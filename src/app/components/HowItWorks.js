@@ -1,6 +1,6 @@
-"use client";
-import { motion } from "framer-motion";
-import { useState } from "react";
+"use client"
+import { motion } from "framer-motion"
+import { useState } from "react"
 
 const steps = [
   {
@@ -18,10 +18,10 @@ const steps = [
     description: "From local player to global eSports icon.",
     type: "devices-advanced",
   },
-];
+]
 
 export default function HowItWorks() {
-  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [hoveredIndex, setHoveredIndex] = useState(null)
 
   return (
     <section id="how-it-works" className="py-40 bg-[#0D0D0D]">
@@ -92,10 +92,7 @@ export default function HowItWorks() {
                           scale: { duration: 0.3 },
                           rotate: {
                             duration: 4,
-                            repeat:
-                              hoveredIndex === index
-                                ? Number.POSITIVE_INFINITY
-                                : 0,
+                            repeat: hoveredIndex === index ? Number.POSITIVE_INFINITY : 0,
                             ease: "linear",
                           },
                         }}
@@ -144,16 +141,15 @@ export default function HowItWorks() {
                 </motion.div>
               </div>
 
-             <motion.h3
-  className="h5"
-  animate={{
-    color: hoveredIndex === index ? "#A855F7" : "var(--sns-grey)",
-  }}
-  transition={{ duration: 0.3 }}
->
-  {step.title}
-</motion.h3>
-
+              <motion.h3
+                className="h5"
+                animate={{
+                  color: hoveredIndex === index ? "#A855F7" : "var(--sns-grey)",
+                }}
+                transition={{ duration: 0.3 }}
+              >
+                {step.title}
+              </motion.h3>
 
               <motion.p
                 className="how-desc"
@@ -169,5 +165,5 @@ export default function HowItWorks() {
         </div>
       </div>
     </section>
-  );
+  )
 }

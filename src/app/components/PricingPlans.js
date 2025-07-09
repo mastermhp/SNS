@@ -1,7 +1,7 @@
-"use client";
-import { motion } from "framer-motion";
-import { useState } from "react";
-import SignupModal from "./SignupModal";
+"use client"
+import { motion } from "framer-motion"
+import { useState } from "react"
+import SignupModal from "./SignupModal"
 
 const plans = [
   {
@@ -89,17 +89,17 @@ const plans = [
     type: "advanced",
     topHeight: "h-68 sm:h-72 md:h-76",
   },
-];
+]
 
 export default function PricingPlans() {
-  const [hoveredIndex, setHoveredIndex] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [hoveredIndex, setHoveredIndex] = useState(null)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selectedPlan, setSelectedPlan] = useState(null)
 
   const handleGetStarted = (planName) => {
-    setSelectedPlan(planName);
-    setModalOpen(true);
-  };
+    setSelectedPlan(planName)
+    setModalOpen(true)
+  }
 
   return (
     <section id="plans" className="py-20 sm:py-32 lg:py-40 bg-black relative">
@@ -153,9 +153,7 @@ export default function PricingPlans() {
                 >
                   <div className="w-full bg-black rounded-2xl overflow-hidden">
                     {/* Top Section with Variable Height */}
-                    <div
-                      className={`${plan.topHeight} w-full p-4 sm:p-6 flex flex-col relative overflow-hidden`}
-                    >
+                    <div className={`${plan.topHeight} w-full p-4 sm:p-6 flex flex-col relative overflow-hidden`}>
                       {/* Background Image */}
                       <div className="absolute inset-0 overflow-hidden">
                         <img
@@ -171,9 +169,7 @@ export default function PricingPlans() {
                       <div className="relative z-10 flex flex-col justify-center h-full">
                         {/* Popular Badge */}
                         <div className="text-center mt-32">
-                          <span className="text-white text-xs font-medium">
-                            Most Popular
-                          </span>
+                          <span className="text-white text-xs font-medium">Most Popular</span>
                         </div>
 
                         {/* Plan Name */}
@@ -193,18 +189,12 @@ export default function PricingPlans() {
                             {plan.name}
                           </h3>
                           <div className="mb-3 mt-8">
-                            <span className="text-2xl sm:text-3xl font-bold text-white">
-                              {plan.price}
-                            </span>
+                            <span className="text-2xl sm:text-3xl font-bold text-white">{plan.price}</span>
                             {plan.period && (
-                              <span className="text-gray-400 ml-1 text-xs sm:text-sm">
-                                {plan.period}
-                              </span>
+                              <span className="text-gray-400 ml-1 text-xs sm:text-sm">{plan.period}</span>
                             )}
                           </div>
-                          <p className="text-gray-300 text-xs mb-12">
-                            {plan.team}
-                          </p>
+                          <p className="text-gray-300 text-xs mb-12">{plan.team}</p>
                           <h3
                             className="text-lg font-bold mb-2"
                             style={{
@@ -218,9 +208,7 @@ export default function PricingPlans() {
                             {plan.description}
                           </h3>
 
-                          <h4 className="text-xs font-semibold text-orange-400">
-                            {plan.subtitle}
-                          </h4>
+                          <h4 className="text-xs font-semibold text-orange-400">{plan.subtitle}</h4>
                         </div>
                       </div>
                     </div>
@@ -231,16 +219,11 @@ export default function PricingPlans() {
                       <div className="flex-grow mb-4 overflow-y-auto">
                         <ul className="space-y-1.5 text-xs">
                           {plan.features.map((feature, featureIndex) => (
-                            <li
-                              key={featureIndex}
-                              className="flex items-start space-x-2"
-                            >
+                            <li key={featureIndex} className="flex items-start space-x-2">
                               <div className="flex-shrink-0 mt-2">
                                 <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
                               </div>
-                              <span className="text-gray-500 text-[18px] leading-tight">
-                                {feature}
-                              </span>
+                              <span className="text-gray-500 text-[18px] leading-tight">{feature}</span>
                             </li>
                           ))}
                         </ul>
@@ -255,12 +238,7 @@ export default function PricingPlans() {
                       >
                         <span className="flex items-center justify-center space-x-2">
                           <span>{plan.buttonText}</span>
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
@@ -275,10 +253,7 @@ export default function PricingPlans() {
                 </motion.div>
               ) : (
                 /* Basic and Advanced Cards */
-                <motion.div
-                  className="flex flex-col"
-                  whileHover={{ scale: 1.02 }}
-                >
+                <motion.div className="flex flex-col" whileHover={{ scale: 1.02 }}>
                   {/* Top Section with Variable Height */}
                   <div
                     className={`${plan.topHeight} w-full bg-gray-900/50 backdrop-blur-sm rounded-t-2xl p-4 sm:p-6 border-t border-l border-r border-gray-800 hover:border-purple-500 transition-all duration-300 flex flex-col relative overflow-hidden`}
@@ -334,18 +309,10 @@ export default function PricingPlans() {
                           {plan.name}
                         </h3>
                         <div className="mb-3">
-                          <span className="text-2xl sm:text-3xl font-bold text-white">
-                            {plan.price}
-                          </span>
-                          {plan.period && (
-                            <span className="text-gray-400 ml-1 text-xs sm:text-sm">
-                              {plan.period}
-                            </span>
-                          )}
+                          <span className="text-2xl sm:text-3xl font-bold text-white">{plan.price}</span>
+                          {plan.period && <span className="text-gray-400 ml-1 text-xs sm:text-sm">{plan.period}</span>}
                         </div>
-                        <p className="text-gray-300 text-xs mb-12">
-                          {plan.team}
-                        </p>
+                        <p className="text-gray-300 text-xs mb-12">{plan.team}</p>
                         <h3
                           className="text-xl font-bold"
                           style={{
@@ -358,9 +325,7 @@ export default function PricingPlans() {
                         >
                           {plan.description}
                         </h3>
-                        <h4 className="text-xs font-semibold text-orange-400">
-                          {plan.subtitle}
-                        </h4>
+                        <h4 className="text-xs font-semibold text-orange-400">{plan.subtitle}</h4>
                       </div>
                     </div>
                   </div>
@@ -371,16 +336,11 @@ export default function PricingPlans() {
                     <div className="flex-grow mb-4 overflow-y-auto">
                       <ul className="space-y-1.5 text-xs">
                         {plan.features.map((feature, featureIndex) => (
-                          <li
-                            key={featureIndex}
-                            className="flex items-start space-x-2"
-                          >
+                          <li key={featureIndex} className="flex items-start space-x-2">
                             <div className="flex-shrink-0 items-center justify-center mt-2">
                               <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
                             </div>
-                            <span className="text-gray-500 text-[18px] leading-tight">
-                              {feature}
-                            </span>
+                            <span className="text-gray-500 text-[18px] leading-tight">{feature}</span>
                           </li>
                         ))}
                       </ul>
@@ -395,12 +355,7 @@ export default function PricingPlans() {
                     >
                       <span className="flex items-center justify-center space-x-2">
                         <span>{plan.buttonText}</span>
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -417,11 +372,7 @@ export default function PricingPlans() {
           ))}
         </div>
       </div>
-      <SignupModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        selectedPlan={selectedPlan}
-      />
+      <SignupModal isOpen={modalOpen} onClose={() => setModalOpen(false)} selectedPlan={selectedPlan} />
     </section>
-  );
+  )
 }

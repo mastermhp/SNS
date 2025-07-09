@@ -283,8 +283,26 @@ export default function RisingStarsCarousel() {
 
   // Start auto-scroll when component mounts and conditions are met
   useEffect(() => {
+    const startAutoScrollInternal = () => {
+      if (autoScrollRef.current) {
+        clearInterval(autoScrollRef.current)
+      }
+
+      autoScrollRef.current = setInterval(() => {
+        if (!isHovered && !isPaused && streamers.length > 0 && !loading) {
+          setCurrentX((prevX) => {
+            const newX = prevX - 2
+            if (Math.abs(newX) >= totalWidth) {
+              return 0
+            }
+            return newX
+          })
+        }
+      }, 50)
+    }
+
     if (!isHovered && !isPaused && streamers.length > 0 && !loading) {
-      startAutoScroll()
+      startAutoScrollInternal()
     } else {
       if (autoScrollRef.current) {
         clearInterval(autoScrollRef.current)
@@ -580,7 +598,8 @@ export default function RisingStarsCarousel() {
                             <span className="text-gray-400 text-xs">Status</span>
                           </div>
                           <p className="text-white text-center flex items-center justify-center font-medium text-xs">
-                            VERIFIED BY <img src="/Logo/SNS_Logo.svg" className="ml-2 w-16 h-8" />
+                            VERIFIED BY{" "}
+                            <img src="/Logo/SNS_Logo.svg" alt="Slice N Share Logo" className="ml-2 w-16 h-8" />
                           </p>
                         </div>
                       </div>

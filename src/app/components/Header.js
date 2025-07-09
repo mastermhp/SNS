@@ -36,7 +36,7 @@ export default function Header() {
       >
         <div className="flex items-center justify-between px-4 sm:px-6 py-3 rounded-[20px]">
           <div className="flex items-center space-x-1">
-            <img src="/Logo/Logo.png" className="w-6 h-6 sm:w-8 sm:h-8" />
+            <img src="/Logo/Logo.png" alt="Slice N Share Logo" className="w-6 h-6 sm:w-8 sm:h-8" />
           </div>
 
           {/* Desktop Navigation */}

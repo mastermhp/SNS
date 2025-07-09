@@ -35,7 +35,7 @@ export default function HeroSection() {
           className="mb-1"
         >
           <div className="flex items-center justify-center space-x-2 mb-2">
-            <img src="/Logo/SNS_Logo.svg" className="h-8 w-20 sm:h-12 w-30 md:h-16 w-40" />
+            <img src="/Logo/SNS_Logo.svg" alt="Slice N Share Logo" className="h-8 w-20 sm:h-12 w-30 md:h-16 w-40" />
           </div>
         </motion.div>
 

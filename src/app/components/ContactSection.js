@@ -206,7 +206,7 @@ export default function ContactSection() {
                 >
                   <h3 className="text-xl font-bold text-white mb-2">Message Sent Successfully!</h3>
                   <p className="text-gray-400 text-sm mb-4">
-                    Thank you for reaching out. We'll get back to you within 24 hours.
+                    Thank you for reaching out. We&apos;ll get back to you within 24 hours.
                   </p>
 
                   {/* Animated progress bar */}

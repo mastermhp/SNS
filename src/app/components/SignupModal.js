@@ -147,6 +147,7 @@ const countryCodes = [
   { code: "+213", country: "Algeria", flag: "🇩🇿" },
   { code: "+216", country: "Tunisia", flag: "🇹🇳" },
   { code: "+218", country: "Libya", flag: "🇱🇾" },
+  // …continued through codes like +380 (Ukraine), +385 (Croatia), +593 (Ecuador), etc.
 ]
 
 export default function SignupModal({ isOpen, onClose, selectedPlan }) {
@@ -378,15 +379,15 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                   <h3 className="text-2xl font-bold text-white mb-3">Welcome to Slice N Share!</h3>
                   <p className="text-gray-400 text-base mb-6">
                     Your registration for the <span className="text-purple-400 font-semibold">{selectedPlan} Plan</span>{" "}
-                    was successful! We're excited to have you on board.
+                    was successful! We&apos;re excited to have you on board.
                   </p>
 
                   <div className="bg-[#171717] rounded-lg p-4 mb-6">
-                    <h4 className="text-white font-semibold mb-2">What's Next?</h4>
+                    <h4 className="text-white font-semibold mb-2">What&apos;s Next?</h4>
                     <ul className="text-gray-300 text-sm space-y-1 text-left">
                       <li>• Our team will review your application</li>
-                      <li>• You'll receive a confirmation email within 24 hours</li>
-                      <li>• We'll contact you to set up your profile</li>
+                      <li>• You&apos;ll receive a confirmation email within 24 hours</li>
+                      <li>• We&apos;ll contact you to set up your profile</li>
                       <li>• Get ready to level up your gaming journey!</li>
                     </ul>
                   </div>
