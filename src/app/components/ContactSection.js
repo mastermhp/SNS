@@ -47,6 +47,7 @@ export default function ContactSection() {
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [success, setSuccess] = useState(false)
 
   const handleInputChange = (e) => {
     setFormData({
@@ -73,15 +74,18 @@ export default function ContactSection() {
         throw new Error("Failed to send message. Please try again.")
       }
 
-      // Reset form on success
-      setFormData({
-        name: "",
-        email: "",
-        message: "",
-      })
+      // Show success state
+      setSuccess(true)
 
-      // Show success message (you can add a success state if needed)
-      alert("Message sent successfully! We'll get back to you soon.")
+      // Reset form after 3 seconds and hide success message
+      setTimeout(() => {
+        setFormData({
+          name: "",
+          email: "",
+          message: "",
+        })
+        setSuccess(false)
+      }, 3000)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -165,14 +169,81 @@ export default function ContactSection() {
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="w-full max-w-md mx-auto lg:mx-0 bg-[#0D0D0D] p-6 sm:p-8 lg:p-10 rounded-2xl"
+            className="w-full max-w-md mx-auto lg:mx-0 bg-[#0D0D0D] p-6 sm:p-8 lg:p-10 rounded-2xl relative"
           >
+            {/* Success State Overlay */}
+            {success && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="absolute inset-0 bg-[#0D0D0D] rounded-2xl flex flex-col items-center justify-center z-10"
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                  className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mb-6"
+                >
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <motion.path
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ delay: 0.5, duration: 0.5 }}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={3}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-center"
+                >
+                  <h3 className="text-xl font-bold text-white mb-2">Message Sent Successfully!</h3>
+                  <p className="text-gray-400 text-sm mb-4">
+                    Thank you for reaching out. We'll get back to you within 24 hours.
+                  </p>
+
+                  {/* Animated progress bar */}
+                  <div className="w-full bg-gray-700 rounded-full h-1 mb-2">
+                    <motion.div
+                      initial={{ width: "0%" }}
+                      animate={{ width: "100%" }}
+                      transition={{ delay: 0.6, duration: 3 }}
+                      className="bg-green-500 h-1 rounded-full"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500">Form will reset automatically</p>
+                </motion.div>
+              </motion.div>
+            )}
+
+            {/* Form Content */}
             <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
               {error && (
-                <div className="bg-red-500/10 border border-red-500 rounded-lg p-4 mb-6">
-                  <p className="text-red-400 text-sm">{error}</p>
-                </div>
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-red-500/10 border border-red-500 rounded-lg p-4 mb-6"
+                >
+                  <div className="flex items-center space-x-2">
+                    <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <p className="text-red-400 text-sm">{error}</p>
+                  </div>
+                </motion.div>
               )}
+
               <div>
                 <label className="block text-white text-sm font-medium mb-2 ml-4 sm:ml-6">Name</label>
                 <input
@@ -183,6 +254,7 @@ export default function ContactSection() {
                   placeholder="Type your name.."
                   className="w-full px-4 py-3 sm:py-4 bg-[#171717] rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all backdrop-blur-sm text-sm sm:text-base"
                   required
+                  disabled={loading || success}
                 />
               </div>
 
@@ -196,6 +268,7 @@ export default function ContactSection() {
                   placeholder="Type your email.."
                   className="w-full px-4 py-3 sm:py-4 bg-[#171717] rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all backdrop-blur-sm text-sm sm:text-base"
                   required
+                  disabled={loading || success}
                 />
               </div>
 
@@ -209,23 +282,31 @@ export default function ContactSection() {
                   placeholder="Write your message..."
                   className="w-full px-4 py-3 sm:py-4 bg-[#171717] rounded-3xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all resize-none backdrop-blur-sm text-sm sm:text-base"
                   required
+                  disabled={loading || success}
                 />
               </div>
 
               <motion.button
                 type="submit"
-                disabled={loading}
+                disabled={loading || success}
                 className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold py-3 sm:py-4 px-6 rounded-full hover:from-purple-700 hover:to-purple-800 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                 whileHover={{
-                  scale: loading ? 1 : 1.02,
-                  boxShadow: loading ? "none" : "0 10px 30px rgba(139, 92, 246, 0.4)",
+                  scale: loading || success ? 1 : 1.02,
+                  boxShadow: loading || success ? "none" : "0 10px 30px rgba(139, 92, 246, 0.4)",
                 }}
-                whileTap={{ scale: loading ? 1 : 0.98 }}
+                whileTap={{ scale: loading || success ? 1 : 0.98 }}
               >
                 {loading ? (
                   <div className="flex items-center justify-center space-x-2">
                     <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                     <span>Sending...</span>
+                  </div>
+                ) : success ? (
+                  <div className="flex items-center justify-center space-x-2">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Sent Successfully!</span>
                   </div>
                 ) : (
                   "Submit"

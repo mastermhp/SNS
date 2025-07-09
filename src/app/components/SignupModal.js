@@ -96,6 +96,59 @@ const sponsorshipOptions = [
   { value: "ending_soon", label: "Yes but ending soon" },
 ]
 
+const countryCodes = [
+  { code: "+880", country: "Bangladesh", flag: "🇧🇩" },
+  { code: "+1", country: "USA / Canada / NANP territories", flag: "🇺🇸/🇨🇦" },
+  { code: "+7", country: "Russia / Kazakhstan", flag: "🇷🇺/🇰🇿" },
+  { code: "+20", country: "Egypt", flag: "🇪🇬" },
+  { code: "+30", country: "Greece", flag: "🇬🇷" },
+  { code: "+31", country: "Netherlands", flag: "🇳🇱" },
+  { code: "+32", country: "Belgium", flag: "🇧🇪" },
+  { code: "+33", country: "France", flag: "🇫🇷" },
+  { code: "+34", country: "Spain", flag: "🇪🇸" },
+  { code: "+36", country: "Hungary", flag: "🇭🇺" },
+  { code: "+39", country: "Italy / Vatican City", flag: "🇮🇹/🇻🇦" },
+  { code: "+40", country: "Romania", flag: "🇷🇴" },
+  { code: "+41", country: "Switzerland", flag: "🇨🇭" },
+  { code: "+43", country: "Austria", flag: "🇦🇹" },
+  { code: "+44", country: "United Kingdom", flag: "🇬🇧" },
+  { code: "+45", country: "Denmark", flag: "🇩🇰" },
+  { code: "+46", country: "Sweden", flag: "🇸🇪" },
+  { code: "+47", country: "Norway", flag: "🇳🇴" },
+  { code: "+48", country: "Poland", flag: "🇵🇱" },
+  { code: "+49", country: "Germany", flag: "🇩🇪" },
+  { code: "+51", country: "Peru", flag: "🇵🇪" },
+  { code: "+52", country: "Mexico", flag: "🇲🇽" },
+  { code: "+54", country: "Argentina", flag: "🇦🇷" },
+  { code: "+55", country: "Brazil", flag: "🇧🇷" },
+  { code: "+56", country: "Chile", flag: "🇨🇱" },
+  { code: "+57", country: "Colombia", flag: "🇨🇴" },
+  { code: "+58", country: "Venezuela", flag: "🇻🇪" },
+  { code: "+60", country: "Malaysia", flag: "🇲🇾" },
+  { code: "+61", country: "Australia", flag: "🇦🇺" },
+  { code: "+62", country: "Indonesia", flag: "🇮🇩" },
+  { code: "+63", country: "Philippines", flag: "🇵🇭" },
+  { code: "+64", country: "New Zealand", flag: "🇳🇿" },
+  { code: "+65", country: "Singapore", flag: "🇸🇬" },
+  { code: "+66", country: "Thailand", flag: "🇹🇭" },
+  { code: "+81", country: "Japan", flag: "🇯🇵" },
+  { code: "+82", country: "South Korea", flag: "🇰🇷" },
+  { code: "+84", country: "Vietnam", flag: "🇻🇳" },
+  { code: "+86", country: "China", flag: "🇨🇳" },
+  { code: "+90", country: "Turkey", flag: "🇹🇷" },
+  { code: "+91", country: "India", flag: "🇮🇳" },
+  { code: "+92", country: "Pakistan", flag: "🇵🇰" },
+  { code: "+93", country: "Afghanistan", flag: "🇦🇫" },
+  { code: "+94", country: "Sri Lanka", flag: "🇱🇰" },
+  { code: "+95", country: "Myanmar", flag: "🇲🇲" },
+  { code: "+98", country: "Iran", flag: "🇮🇷" },
+  { code: "+211", country: "South Sudan", flag: "🇸🇸" },
+  { code: "+212", country: "Morocco", flag: "🇲🇦" },
+  { code: "+213", country: "Algeria", flag: "🇩🇿" },
+  { code: "+216", country: "Tunisia", flag: "🇹🇳" },
+  { code: "+218", country: "Libya", flag: "🇱🇾" },
+]
+
 export default function SignupModal({ isOpen, onClose, selectedPlan }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
@@ -105,11 +158,12 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
     fullName: "",
     ingameName: "",
     email: "",
+    countryCode: "+880",
     phone: "",
     district: "",
     platform: "",
     primaryGameTitles: "",
-    secondaryGameTitles: [],
+    secondaryGameTitles: "", // Changed from array to single string
     isSponsored: "",
     monthlyIncomeRange: "",
     socials: [{ platform: "", url: "" }],
@@ -179,13 +233,6 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
     }))
   }
 
-  const handleArrayChange = (name, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: prev[name].includes(value) ? prev[name].filter((item) => item !== value) : [...prev[name], value],
-    }))
-  }
-
   const handleSocialChange = (index, field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -215,11 +262,13 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
     try {
       const payload = {
         ...formData,
-        displayName: formData.ingameName, // Map ingameName to displayName for API compatibility
+        displayName: formData.ingameName,
         plan: selectedPlan?.toLowerCase() || "basic",
         socials: formData.socials.filter((social) => social.platform && social.url),
-        platform: [formData.platform], // Convert single platform to array for API
-        primaryGameTitles: [formData.primaryGameTitles], // Convert single game to array for API
+        platform: [formData.platform],
+        primaryGameTitles: [formData.primaryGameTitles],
+        secondaryGameTitles: formData.secondaryGameTitles ? [formData.secondaryGameTitles] : [], // Convert single game to array
+        phone: `${formData.countryCode}${formData.phone}`, // Combine country code with phone
         avatar: {
           url: "https://example.com/avatar.jpg",
           publicId: "avatar_public_id",
@@ -246,17 +295,18 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
           fullName: "",
           ingameName: "",
           email: "",
+          countryCode: "+880",
           phone: "",
           district: "",
           platform: "",
           primaryGameTitles: "",
-          secondaryGameTitles: [],
+          secondaryGameTitles: "",
           isSponsored: "",
           monthlyIncomeRange: "",
           socials: [{ platform: "", url: "" }],
           bio: "",
         })
-      }, 2000)
+      }, 4000)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -278,7 +328,7 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-[#0D0D0D] rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-[#0D0D0D] rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto relative"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -291,6 +341,69 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                 <X size={24} />
               </button>
             </div>
+
+            {/* Success State Overlay */}
+            {success && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="absolute inset-0 bg-[#0D0D0D] rounded-2xl flex flex-col items-center justify-center z-10"
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                  className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mb-6"
+                >
+                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <motion.path
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ delay: 0.5, duration: 0.5 }}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={3}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-center max-w-md"
+                >
+                  <h3 className="text-2xl font-bold text-white mb-3">Welcome to Slice N Share!</h3>
+                  <p className="text-gray-400 text-base mb-6">
+                    Your registration for the <span className="text-purple-400 font-semibold">{selectedPlan} Plan</span>{" "}
+                    was successful! We're excited to have you on board.
+                  </p>
+
+                  <div className="bg-[#171717] rounded-lg p-4 mb-6">
+                    <h4 className="text-white font-semibold mb-2">What's Next?</h4>
+                    <ul className="text-gray-300 text-sm space-y-1 text-left">
+                      <li>• Our team will review your application</li>
+                      <li>• You'll receive a confirmation email within 24 hours</li>
+                      <li>• We'll contact you to set up your profile</li>
+                      <li>• Get ready to level up your gaming journey!</li>
+                    </ul>
+                  </div>
+
+                  {/* Animated progress bar */}
+                  <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
+                    <motion.div
+                      initial={{ width: "0%" }}
+                      animate={{ width: "100%" }}
+                      transition={{ delay: 0.6, duration: 4 }}
+                      className="bg-gradient-to-r from-purple-500 to-green-500 h-2 rounded-full"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500">Modal will close automatically</p>
+                </motion.div>
+              </motion.div>
+            )}
 
             {/* Plan Features Display */}
             {!success && selectedPlan && (
@@ -309,22 +422,25 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
               </div>
             )}
 
-            {success ? (
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-12">
-                <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">Welcome to Slice N Share!</h3>
-                <p className="text-gray-400">Your registration was successful. We will be in touch soon!</p>
-              </motion.div>
-            ) : (
+            {!success && (
               <form onSubmit={handleSubmit} className="space-y-6">
                 {error && (
-                  <div className="bg-red-500/10 border border-red-500 rounded-lg p-4">
-                    <p className="text-red-400 text-sm">{error}</p>
-                  </div>
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-red-500/10 border border-red-500 rounded-lg p-4"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                          fillRule="evenodd"
+                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <p className="text-red-400 text-sm">{error}</p>
+                    </div>
+                  </motion.div>
                 )}
 
                 {/* Basic Information */}
@@ -338,6 +454,7 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-[#171717] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                       required
+                      disabled={loading}
                     />
                   </div>
                   <div>
@@ -349,6 +466,7 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-[#171717] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                       required
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -363,19 +481,36 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-[#171717] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                       required
+                      disabled={loading}
                     />
                   </div>
                   <div>
                     <label className="block text-white text-sm font-medium mb-2">Phone *</label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      placeholder="+8801XXXXXXXXX"
-                      className="w-full px-4 py-3 bg-[#171717] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-                      required
-                    />
+                    <div className="flex gap-2">
+                      <select
+                        name="countryCode"
+                        value={formData.countryCode}
+                        onChange={handleInputChange}
+                        className="px-3 py-3 bg-[#171717] rounded-lg text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 min-w-[100px]"
+                        disabled={loading}
+                      >
+                        {countryCodes.map((country) => (
+                          <option key={country.code} value={country.code}>
+                            {country.flag} {country.code}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        placeholder="1XXXXXXXXX"
+                        className="flex-1 px-4 py-3 bg-[#171717] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                        required
+                        disabled={loading}
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -389,6 +524,7 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-[#171717] rounded-lg text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                       required
+                      disabled={loading}
                     >
                       <option value="">Select District</option>
                       {districts.map((district) => (
@@ -405,6 +541,7 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                       value={formData.monthlyIncomeRange}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-[#171717] rounded-lg text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                      disabled={loading}
                     >
                       <option value="">Select Range</option>
                       <option value="0-3K">0-3K BDT</option>
@@ -429,6 +566,7 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                           onChange={handleInputChange}
                           className="w-4 h-4 text-purple-600 bg-[#171717] border-gray-600 focus:ring-purple-500"
                           required
+                          disabled={loading}
                         />
                         <span className="text-gray-300">{platform}</span>
                       </label>
@@ -450,6 +588,7 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                           onChange={handleInputChange}
                           className="w-4 h-4 text-purple-600 bg-[#171717] border-gray-600 focus:ring-purple-500"
                           required
+                          disabled={loading}
                         />
                         <span className="text-gray-300 text-sm">{game}</span>
                       </label>
@@ -457,17 +596,20 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                   </div>
                 </div>
 
-                {/* Secondary Games - Multiple Selection Optional */}
+                {/* Secondary Game - Single Selection Optional */}
                 <div>
-                  <label className="block text-white text-sm font-medium mb-3">Secondary Game Titles (Optional)</label>
+                  <label className="block text-white text-sm font-medium mb-3">Secondary Game Title (Optional)</label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {gamesList.map((game) => (
                       <label key={game} className="flex items-center space-x-2 cursor-pointer">
                         <input
-                          type="checkbox"
-                          checked={formData.secondaryGameTitles.includes(game)}
-                          onChange={() => handleArrayChange("secondaryGameTitles", game)}
-                          className="w-4 h-4 text-purple-600 bg-[#171717] border-gray-600 rounded focus:ring-purple-500"
+                          type="radio"
+                          name="secondaryGameTitles"
+                          value={game}
+                          checked={formData.secondaryGameTitles === game}
+                          onChange={handleInputChange}
+                          className="w-4 h-4 text-purple-600 bg-[#171717] border-gray-600 focus:ring-purple-500"
+                          disabled={loading}
                         />
                         <span className="text-gray-300 text-sm">{game}</span>
                       </label>
@@ -484,6 +626,7 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                         value={social.platform}
                         onChange={(e) => handleSocialChange(index, "platform", e.target.value)}
                         className="px-4 py-3 bg-[#171717] rounded-lg text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                        disabled={loading}
                       >
                         <option value="">Select Platform</option>
                         {socialPlatforms.map((platform) => (
@@ -498,12 +641,14 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                         onChange={(e) => handleSocialChange(index, "url", e.target.value)}
                         placeholder="Profile URL"
                         className="flex-1 px-4 py-3 bg-[#171717] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                        disabled={loading}
                       />
                       {formData.socials.length > 1 && (
                         <button
                           type="button"
                           onClick={() => removeSocialField(index)}
                           className="px-3 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                          disabled={loading}
                         >
                           <X size={16} />
                         </button>
@@ -514,6 +659,7 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                     type="button"
                     onClick={addSocialField}
                     className="text-purple-400 hover:text-purple-300 text-sm"
+                    disabled={loading}
                   >
                     + Add Another Social Profile
                   </button>
@@ -533,6 +679,7 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                           onChange={handleInputChange}
                           className="w-4 h-4 text-purple-600 bg-[#171717] border-gray-600 focus:ring-purple-500"
                           required
+                          disabled={loading}
                         />
                         <span className="text-gray-300">{option.label}</span>
                       </label>
@@ -552,6 +699,7 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                     rows={3}
                     placeholder="Write down your answers"
                     className="w-full px-4 py-3 bg-[#171717] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
+                    disabled={loading}
                   />
                 </div>
 
