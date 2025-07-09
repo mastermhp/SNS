@@ -35,7 +35,7 @@ export default function HeroSection() {
           className="mb-1"
         >
           <div className="flex items-center justify-center space-x-2 mb-2">
-            <img src="/Logo/Logo_Dark.png" className="h-8 w-20 sm:h-12 w-30 md:h-16 w-40" />
+            <img src="/Logo/SNS_Logo.svg" className="h-8 w-20 sm:h-12 w-30 md:h-16 w-40" />
           </div>
         </motion.div>
 
@@ -43,7 +43,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.7 }}
-          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold mb-6 sm:mb-8 leading-tight"
+          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold mb-4 sm:mb-8 leading-tight"
         >
           <span className="display-alt text-xl sm:text-xl md:text-4xl lg:text-5xl xl:text-6xl">
             EMPOWERING THE NEXT

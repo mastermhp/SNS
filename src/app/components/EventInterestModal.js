@@ -214,7 +214,7 @@ export default function EventInterestModal({ isOpen, onClose, eventTitle, eventI
                         <span>Registering...</span>
                       </div>
                     ) : (
-                      "Register Interest"
+                      "Submit"
                     )}
                   </motion.button>
                 </div>

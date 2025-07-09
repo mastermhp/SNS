@@ -96,7 +96,7 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
         },
       }
 
-      const response = await fetch("http://localhost:3001/api/v1/auth/streamers/signup", {
+      const response = await fetch("https://api.slicenshare.com/api/v1/auth/streamers/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -194,7 +194,7 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                     />
                   </div>
                   <div>
-                    <label className="block text-white text-sm font-medium mb-2">Display Name *</label>
+                    <label className="block text-white text-sm font-medium mb-2">In-Game Name (IGN) *</label>
                     <input
                       type="text"
                       name="displayName"
@@ -366,19 +366,6 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                   </button>
                 </div>
 
-                {/* Bio */}
-                <div>
-                  <label className="block text-white text-sm font-medium mb-2">Bio</label>
-                  <textarea
-                    name="bio"
-                    value={formData.bio}
-                    onChange={handleInputChange}
-                    rows={3}
-                    placeholder="Tell us about yourself..."
-                    className="w-full px-4 py-3 bg-[#171717] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
-                  />
-                </div>
-
                 {/* Sponsored */}
                 <div>
                   <label className="flex items-center space-x-2 cursor-pointer">
@@ -389,9 +376,24 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                       onChange={handleInputChange}
                       className="w-4 h-4 text-purple-600 bg-[#171717] border-gray-600 rounded focus:ring-purple-500"
                     />
-                    <span className="text-gray-300">I am currently sponsored</span>
+                    <span className="text-gray-300">Do you have any Sponsorship?</span>
                   </label>
                 </div>
+
+                {/* Bio */}
+                <div>
+                  <label className="block text-white text-sm font-medium mb-2">What kind of supports do you need from us ? </label>
+                  <textarea
+                    name="bio"
+                    value={formData.bio}
+                    onChange={handleInputChange}
+                    rows={3}
+                    placeholder="Write down your answers"
+                    className="w-full px-4 py-3 bg-[#171717] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
+                  />
+                </div>
+
+                
 
                 {/* Submit Button */}
                 <motion.button
@@ -407,7 +409,7 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                       <span>Signing Up...</span>
                     </div>
                   ) : (
-                    "Join Slice N Share"
+                    "Submit & Join Slice N Share"
                   )}
                 </motion.button>
               </form>

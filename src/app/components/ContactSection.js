@@ -180,7 +180,7 @@ export default function ContactSection() {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  placeholder="Jane Smith"
+                  placeholder="Type your name.."
                   className="w-full px-4 py-3 sm:py-4 bg-[#171717] rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all backdrop-blur-sm text-sm sm:text-base"
                   required
                 />
@@ -193,7 +193,7 @@ export default function ContactSection() {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  placeholder="jane@framer.com"
+                  placeholder="Type your email.."
                   className="w-full px-4 py-3 sm:py-4 bg-[#171717] rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all backdrop-blur-sm text-sm sm:text-base"
                   required
                 />

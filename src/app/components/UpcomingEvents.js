@@ -5,29 +5,29 @@ import EventInterestModal from "./EventInterestModal"
 
 const events = [
   {
-    title: "Slice N Share Tournament",
+    title: "Slice N Share LAN Tournament",
     description: "Get ready to battle it out! Big prizes, bigger glory.",
-    date: "20 Jul 2025",
-    time: "2 PM - 6 PM",
-    location: "University of Dhaka",
+    date: "2025",
+    time: "TBA",
+    location: "National & International City",
     image:
       "https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
   },
   {
     title: "Campus Ambassador Program",
     description: "Host games, gain perks and opportunities.",
-    date: "20 Jul 2025",
-    time: "2 PM - 6 PM",
-    location: "North South University Auditorium",
+    date: "2025",
+    time: "TBA",
+    location: "National & International Institutes",
     image:
       "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
   },
   {
     title: "Meet-Up & Concert Vibes",
-    description: "Gamers, fans & music—an epic night awaits! Network, chill & enjoy live beats.",
-    date: "20 Jul 2025",
-    time: "2 PM - 6 PM",
-    location: "South East University",
+    description: "Gamers, fans & music—an epic night awaits! ",
+    date: "2025",
+    time: "TBA",
+    location: "National & International City",
     image:
       "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
   },

@@ -27,7 +27,7 @@ export default function Header() {
     <>
       <motion.header
         className={`fixed top-2 sm:top-4 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 ${
-          isScrolled ? "bg-black/80 backdrop-blur-md rounded-[20px]" : "bg-transparent rounded-[20px]"
+          isScrolled ? "bg-black/80 backdrop-blur-md rounded-[8px]" : "bg-transparent rounded-[8px]"
         }`}
         style={{ width: "95%", maxWidth: "600px" }}
         initial={{ y: -100, opacity: 0 }}

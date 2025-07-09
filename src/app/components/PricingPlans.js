@@ -1,15 +1,16 @@
-"use client"
-import { motion } from "framer-motion"
-import { useState } from "react"
-import SignupModal from "./SignupModal"
+"use client";
+import { motion } from "framer-motion";
+import { useState } from "react";
+import SignupModal from "./SignupModal";
 
 const plans = [
   {
     name: "BASIC",
     price: "Free",
-    period: "per person",
-    subtitle: "🎮 Slice N Share – Free Tier Benefits",
-    description: "Your journey from Noob to Pro starts here 💥",
+    period: "/ Monthly",
+    team: " (Single Gamer)",
+    // subtitle: "🎮 Slice N Share – Free Tier Benefits",
+    description: "Your journey from Noob to Pro starts here",
     features: [
       "Global Gamer Profile on Slice N Share – Get seen. Be known. Build your legacy.",
       "Access to Free Training Resources – Learn smarter with SnS AI tools.",
@@ -27,14 +28,15 @@ const plans = [
     buttonText: "Get Started",
     popular: false,
     type: "basic",
-    topHeight: "h-48 sm:h-52 md:h-56",
+    topHeight: "h-48 sm:h-52 md:h-68",
   },
   {
     name: "STANDARD",
     price: "1000 BDT",
-    period: "per person monthly",
-    subtitle: "🔥 Slice N Share Elite Gamer Benefits 🔥",
-    description: "Unleash your potential. Dominate globally.",
+    period: "/ Monthly",
+    team: " (Single Gamer)",
+    // subtitle: "🔥 Slice N Share Elite Gamer Benefits 🔥",
+    description: "Unleash your Potential. Dominate globally.",
     features: [
       "Monthly Salary Based on Performance – Play hard, get rewarded.",
       "Personalized Gamer Profile on Slice N Share Platform",
@@ -61,9 +63,10 @@ const plans = [
   {
     name: "ADVANCED",
     price: "4500 BDT",
-    period: "Monthly (6 People)",
-    subtitle: "🔥 Unlimited Benefits – Based on Potential & Availability",
-    description: "With all the premium features",
+    period: "/Monthly",
+    team: " (Team - 6 People)",
+    // subtitle: "🔥 Unlimited Benefits – Based on Potential & Availability",
+    description: "With all the Premium features",
     features: [
       "Global Gamer Profile on Slice N Share",
       "Content Creation Support (YouTube, TikTok, Insta, FB, etc.)",
@@ -79,24 +82,24 @@ const plans = [
       "Unlimited Specialized Slice N Share Branding",
       "Unlimited Global Media Features – Get featured, get noticed – globally.",
       "Access to AI-Powered Training & Performance Tools (SnS) – Train smarter with custom tools built for competitive players.",
-      "🛍 500+ Discounts on Global & Local Lifestyle Brands",
+      "500+ Discounts on Global & Local Lifestyle Brands",
     ],
     buttonText: "Get Started",
     popular: false,
     type: "advanced",
     topHeight: "h-68 sm:h-72 md:h-76",
   },
-]
+];
 
 export default function PricingPlans() {
-  const [hoveredIndex, setHoveredIndex] = useState(null)
-  const [modalOpen, setModalOpen] = useState(false)
-  const [selectedPlan, setSelectedPlan] = useState(null)
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
 
   const handleGetStarted = (planName) => {
-    setSelectedPlan(planName)
-    setModalOpen(true)
-  }
+    setSelectedPlan(planName);
+    setModalOpen(true);
+  };
 
   return (
     <section id="plans" className="py-20 sm:py-32 lg:py-40 bg-black relative">
@@ -150,7 +153,9 @@ export default function PricingPlans() {
                 >
                   <div className="w-full bg-black rounded-2xl overflow-hidden">
                     {/* Top Section with Variable Height */}
-                    <div className={`${plan.topHeight} w-full p-4 sm:p-6 flex flex-col relative overflow-hidden`}>
+                    <div
+                      className={`${plan.topHeight} w-full p-4 sm:p-6 flex flex-col relative overflow-hidden`}
+                    >
                       {/* Background Image */}
                       <div className="absolute inset-0 overflow-hidden">
                         <img
@@ -165,8 +170,10 @@ export default function PricingPlans() {
                       {/* Content */}
                       <div className="relative z-10 flex flex-col justify-center h-full">
                         {/* Popular Badge */}
-                        <div className="text-center">
-                          <span className="text-white text-xs font-medium">Most Popular</span>
+                        <div className="text-center mt-32">
+                          <span className="text-white text-xs font-medium">
+                            Most Popular
+                          </span>
                         </div>
 
                         {/* Plan Name */}
@@ -185,14 +192,35 @@ export default function PricingPlans() {
                           >
                             {plan.name}
                           </h3>
-                          <div className="mb-3">
-                            <span className="text-2xl sm:text-3xl font-bold text-white">{plan.price}</span>
+                          <div className="mb-3 mt-8">
+                            <span className="text-2xl sm:text-3xl font-bold text-white">
+                              {plan.price}
+                            </span>
                             {plan.period && (
-                              <span className="text-gray-400 ml-1 text-xs sm:text-sm">{plan.period}</span>
+                              <span className="text-gray-400 ml-1 text-xs sm:text-sm">
+                                {plan.period}
+                              </span>
                             )}
                           </div>
-                          <p className="text-gray-300 text-xs mb-2">{plan.description}</p>
-                          <h4 className="text-xs font-semibold text-orange-400">{plan.subtitle}</h4>
+                          <p className="text-gray-300 text-xs mb-12">
+                            {plan.team}
+                          </p>
+                          <h3
+                            className="text-lg font-bold mb-2"
+                            style={{
+                              backgroundImage:
+                                "linear-gradient(300deg, var(--token-dc9856fd-0400-432f-8bac-dca82295da25, rgb(255, 0, 64)) 0%, rgb(255, 145, 173) 19.91370160204264%, rgb(182, 214, 241) 36.19087837837838%, rgb(254, 221, 194) 52.43997912726201%, rgb(255, 195, 161) 65.35754504504504%, rgb(252, 161, 43) 82.6090811186774%, var(--token-8a3f945e-7097-47e8-ae48-c03cf8e5cf8b, rgb(129, 23, 241)) 100%)",
+                              WebkitBackgroundClip: "text",
+                              WebkitTextFillColor: "transparent",
+                              backgroundClip: "text",
+                            }}
+                          >
+                            {plan.description}
+                          </h3>
+
+                          <h4 className="text-xs font-semibold text-orange-400">
+                            {plan.subtitle}
+                          </h4>
                         </div>
                       </div>
                     </div>
@@ -203,11 +231,16 @@ export default function PricingPlans() {
                       <div className="flex-grow mb-4 overflow-y-auto">
                         <ul className="space-y-1.5 text-xs">
                           {plan.features.map((feature, featureIndex) => (
-                            <li key={featureIndex} className="flex items-start space-x-2">
-                              <div className="flex-shrink-0 mt-1">
-                                <div className="w-1 h-1 bg-orange-400 rounded-full"></div>
+                            <li
+                              key={featureIndex}
+                              className="flex items-start space-x-2"
+                            >
+                              <div className="flex-shrink-0 mt-2">
+                                <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
                               </div>
-                              <span className="text-gray-300 leading-tight">{feature}</span>
+                              <span className="text-gray-500 text-[18px] leading-tight">
+                                {feature}
+                              </span>
                             </li>
                           ))}
                         </ul>
@@ -222,7 +255,12 @@ export default function PricingPlans() {
                       >
                         <span className="flex items-center justify-center space-x-2">
                           <span>{plan.buttonText}</span>
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
@@ -237,7 +275,10 @@ export default function PricingPlans() {
                 </motion.div>
               ) : (
                 /* Basic and Advanced Cards */
-                <motion.div className="flex flex-col" whileHover={{ scale: 1.02 }}>
+                <motion.div
+                  className="flex flex-col"
+                  whileHover={{ scale: 1.02 }}
+                >
                   {/* Top Section with Variable Height */}
                   <div
                     className={`${plan.topHeight} w-full bg-gray-900/50 backdrop-blur-sm rounded-t-2xl p-4 sm:p-6 border-t border-l border-r border-gray-800 hover:border-purple-500 transition-all duration-300 flex flex-col relative overflow-hidden`}
@@ -273,7 +314,7 @@ export default function PricingPlans() {
                       {/* Plan Name */}
                       <div className="text-center mb-4">
                         <h3
-                          className="font-semibold text-xl sm:text-2xl mb-4 sm:mb-6"
+                          className="font-semibold text-xl sm:text-2xl mt-8 mb-4 sm:mb-6"
                           style={{
                             backgroundImage: `linear-gradient(300deg, 
                                 rgb(255, 0, 64) 0%, 
@@ -293,26 +334,53 @@ export default function PricingPlans() {
                           {plan.name}
                         </h3>
                         <div className="mb-3">
-                          <span className="text-2xl sm:text-3xl font-bold text-white">{plan.price}</span>
-                          {plan.period && <span className="text-gray-400 ml-1 text-xs sm:text-sm">{plan.period}</span>}
+                          <span className="text-2xl sm:text-3xl font-bold text-white">
+                            {plan.price}
+                          </span>
+                          {plan.period && (
+                            <span className="text-gray-400 ml-1 text-xs sm:text-sm">
+                              {plan.period}
+                            </span>
+                          )}
                         </div>
-                        <p className="text-gray-300 text-xs mb-2">{plan.description}</p>
-                        <h4 className="text-xs font-semibold text-orange-400">{plan.subtitle}</h4>
+                        <p className="text-gray-300 text-xs mb-12">
+                          {plan.team}
+                        </p>
+                        <h3
+                          className="text-xl font-bold"
+                          style={{
+                            backgroundImage:
+                              "linear-gradient(300deg, var(--token-dc9856fd-0400-432f-8bac-dca82295da25, rgb(255, 0, 64)) 0%, rgb(255, 145, 173) 19.91370160204264%, rgb(182, 214, 241) 36.19087837837838%, rgb(254, 221, 194) 52.43997912726201%, rgb(255, 195, 161) 65.35754504504504%, rgb(252, 161, 43) 82.6090811186774%, var(--token-8a3f945e-7097-47e8-ae48-c03cf8e5cf8b, rgb(129, 23, 241)) 100%)",
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent",
+                            backgroundClip: "text",
+                          }}
+                        >
+                          {plan.description}
+                        </h3>
+                        <h4 className="text-xs font-semibold text-orange-400">
+                          {plan.subtitle}
+                        </h4>
                       </div>
                     </div>
                   </div>
 
                   {/* Bottom Section - Same Height for All Cards */}
-                  <div className="h-64 sm:h-72 md:h-80 w-full bg-gray-900/50 backdrop-blur-sm rounded-b-2xl p-4 sm:p-6 border-b border-l border-r border-gray-800 hover:border-purple-500 transition-all duration-300 flex flex-col">
+                  <div className="h-64 sm:h-72 md:h-80 w-full backdrop-blur-sm rounded-b-2xl p-4 sm:p-6 border-b border-l border-r border-gray-800 hover:border-purple-500 transition-all duration-300 flex flex-col">
                     {/* Features */}
                     <div className="flex-grow mb-4 overflow-y-auto">
                       <ul className="space-y-1.5 text-xs">
                         {plan.features.map((feature, featureIndex) => (
-                          <li key={featureIndex} className="flex items-start space-x-2">
-                            <div className="flex-shrink-0 mt-1">
-                              <div className="w-1 h-1 bg-orange-400 rounded-full"></div>
+                          <li
+                            key={featureIndex}
+                            className="flex items-start space-x-2"
+                          >
+                            <div className="flex-shrink-0 items-center justify-center mt-2">
+                              <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
                             </div>
-                            <span className="text-gray-300 leading-tight">{feature}</span>
+                            <span className="text-gray-500 text-[18px] leading-tight">
+                              {feature}
+                            </span>
                           </li>
                         ))}
                       </ul>
@@ -327,7 +395,12 @@ export default function PricingPlans() {
                     >
                       <span className="flex items-center justify-center space-x-2">
                         <span>{plan.buttonText}</span>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -344,7 +417,11 @@ export default function PricingPlans() {
           ))}
         </div>
       </div>
-      <SignupModal isOpen={modalOpen} onClose={() => setModalOpen(false)} selectedPlan={selectedPlan} />
+      <SignupModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        selectedPlan={selectedPlan}
+      />
     </section>
-  )
+  );
 }

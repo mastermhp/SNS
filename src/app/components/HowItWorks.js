@@ -1,6 +1,6 @@
-"use client"
-import { motion } from "framer-motion"
-import { useState } from "react"
+"use client";
+import { motion } from "framer-motion";
+import { useState } from "react";
 
 const steps = [
   {
@@ -18,35 +18,35 @@ const steps = [
     description: "From local player to global eSports icon.",
     type: "devices-advanced",
   },
-]
+];
 
 export default function HowItWorks() {
-  const [hoveredIndex, setHoveredIndex] = useState(null)
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
   return (
-    <section id="how-it-works" className="py-20 sm:py-32 lg:py-40 bg-[#0D0D0D]">
+    <section id="how-it-works" className="py-40 bg-[#0D0D0D]">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-12 sm:mb-16"
+          className="text-center mb-16"
         >
-          <h2 className="how-title text-2xl sm:text-3xl md:text-4xl lg:text-5xl">HOW IT WORKS</h2>
+          <h2 className="how-title">HOW IT WORKS</h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {steps.map((step, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: index * 0.2 }}
-              className="how-card w-full max-w-sm mx-auto"
+              className="how-card"
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
-              <div className="relative mb-6 sm:mb-8 h-48 sm:h-56 md:h-64 flex items-center justify-center">
+              <div className="relative mb-8 h-64 flex items-center justify-center ">
                 {/* Card Background */}
                 <motion.div
                   className="rounded-2xl flex items-center justify-center relative overflow-hidden"
@@ -57,7 +57,7 @@ export default function HowItWorks() {
                   {step.type === "devices" && (
                     <div className="relative">
                       <motion.div
-                        className="relative w-48 sm:w-56 md:w-60 h-32 sm:h-36 md:h-40 flex items-center justify-center"
+                        className="relative w-60 h-40 flex items-center justify-center"
                         animate={{
                           scale: hoveredIndex === index ? 1.05 : 1,
                         }}
@@ -83,16 +83,19 @@ export default function HowItWorks() {
                   {step.type === "circle" && (
                     <div className="relative flex items-center justify-center">
                       <motion.div
-                        className="relative w-48 sm:w-56 md:w-60 h-32 sm:h-36 md:h-40 flex items-center justify-center"
+                        className="relative w-60 h-40 flex items-center justify-center"
                         animate={{
                           scale: hoveredIndex === index ? 1.05 : 1,
-                          rotate: hoveredIndex === index ? 360 : 0,
+                          // rotate: hoveredIndex === index ? 360 : 0,
                         }}
                         transition={{
                           scale: { duration: 0.3 },
                           rotate: {
                             duration: 4,
-                            repeat: hoveredIndex === index ? Number.POSITIVE_INFINITY : 0,
+                            repeat:
+                              hoveredIndex === index
+                                ? Number.POSITIVE_INFINITY
+                                : 0,
                             ease: "linear",
                           },
                         }}
@@ -117,7 +120,7 @@ export default function HowItWorks() {
                   {step.type === "devices-advanced" && (
                     <div className="relative">
                       <motion.div
-                        className="relative w-48 sm:w-56 md:w-60 h-32 sm:h-36 md:h-40 flex items-center justify-center"
+                        className="relative w-60 h-40 flex items-center justify-center"
                         animate={{
                           scale: hoveredIndex === index ? 1.05 : 1,
                         }}
@@ -141,23 +144,23 @@ export default function HowItWorks() {
                 </motion.div>
               </div>
 
-              <motion.h3
-                className="how-h3 text-lg sm:text-xl md:text-2xl px-2 sm:px-4"
-                animate={{
-                  background: hoveredIndex === index ? "linear-gradient(45deg, #A855F7, #EC4899)" : "transparent",
-                  WebkitBackgroundClip: hoveredIndex === index ? "text" : "unset",
-                  WebkitTextFillColor: hoveredIndex === index ? "transparent" : "#FFFFFF",
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                {step.title}
-              </motion.h3>
+             <motion.h3
+  className="h5"
+  animate={{
+    color: hoveredIndex === index ? "#A855F7" : "var(--sns-grey)",
+  }}
+  transition={{ duration: 0.3 }}
+>
+  {step.title}
+</motion.h3>
+
+
               <motion.p
-                className="how-desc text-sm sm:text-base"
-                animate={{
-                  color: hoveredIndex === index ? "#C084FC" : "#9CA3AF",
-                }}
-                transition={{ duration: 0.3 }}
+                className="how-desc"
+                // animate={{
+                //   color: hoveredIndex === index ? "#C084FC" : "#9CA3AF",
+                // }}
+                // transition={{ duration: 0.3 }}
               >
                 {step.description}
               </motion.p>
@@ -166,5 +169,5 @@ export default function HowItWorks() {
         </div>
       </div>
     </section>
-  )
+  );
 }
