@@ -1,0 +1,67 @@
+name: Deploy Frontend to Server
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: |
+          echo "Installing dependencies..."
+          npm install
+
+      - name: Build Next.js application
+        run: |
+          echo "Building Next.js application..."
+          npm run build
+      
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.PI_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.PI_PORT }} -H ${{ secrets.PI_HOST }} >> ~/.ssh/known_hosts
+      
+      - name: Deploy to Server
+        env:
+          PI_HOST: ${{ secrets.PI_HOST }}
+          PI_PORT: ${{ secrets.PI_PORT }}
+          PI_USER: ${{ secrets.PI_USER }}
+        run: |
+          echo "Deploying to $PI_HOST:$PI_PORT as $PI_USER"
+          
+          # Create directory if it doesn't exist
+          ssh -p $PI_PORT $PI_USER@$PI_HOST 'sudo mkdir -p /var/www/slicenshare/slicenshare.com'
+          
+          # Copy built static files (out folder from static export)
+          scp -P $PI_PORT -r out/* $PI_USER@$PI_HOST:/tmp/
+          ssh -p $PI_PORT $PI_USER@$PI_HOST 'sudo cp -r /tmp/* /var/www/slicenshare/slicenshare.com/'
+          
+          # Set proper ownership
+          ssh -p $PI_PORT $PI_USER@$PI_HOST 'sudo chown -R takiuddin:takiuddin /var/www/slicenshare/slicenshare.com'
+      
+      - name: Verify Deployment
+        env:
+          PI_HOST: ${{ secrets.PI_HOST }}
+          PI_PORT: ${{ secrets.PI_PORT }}
+          PI_USER: ${{ secrets.PI_USER }}
+        run: |
+          echo "Waiting for deployment to complete..."
+          sleep 5
+          echo "Checking deployment directory..."
+          ssh -p $PI_PORT $PI_USER@$PI_HOST 'ls -la /var/www/slicenshare/slicenshare.com/'
+          echo "Testing website..."
+          ssh -p $PI_PORT $PI_USER@$PI_HOST 'curl -I https://slicenshare.com || echo "Website not responding"' 
