@@ -1,6 +1,6 @@
 "use client"
 import { motion, useAnimation } from "framer-motion"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 // Enhanced fallback data with real streamer info from your API
@@ -140,7 +140,7 @@ const getAvatarForStreamer = (displayName) => {
     MHFiroz: "/Streamers/Torpedo.jpg", // Default fallback
   }
 
-  return avatarMap[displayName] || "/Streamers/Torpedo.jpg" // Use actual image instead of placeholder
+  return avatarMap[displayName] || "/Streamers/Torpedo.jpg"
 }
 
 // Function to get background image based on game
@@ -178,16 +178,16 @@ const getBorderColor = (index) => {
 
 export default function RisingStarsCarousel() {
   const [streamers, setStreamers] = useState(fallbackPlayers)
-  const [loading, setLoading] = useState(false) // Start with false since we have good fallback data
+  const [loading, setLoading] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
   const [currentX, setCurrentX] = useState(0)
-  const [apiStatus, setApiStatus] = useState("fallback") // 'loading', 'success', 'error', 'fallback'
+  const [apiStatus, setApiStatus] = useState("fallback")
   const controls = useAnimation()
+  const autoScrollRef = useRef(null)
 
   useEffect(() => {
     const fetchStreamers = async () => {
-      // Only try to fetch in production or if explicitly testing
       const shouldFetchAPI =
         process.env.NODE_ENV === "production" ||
         window.location.hostname === "slicenshare.com" ||
@@ -204,7 +204,7 @@ export default function RisingStarsCarousel() {
         setApiStatus("loading")
 
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 8000) // 8 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 8000)
 
         const response = await fetch("https://api.slicenshare.com/api/v1/auth/streamers", {
           signal: controller.signal,
@@ -219,7 +219,6 @@ export default function RisingStarsCarousel() {
           const apiData = await response.json()
 
           if (apiData.success && apiData.data && apiData.data.length > 0) {
-            // Transform API data to match our component structure
             const transformedStreamers = apiData.data.map((streamer, index) => ({
               ...streamer,
               avatar: getAvatarForStreamer(streamer.displayName),
@@ -245,14 +244,12 @@ export default function RisingStarsCarousel() {
         } else {
           console.log("⚠️ API error, using enhanced fallback data:", error.message)
         }
-        // Keep using enhanced fallback data
         setStreamers(fallbackPlayers)
       } finally {
         setLoading(false)
       }
     }
 
-    // Only try to fetch if we're in the browser (not during SSR)
     if (typeof window !== "undefined") {
       fetchStreamers()
     }
@@ -260,61 +257,94 @@ export default function RisingStarsCarousel() {
 
   // Create infinite loop by tripling the array
   const infiniteCards = [...streamers, ...streamers, ...streamers]
-  const cardWidth = 300 // Width of each card including gap
+  const cardWidth = 300
   const totalWidth = streamers.length * cardWidth
 
-  // Continuous scroll animation
-  useEffect(() => {
-    if (!isHovered && !isPaused && streamers.length > 0 && !loading) {
-      const startContinuousScroll = async () => {
-        await controls.start({
-          x: [currentX, currentX - totalWidth],
-          transition: {
-            duration: streamers.length * 8,
-            ease: "linear",
-            repeat: Number.POSITIVE_INFINITY,
-            repeatType: "loop",
-          },
+  // Auto-scroll function
+  const startAutoScroll = () => {
+    if (autoScrollRef.current) {
+      clearInterval(autoScrollRef.current)
+    }
+
+    autoScrollRef.current = setInterval(() => {
+      if (!isHovered && !isPaused && streamers.length > 0 && !loading) {
+        setCurrentX((prevX) => {
+          const newX = prevX - 2 // Move 2px at a time for smooth scrolling
+          // Reset position when we've scrolled through one full set
+          if (Math.abs(newX) >= totalWidth) {
+            return 0
+          }
+          return newX
         })
       }
-      startContinuousScroll()
+    }, 50) // Update every 50ms for smooth animation
+  }
+
+  // Start auto-scroll when component mounts and conditions are met
+  useEffect(() => {
+    if (!isHovered && !isPaused && streamers.length > 0 && !loading) {
+      startAutoScroll()
     } else {
-      controls.stop()
+      if (autoScrollRef.current) {
+        clearInterval(autoScrollRef.current)
+      }
     }
-  }, [isHovered, isPaused, controls, totalWidth, streamers.length, currentX, loading])
 
+    return () => {
+      if (autoScrollRef.current) {
+        clearInterval(autoScrollRef.current)
+      }
+    }
+  }, [isHovered, isPaused, streamers.length, loading, totalWidth])
+
+  // Update the animation based on currentX
+  useEffect(() => {
+    controls.set({ x: currentX })
+  }, [currentX, controls])
+
+  // FIXED NAVIGATION FUNCTIONS
   const handlePrevious = () => {
+    console.log("Previous button clicked")
     setIsPaused(true)
-    const targetX = currentX + cardWidth
-    setCurrentX(targetX)
 
-    controls.start({
-      x: targetX,
-      transition: {
-        duration: 0.5,
-        ease: "easeInOut",
-      },
+    // Clear auto-scroll
+    if (autoScrollRef.current) {
+      clearInterval(autoScrollRef.current)
+    }
+
+    // Move one card width to the right (previous)
+    setCurrentX((prevX) => {
+      const newX = prevX + cardWidth
+      console.log("Moving from", prevX, "to", newX)
+      return newX
     })
 
+    // Resume auto-scroll after 3 seconds
     setTimeout(() => {
+      console.log("Resuming auto-scroll")
       setIsPaused(false)
     }, 3000)
   }
 
   const handleNext = () => {
+    console.log("Next button clicked")
     setIsPaused(true)
-    const targetX = currentX - cardWidth
-    setCurrentX(targetX)
 
-    controls.start({
-      x: targetX,
-      transition: {
-        duration: 0.5,
-        ease: "easeInOut",
-      },
+    // Clear auto-scroll
+    if (autoScrollRef.current) {
+      clearInterval(autoScrollRef.current)
+    }
+
+    // Move one card width to the left (next)
+    setCurrentX((prevX) => {
+      const newX = prevX - cardWidth
+      console.log("Moving from", prevX, "to", newX)
+      return newX
     })
 
+    // Resume auto-scroll after 3 seconds
     setTimeout(() => {
+      console.log("Resuming auto-scroll")
       setIsPaused(false)
     }, 3000)
   }
@@ -329,7 +359,7 @@ export default function RisingStarsCarousel() {
         return { text: "API temporarily unavailable - showing featured streamers", color: "text-yellow-500", icon: "⚠️" }
       case "fallback":
       default:
-        return { text: `Our ${streamers.length} July  Stars`, color: "text-purple-500", icon: "⭐" }
+        return { text: `Our ${streamers.length} July Stars`, color: "text-purple-500", icon: "⭐" }
     }
   }
 
@@ -364,9 +394,7 @@ export default function RisingStarsCarousel() {
             className="text-center mb-12"
           >
             <h2 className="h4-alt flex items-center justify-center text-3xl">THE RISING STARS</h2>
-            {/* Enhanced status indicator */}
             <p className={`text-white/65 text-lg mt-2 flex items-center justify-center space-x-1`}>
-              {/* <span>{status.icon}</span> */}
               <span>{status.text}</span>
             </p>
           </motion.div>
@@ -374,14 +402,16 @@ export default function RisingStarsCarousel() {
           {/* Navigation Buttons */}
           <button
             onClick={handlePrevious}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 z-40 w-12 h-12 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-black/70 transition-all border border-gray-600"
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 z-40 w-12 h-12 bg-black/70 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-black/90 transition-all border border-gray-600 hover:border-purple-500 hover:scale-110"
+            style={{ cursor: "pointer" }}
           >
             <ChevronLeft size={24} />
           </button>
 
           <button
             onClick={handleNext}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 z-40 w-12 h-12 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-black/70 transition-all border border-gray-600"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 z-40 w-12 h-12 bg-black/70 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-black/90 transition-all border border-gray-600 hover:border-purple-500 hover:scale-110"
+            style={{ cursor: "pointer" }}
           >
             <ChevronRight size={24} />
           </button>
@@ -396,13 +426,22 @@ export default function RisingStarsCarousel() {
 
             <div
               className="overflow-hidden"
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
+              onMouseEnter={() => {
+                console.log("Mouse entered carousel")
+                setIsHovered(true)
+              }}
+              onMouseLeave={() => {
+                console.log("Mouse left carousel")
+                setIsHovered(false)
+              }}
             >
               <motion.div
                 className="flex gap-6 px-16"
                 animate={controls}
-                style={{ width: `${infiniteCards.length * cardWidth}px` }}
+                style={{
+                  width: `${infiniteCards.length * cardWidth}px`,
+                  transform: `translateX(${currentX}px)`,
+                }}
               >
                 {infiniteCards.map((player, index) => (
                   <motion.div
@@ -436,7 +475,7 @@ export default function RisingStarsCarousel() {
                               alt={player.displayName}
                               className="w-full h-full object-cover"
                               onError={(e) => {
-                                e.target.src = "/Streamers/Torpedo.jpg" // Fallback to existing image
+                                e.target.src = "/Streamers/Torpedo.jpg"
                               }}
                             />
                           </div>
@@ -495,7 +534,6 @@ export default function RisingStarsCarousel() {
                               )}
                             </motion.a>
                           )) || (
-                            // Fallback social icons if no socials data
                             <>
                               <motion.a
                                 href="#"
@@ -524,13 +562,6 @@ export default function RisingStarsCarousel() {
                         {/* Game Info */}
                         <div className="space-y-2 p-6">
                           <div className="flex items-center justify-center space-x-2">
-                            {/* <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                              <path
-                                fillRule="evenodd"
-                                d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                                clipRule="evenodd"
-                              />
-                            </svg> */}
                             <span className="text-purple-500 text-xs">Plays</span>
                           </div>
                           <p className="play-game">
@@ -548,8 +579,7 @@ export default function RisingStarsCarousel() {
                             <span className="text-gray-400 text-xs">Status</span>
                           </div>
                           <p className="text-white text-center flex items-center justify-center font-medium text-xs">
-                            {/* {player.isSponsored ? "SPONSORED PLAYER" : "VERIFIED BY SLICENSHARE"} */}
-                            VERIFIED BY  <img src="/Logo/SNS_Logo.svg" className="ml-2 w-16 h-8"/>
+                            VERIFIED BY <img src="/Logo/SNS_Logo.svg" className="ml-2 w-16 h-8" />
                           </p>
                         </div>
                       </div>

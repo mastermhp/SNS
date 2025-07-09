@@ -15,9 +15,7 @@ export default function Footer() {
             className="flex items-center justify-center md:justify-start"
           >
             <div className="flex items-center space-x-1">
-              <span className="text-white font-bold text-xl sm:text-2xl tracking-wider">SLICE</span>
-              <img src="/Logo/Logo.png" className="w-6 h-6 sm:w-8 sm:h-8" />
-              <span className="text-white font-bold text-xl sm:text-2xl tracking-wider">SHARE</span>
+              <img src="/Logo/SNS_Logo.svg" />
             </div>
           </motion.div>
 

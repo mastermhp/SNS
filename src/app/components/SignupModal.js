@@ -3,7 +3,73 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useState } from "react"
 import { X } from "lucide-react"
 
-const districts = ["Dhaka", "Chittagong", "Rajshahi", "Khulna", "Barisal", "Sylhet", "Rangpur", "Mymensingh"]
+const districts = [
+  "Bagerhat",
+  "Bandarban",
+  "Barguna",
+  "Barisal",
+  "Bhola",
+  "Bogra",
+  "Brahmanbaria",
+  "Chandpur",
+  "Chittagong",
+  "Chuadanga",
+  "Comilla",
+  "Cox's Bazar",
+  "Dhaka",
+  "Dinajpur",
+  "Faridpur",
+  "Feni",
+  "Gaibandha",
+  "Gazipur",
+  "Gopalganj",
+  "Habiganj",
+  "Jamalpur",
+  "Jessore",
+  "Jhalokati",
+  "Jhenaidah",
+  "Joypurhat",
+  "Khagrachhari",
+  "Khulna",
+  "Kishoreganj",
+  "Kurigram",
+  "Kushtia",
+  "Lakshmipur",
+  "Lalmonirhat",
+  "Madaripur",
+  "Magura",
+  "Manikganj",
+  "Meherpur",
+  "Moulvibazar",
+  "Munshiganj",
+  "Mymensingh",
+  "Naogaon",
+  "Narail",
+  "Narayanganj",
+  "Narsingdi",
+  "Natore",
+  "Nawabganj",
+  "Netrakona",
+  "Nilphamari",
+  "Noakhali",
+  "Pabna",
+  "Panchagarh",
+  "Patuakhali",
+  "Pirojpur",
+  "Rajbari",
+  "Rajshahi",
+  "Rangamati",
+  "Rangpur",
+  "Satkhira",
+  "Shariatpur",
+  "Sherpur",
+  "Sirajganj",
+  "Sunamganj",
+  "Sylhet",
+  "Tangail",
+  "Thakurgaon",
+  "Jashore",
+]
 
 const platforms = ["PC", "Mobile", "Console"]
 
@@ -24,6 +90,12 @@ const gamesList = [
 
 const socialPlatforms = ["YouTube", "Twitch", "Facebook", "Instagram", "TikTok", "Discord"]
 
+const sponsorshipOptions = [
+  { value: "no", label: "No" },
+  { value: "yes", label: "Yes" },
+  { value: "ending_soon", label: "Yes but ending soon" },
+]
+
 export default function SignupModal({ isOpen, onClose, selectedPlan }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
@@ -31,18 +103,73 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
 
   const [formData, setFormData] = useState({
     fullName: "",
-    displayName: "",
+    ingameName: "",
     email: "",
     phone: "",
     district: "",
-    platform: [],
-    primaryGameTitles: [],
+    platform: "",
+    primaryGameTitles: "",
     secondaryGameTitles: [],
-    isSponsored: false,
+    isSponsored: "",
     monthlyIncomeRange: "",
     socials: [{ platform: "", url: "" }],
     bio: "",
   })
+
+  const getPlanFeatures = (planName) => {
+    const planFeatures = {
+      BASIC: [
+        "Global Gamer Profile on Slice N Share",
+        "Access to Free Training Resources",
+        "Monthly Gamer Meetups",
+        "Discount on 20 Lifestyle Apps",
+        "Mental Health Support",
+        "Exclusive Networking Opportunities",
+        "Limited Chance to Be Scouted by Sponsors",
+        "Limited Community Support & Feedback",
+        "Entry in Tournaments with Prize Pools",
+        "Earn from Limited Scrims",
+        "Limited Opportunities for Brand Collaboration",
+        "Noob to Pro Pathway",
+      ],
+      STANDARD: [
+        "Monthly Salary Based on Performance",
+        "Personalized Gamer Profile",
+        "Bootcamp once in 4 months",
+        "Content Creation Support & Guidelines",
+        "Mental Health Support from Specialized Doctors",
+        "Priority Entry in Monthly Tournaments",
+        "Unlimited Scrims Earning Priority",
+        "Priority Access to Sponsorship Deals",
+        "Regular in-person coaching from Pro Players",
+        "Multiple Brand Collaborations",
+        "Support for International Tournaments",
+        "Priority Selection in Slice N Share Esports Teams",
+        "Exclusive Slice N Share Branding",
+        "AI Tools for Gamers",
+        "Device Support on Demand",
+        "Discounts at 100+ Lifestyle Brands",
+      ],
+      ADVANCED: [
+        "Global Gamer Profile on Slice N Share",
+        "Content Creation Support",
+        "Access to Slice N Share HQ for Bootcamps",
+        "Mental Health Support with Doctors (Priority++)",
+        "Device Support on Demand",
+        "Entry in Ranked Monthly Tournaments",
+        "Unlimited Scrim Earning Opportunities",
+        "Unlimited Sponsorship Matchmaking",
+        "1:1 Coaching & Elite Mentorship",
+        "Full Support for International Tournaments",
+        "Priority Recruitment to Slice N Share Esports Team",
+        "Unlimited Specialized Slice N Share Branding",
+        "Unlimited Global Media Features",
+        "Access to AI-Powered Training & Performance Tools",
+        "500+ Discounts on Global & Local Lifestyle Brands",
+      ],
+    }
+    return planFeatures[planName?.toUpperCase()] || []
+  }
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -88,8 +215,11 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
     try {
       const payload = {
         ...formData,
+        displayName: formData.ingameName, // Map ingameName to displayName for API compatibility
         plan: selectedPlan?.toLowerCase() || "basic",
         socials: formData.socials.filter((social) => social.platform && social.url),
+        platform: [formData.platform], // Convert single platform to array for API
+        primaryGameTitles: [formData.primaryGameTitles], // Convert single game to array for API
         avatar: {
           url: "https://example.com/avatar.jpg",
           publicId: "avatar_public_id",
@@ -114,14 +244,14 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
         setSuccess(false)
         setFormData({
           fullName: "",
-          displayName: "",
+          ingameName: "",
           email: "",
           phone: "",
           district: "",
-          platform: [],
-          primaryGameTitles: [],
+          platform: "",
+          primaryGameTitles: "",
           secondaryGameTitles: [],
-          isSponsored: false,
+          isSponsored: "",
           monthlyIncomeRange: "",
           socials: [{ platform: "", url: "" }],
           bio: "",
@@ -162,6 +292,23 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
               </button>
             </div>
 
+            {/* Plan Features Display */}
+            {!success && selectedPlan && (
+              <div className="mb-8 bg-[#171717] rounded-lg p-6">
+                <h3 className="text-lg font-bold text-white mb-4">{selectedPlan} Plan Features</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-40 overflow-y-auto">
+                  {getPlanFeatures(selectedPlan).map((feature, index) => (
+                    <div key={index} className="flex items-start space-x-2">
+                      <div className="flex-shrink-0 mt-2">
+                        <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                      </div>
+                      <span className="text-gray-300 text-sm leading-tight">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {success ? (
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-12">
                 <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -197,8 +344,8 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                     <label className="block text-white text-sm font-medium mb-2">In-Game Name (IGN) *</label>
                     <input
                       type="text"
-                      name="displayName"
-                      value={formData.displayName}
+                      name="ingameName"
+                      value={formData.ingameName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-[#171717] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                       required
@@ -232,7 +379,7 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                   </div>
                 </div>
 
-                {/* District and Platform */}
+                {/* District and Monthly Income */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-white text-sm font-medium mb-2">District *</label>
@@ -268,17 +415,20 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                   </div>
                 </div>
 
-                {/* Gaming Platforms */}
+                {/* Gaming Platform - Single Selection */}
                 <div>
-                  <label className="block text-white text-sm font-medium mb-3">Gaming Platforms *</label>
-                  <div className="flex flex-wrap gap-3">
+                  <label className="block text-white text-sm font-medium mb-3">Gaming Platform *</label>
+                  <div className="flex flex-wrap gap-4">
                     {platforms.map((platform) => (
                       <label key={platform} className="flex items-center space-x-2 cursor-pointer">
                         <input
-                          type="checkbox"
-                          checked={formData.platform.includes(platform)}
-                          onChange={() => handleArrayChange("platform", platform)}
-                          className="w-4 h-4 text-purple-600 bg-[#171717] border-gray-600 rounded focus:ring-purple-500"
+                          type="radio"
+                          name="platform"
+                          value={platform}
+                          checked={formData.platform === platform}
+                          onChange={handleInputChange}
+                          className="w-4 h-4 text-purple-600 bg-[#171717] border-gray-600 focus:ring-purple-500"
+                          required
                         />
                         <span className="text-gray-300">{platform}</span>
                       </label>
@@ -286,17 +436,20 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                   </div>
                 </div>
 
-                {/* Primary Games */}
+                {/* Primary Game - Single Selection Required */}
                 <div>
-                  <label className="block text-white text-sm font-medium mb-3">Primary Game Titles *</label>
+                  <label className="block text-white text-sm font-medium mb-3">Primary Game Title *</label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {gamesList.map((game) => (
                       <label key={game} className="flex items-center space-x-2 cursor-pointer">
                         <input
-                          type="checkbox"
-                          checked={formData.primaryGameTitles.includes(game)}
-                          onChange={() => handleArrayChange("primaryGameTitles", game)}
-                          className="w-4 h-4 text-purple-600 bg-[#171717] border-gray-600 rounded focus:ring-purple-500"
+                          type="radio"
+                          name="primaryGameTitles"
+                          value={game}
+                          checked={formData.primaryGameTitles === game}
+                          onChange={handleInputChange}
+                          className="w-4 h-4 text-purple-600 bg-[#171717] border-gray-600 focus:ring-purple-500"
+                          required
                         />
                         <span className="text-gray-300 text-sm">{game}</span>
                       </label>
@@ -304,9 +457,9 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                   </div>
                 </div>
 
-                {/* Secondary Games */}
+                {/* Secondary Games - Multiple Selection Optional */}
                 <div>
-                  <label className="block text-white text-sm font-medium mb-3">Secondary Game Titles</label>
+                  <label className="block text-white text-sm font-medium mb-3">Secondary Game Titles (Optional)</label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {gamesList.map((game) => (
                       <label key={game} className="flex items-center space-x-2 cursor-pointer">
@@ -366,23 +519,32 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                   </button>
                 </div>
 
-                {/* Sponsored */}
+                {/* Sponsorship - Three Options */}
                 <div>
-                  <label className="flex items-center space-x-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      name="isSponsored"
-                      checked={formData.isSponsored}
-                      onChange={handleInputChange}
-                      className="w-4 h-4 text-purple-600 bg-[#171717] border-gray-600 rounded focus:ring-purple-500"
-                    />
-                    <span className="text-gray-300">Do you have any Sponsorship?</span>
-                  </label>
+                  <label className="block text-white text-sm font-medium mb-3">Do you have any Sponsorship? *</label>
+                  <div className="flex flex-wrap gap-4">
+                    {sponsorshipOptions.map((option) => (
+                      <label key={option.value} className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="isSponsored"
+                          value={option.value}
+                          checked={formData.isSponsored === option.value}
+                          onChange={handleInputChange}
+                          className="w-4 h-4 text-purple-600 bg-[#171717] border-gray-600 focus:ring-purple-500"
+                          required
+                        />
+                        <span className="text-gray-300">{option.label}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Bio */}
                 <div>
-                  <label className="block text-white text-sm font-medium mb-2">What kind of supports do you need from us ? </label>
+                  <label className="block text-white text-sm font-medium mb-2">
+                    What kind of supports do you need from us?
+                  </label>
                   <textarea
                     name="bio"
                     value={formData.bio}
@@ -392,8 +554,6 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                     className="w-full px-4 py-3 bg-[#171717] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none"
                   />
                 </div>
-
-                
 
                 {/* Submit Button */}
                 <motion.button
