@@ -27,7 +27,7 @@ export default function EventInterestModal({ isOpen, onClose, eventTitle, eventI
     setError("")
 
     try {
-      const response = await fetch("http://api.slicenshare.com/api/v1/events/event-interested", {
+      const response = await fetch("https://api.slicenshare.com/api/v1/events/event-interested", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

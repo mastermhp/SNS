@@ -7,7 +7,7 @@ export default function HeroSection() {
       {/* Background Video */}
       <div className="absolute inset-0 z-0">
         <video autoPlay muted loop className="w-full h-full object-cover">
-          <source src="/Hero_video/hero_video.webm" type="video/webm" />
+          <source src="/Hero_Video/hero_video.webm" type="video/webm" />
         </video>
       </div>
 

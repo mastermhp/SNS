@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 // Enhanced fallback data with real streamer info from your API
 const fallbackPlayers = [
   {
-    displayName: "TorpedoGaming",
+    ingameName: "TorpedoGaming",
     fullName: "Rifat Khondokar",
     avatar: "/Streamers/Torpedo.jpg",
     primaryGameTitles: ["Valorant"],
@@ -18,7 +18,7 @@ const fallbackPlayers = [
     borderColor: "border-red-500",
   },
   {
-    displayName: "DeathTrio",
+    ingameName: "DeathTrio",
     fullName: "Nasif Ahmed",
     avatar: "/Streamers/DeathTrio.jpg",
     primaryGameTitles: ["Valorant"],
@@ -30,7 +30,7 @@ const fallbackPlayers = [
     borderColor: "border-purple-500",
   },
   {
-    displayName: "InsaneRuly",
+    ingameName: "InsaneRuly",
     fullName: "Atik Yasir Risad",
     avatar: "/Streamers/InsaneRuly.jpg",
     primaryGameTitles: ["PUBG PC"],
@@ -42,7 +42,7 @@ const fallbackPlayers = [
     borderColor: "border-red-500",
   },
   {
-    displayName: "Moonstone",
+    ingameName: "Moonstone",
     fullName: "Sabrina M Sarah",
     avatar: "/Streamers/Moonstone.jpg",
     primaryGameTitles: ["Valorant"],
@@ -54,7 +54,7 @@ const fallbackPlayers = [
     borderColor: "border-purple-500",
   },
   {
-    displayName: "IkuSensei",
+    ingameName: "IkuSensei",
     fullName: "Mr. IKU",
     avatar: "/Streamers/MrIKU.jpg",
     primaryGameTitles: ["Valorant"],
@@ -66,7 +66,7 @@ const fallbackPlayers = [
     borderColor: "border-red-500",
   },
   {
-    displayName: "SavageSteam",
+    ingameName: "SavageSteam",
     fullName: "Raihanul Islam",
     avatar: "/Streamers/Savage.jpg",
     primaryGameTitles: ["Valorant"],
@@ -75,7 +75,7 @@ const fallbackPlayers = [
     borderColor: "border-purple-500",
   },
   {
-    displayName: "ApySheikh",
+    ingameName: "ApySheikh",
     fullName: "Apy Sheikh",
     avatar: "/Streamers/sonic.jpg",
     primaryGameTitles: ["Valorant"],
@@ -87,7 +87,7 @@ const fallbackPlayers = [
     borderColor: "border-red-500",
   },
   {
-    displayName: "Swajan",
+    ingameName: "Swajan",
     fullName: "Effat Bin Hossain Swajan",
     avatar: "/Streamers/URLoveBlank.jpg",
     primaryGameTitles: ["Valorant"],
@@ -99,7 +99,7 @@ const fallbackPlayers = [
     borderColor: "border-purple-500",
   },
   {
-    displayName: "XtropeGaming",
+    ingameName: "XtropeGaming",
     fullName: "ANAYET HOSSAIN",
     avatar: "/Streamers/Xenternite.jpg",
     primaryGameTitles: ["Valorant"],
@@ -111,7 +111,7 @@ const fallbackPlayers = [
     borderColor: "border-red-500",
   },
   {
-    displayName: "SifhPlays",
+    ingameName: "SifhPlays",
     fullName: "Md Abdulla Al Mamun",
     avatar: "/Streamers/Gameoverr.jpg",
     primaryGameTitles: ["Valorant"],
@@ -125,7 +125,7 @@ const fallbackPlayers = [
 ]
 
 // Function to get avatar based on display name
-const getAvatarForStreamer = (displayName) => {
+const getAvatarForStreamer = (ingameName) => {
   const avatarMap = {
     TorpedoGaming: "/Streamers/Torpedo.jpg",
     DeathTrio: "/Streamers/DeathTrio.jpg",
@@ -140,7 +140,7 @@ const getAvatarForStreamer = (displayName) => {
     MHFiroz: "/Streamers/Torpedo.jpg", // Default fallback
   }
 
-  return avatarMap[displayName] || "/Streamers/Torpedo.jpg"
+  return avatarMap[ingameName] || "/Streamers/Torpedo.jpg"
 }
 
 // Function to get background image based on game
@@ -161,17 +161,17 @@ const getGameBackground = (games) => {
 // Function to get border color based on plan or random
 const getBorderColor = (index) => {
   const colors = [
-    "border-white",
+    // "border-white",
     "border-purple-500",
     "border-red-500",
-    "border-yellow-500",
-    "border-orange-500",
-    "border-green-500",
-    "border-blue-500",
-    "border-cyan-500",
-    "border-pink-500",
-    "border-indigo-500",
-    "border-teal-500",
+    // "border-yellow-500",
+    // "border-orange-500",
+    // "border-green-500",
+    // "border-blue-500",
+    // "border-cyan-500",
+    // "border-pink-500",
+    // "border-indigo-500",
+    // "border-teal-500",
   ]
   return colors[index % colors.length]
 }
@@ -190,6 +190,7 @@ export default function RisingStarsCarousel() {
     const fetchStreamers = async () => {
       const shouldFetchAPI =
         process.env.NODE_ENV === "production" ||
+        window.location.hostname === "localhost" ||
         window.location.hostname === "slicenshare.com" ||
         window.location.hostname.includes("vercel.app")
 
@@ -221,7 +222,7 @@ export default function RisingStarsCarousel() {
           if (apiData.success && apiData.data && apiData.data.length > 0) {
             const transformedStreamers = apiData.data.map((streamer, index) => ({
               ...streamer,
-              avatar: getAvatarForStreamer(streamer.displayName),
+              avatar: getAvatarForStreamer(streamer.ingameName),
               gameImage: getGameBackground(streamer.primaryGameTitles),
               borderColor: getBorderColor(index),
             }))
@@ -354,12 +355,12 @@ export default function RisingStarsCarousel() {
       case "loading":
         return { text: "Loading live streamer data...", color: "text-blue-500", icon: "🔄" }
       case "success":
-        return { text: `Live data from ${streamers.length} streamers`, color: "text-green-500", icon: "✅" }
+        return { text: `Our ${streamers.length} July Stars`, color: "text-green-500", icon: "✅" }
       case "error":
         return { text: "API temporarily unavailable - showing featured streamers", color: "text-yellow-500", icon: "⚠️" }
       case "fallback":
       default:
-        return { text: `Our ${streamers.length} July Stars`, color: "text-purple-500", icon: "⭐" }
+        return { text: `Our ${streamers.length} July Stars (default)`, color: "text-purple-500", icon: "⭐" }
     }
   }
 
@@ -445,7 +446,7 @@ export default function RisingStarsCarousel() {
               >
                 {infiniteCards.map((player, index) => (
                   <motion.div
-                    key={`${player.displayName}-${index}`}
+                    key={`${player.ingameName}-${index}`}
                     className="flex-shrink-0 w-72 h-[500px] relative group cursor-pointer"
                     whileHover={{ scale: 1.02 }}
                   >
@@ -455,7 +456,7 @@ export default function RisingStarsCarousel() {
                       <div className="relative h-2/5 overflow-hidden">
                         <img
                           src={player.gameImage || getGameBackground(player.primaryGameTitles)}
-                          alt={`${player.displayName} background`}
+                          alt={`${player.ingameName} background`}
                           className="w-full h-full object-cover"
                           crossOrigin="anonymous"
                           onError={(e) => {
@@ -468,11 +469,11 @@ export default function RisingStarsCarousel() {
                         {/* Player Avatar - Centered in the background section */}
                         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                           <div
-                            className={`w-24 h-24 rounded-full overflow-hidden border-4 ${player.borderColor || "border-white"} bg-white shadow-lg`}
+                            className={`w-24 h-24 rounded-full overflow-hidden border-b-5 ${player.borderColor || "border-white"} bg-white shadow-lg`}
                           >
                             <img
-                              src={player.avatar || getAvatarForStreamer(player.displayName)}
-                              alt={player.displayName}
+                              src={player.avatar || getAvatarForStreamer(player.ingameName)}
+                              alt={player.ingameName}
                               className="w-full h-full object-cover"
                               onError={(e) => {
                                 e.target.src = "/Streamers/Torpedo.jpg"
@@ -496,7 +497,7 @@ export default function RisingStarsCarousel() {
                               backgroundClip: "text",
                             }}
                           >
-                            {player.displayName}
+                            {player.ingameName}
                           </h3>
                         </div>
 

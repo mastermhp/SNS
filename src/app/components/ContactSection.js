@@ -61,7 +61,7 @@ export default function ContactSection() {
     setError("")
 
     try {
-      const response = await fetch("http://api.slicenshare.com/api/v1/contact", {
+      const response = await fetch("https://api.slicenshare.com/api/v1/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
