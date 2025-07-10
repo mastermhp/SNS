@@ -28,7 +28,7 @@ const plans = [
     buttonText: "Get Started",
     popular: false,
     type: "basic",
-    topHeight: "h-48 sm:h-52 md:h-68",
+    topHeight: "h-64 sm:h-64 md:h-68",
   },
   {
     name: "STANDARD",

@@ -386,7 +386,7 @@ export default function RisingStarsCarousel() {
 
   if (loading) {
     return (
-      <section className="relative -mt-[400px] z-30 py-32" style={{ top: "-10%" }}>
+      <section className="relative -mt-[300px] md:-mt-[400px] z-30 py-32" style={{ top: "-10%" }}>
         <div className="w-full flex justify-center">
           <div className="w-full max-w-7xl relative">
             <div className="text-center mb-12">
@@ -403,7 +403,7 @@ export default function RisingStarsCarousel() {
   }
 
   return (
-    <section className="relative -mt-[500px] z-30 py-32" style={{ top: "-10%" }}>
+    <section className="relative -mt-[450px] md:-mt-[500px] z-30 py-32" style={{ top: "-10%" }}>
       <div className="w-full flex justify-center">
         <div className="w-full max-w-7xl relative">
           <motion.div
