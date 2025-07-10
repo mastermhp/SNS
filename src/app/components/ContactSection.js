@@ -137,7 +137,7 @@ export default function ContactSection() {
                   rotate: item.rotate ? [item.rotate - 5, item.rotate + 5] : [-2, 2],
                 }}
                 transition={{
-                  duration: 3 + index * 0.5, // Stagger the animation timing
+                  duration: 4,
                   repeat: Number.POSITIVE_INFINITY,
                   repeatType: "reverse",
                   ease: "easeInOut",
