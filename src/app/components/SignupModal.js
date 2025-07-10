@@ -329,7 +329,12 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-[#0D0D0D] rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto relative"
+            className="bg-[#0D0D0D] rounded-2xl p-8 max-w-4xl w-full relative"
+            style={{
+              maxHeight: success ? "auto" : "90vh",
+              height: success ? "600px" : "auto",
+              overflow: success ? "hidden" : "auto",
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -349,7 +354,13 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                className="absolute inset-0 bg-[#0D0D0D] rounded-2xl flex flex-col items-center justify-center z-10"
+                className="fixed inset-0 bg-[#0D0D0D] rounded-2xl flex flex-col items-center justify-center z-50 overflow-hidden"
+                style={{
+                  margin: 0,
+                  width: "100%",
+                  height: "100%",
+                  minHeight: "600px",
+                }}
               >
                 <motion.div
                   initial={{ scale: 0 }}
@@ -374,7 +385,7 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
-                  className="text-center max-w-md"
+                  className="text-center max-w-md px-6"
                 >
                   <h3 className="text-2xl font-bold text-white mb-3">Welcome to Slice N Share!</h3>
                   <p className="text-gray-400 text-base mb-6">
