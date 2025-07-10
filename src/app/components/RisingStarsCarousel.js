@@ -54,7 +54,7 @@ const fallbackPlayers = [
     borderColor: "border-purple-500",
   },
   {
-    ingameName: "IkuSensei",
+    ingameName: "Mr. IKU",
     fullName: "Mr. IKU",
     avatar: "/Streamers/MrIKU.jpg",
     primaryGameTitles: ["Valorant"],
@@ -66,7 +66,7 @@ const fallbackPlayers = [
     borderColor: "border-red-500",
   },
   {
-    ingameName: "SavageSteam",
+    ingameName: "Savage",
     fullName: "Raihanul Islam",
     avatar: "/Streamers/Savage.jpg",
     primaryGameTitles: ["Valorant"],
@@ -75,7 +75,7 @@ const fallbackPlayers = [
     borderColor: "border-purple-500",
   },
   {
-    ingameName: "ApySheikh",
+    ingameName: "Sonic fps",
     fullName: "Apy Sheikh",
     avatar: "/Streamers/sonic.jpg",
     primaryGameTitles: ["Valorant"],
@@ -87,7 +87,7 @@ const fallbackPlayers = [
     borderColor: "border-red-500",
   },
   {
-    ingameName: "Swajan",
+    ingameName: "URLoveBlank",
     fullName: "Effat Bin Hossain Swajan",
     avatar: "/Streamers/URLoveBlank.jpg",
     primaryGameTitles: ["Valorant"],
@@ -99,7 +99,7 @@ const fallbackPlayers = [
     borderColor: "border-purple-500",
   },
   {
-    ingameName: "XtropeGaming",
+    ingameName: "Xenternite E-sports ",
     fullName: "ANAYET HOSSAIN",
     avatar: "/Streamers/Xenternite.jpg",
     primaryGameTitles: ["Valorant"],
@@ -111,7 +111,7 @@ const fallbackPlayers = [
     borderColor: "border-red-500",
   },
   {
-    ingameName: "SifhPlays",
+    ingameName: "Gameoverr",
     fullName: "Md Abdulla Al Mamun",
     avatar: "/Streamers/Gameoverr.jpg",
     primaryGameTitles: ["Valorant"],
