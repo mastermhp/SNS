@@ -4,14 +4,27 @@ import { motion } from "framer-motion"
 export default function HeroSection() {
   return (
     <section id="home" className="relative h-screen flex flex-col items-center justify-center overflow-hidden">
-      {/* Background Video */}
+      {/* Background Video - iOS Optimized */}
       <div className="absolute inset-0 z-0">
-        <video autoPlay muted loop className="w-full h-full object-cover">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          className="w-full h-full object-cover"
+          style={{
+            WebkitTransform: "translateZ(0)",
+            transform: "translateZ(0)",
+          }}
+        >
           <source src="/Hero_Video/hero_video.webm" type="video/webm" />
+          {/* Fallback for browsers that don't support WebM */}
+          Your browser does not support the video tag.
         </video>
       </div>
 
-      {/* Circular Dot Overlay Pattern */}
+      {/* Rest of your component remains the same */}
       <div className="absolute inset-0 z-10 opacity-40">
         <div
           className="w-full h-full"
@@ -45,9 +58,7 @@ export default function HeroSection() {
           transition={{ duration: 1, delay: 0.7 }}
           className="text-xl sm:text-xl md:text-4xl lg:text-5xl font-semibold mb-4 sm:mb-8 leading-tight"
         >
-          <span className="display-alt text-[14px] md:text-4xl lg:text-5xl xl:text-6xl">
-            EMPOWERING THE NEXT
-          </span>
+          <span className="display-alt text-[14px] md:text-4xl lg:text-5xl xl:text-6xl">EMPOWERING THE NEXT</span>
           <br />
           <span className="display-alt text-[14px] md:text-4xl lg:text-5xl xl:text-6xl">
             GENERATION OF ESPORTS TALENT

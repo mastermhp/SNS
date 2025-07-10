@@ -185,6 +185,7 @@ export default function RisingStarsCarousel() {
   const [apiStatus, setApiStatus] = useState("fallback")
   const controls = useAnimation()
   const autoScrollRef = useRef(null)
+  const animationFrameRef = useRef(null)
 
   useEffect(() => {
     const fetchStreamers = async () => {
@@ -261,77 +262,66 @@ export default function RisingStarsCarousel() {
   const cardWidth = 300
   const totalWidth = streamers.length * cardWidth
 
-  // Auto-scroll function
-  const startAutoScroll = () => {
-    if (autoScrollRef.current) {
-      clearInterval(autoScrollRef.current)
+  // iOS-optimized smooth auto-scroll function using requestAnimationFrame
+  const smoothAutoScroll = () => {
+    if (!isHovered && !isPaused && streamers.length > 0 && !loading) {
+      setCurrentX((prevX) => {
+        const newX = prevX - 1 // Reduced from 2px to 1px for smoother movement on iOS
+        // Reset position when we've scrolled through one full set
+        if (Math.abs(newX) >= totalWidth) {
+          return 0
+        }
+        return newX
+      })
     }
-
-    autoScrollRef.current = setInterval(() => {
-      if (!isHovered && !isPaused && streamers.length > 0 && !loading) {
-        setCurrentX((prevX) => {
-          const newX = prevX - 2 // Move 2px at a time for smooth scrolling
-          // Reset position when we've scrolled through one full set
-          if (Math.abs(newX) >= totalWidth) {
-            return 0
-          }
-          return newX
-        })
-      }
-    }, 50) // Update every 50ms for smooth animation
+    
+    // Use requestAnimationFrame for smoother animation on iOS
+    animationFrameRef.current = requestAnimationFrame(smoothAutoScroll)
   }
 
   // Start auto-scroll when component mounts and conditions are met
   useEffect(() => {
-    const startAutoScrollInternal = () => {
-      if (autoScrollRef.current) {
-        clearInterval(autoScrollRef.current)
-      }
-
-      autoScrollRef.current = setInterval(() => {
-        if (!isHovered && !isPaused && streamers.length > 0 && !loading) {
-          setCurrentX((prevX) => {
-            const newX = prevX - 2
-            if (Math.abs(newX) >= totalWidth) {
-              return 0
-            }
-            return newX
-          })
-        }
-      }, 50)
-    }
-
     if (!isHovered && !isPaused && streamers.length > 0 && !loading) {
-      startAutoScrollInternal()
+      // Cancel any existing animation frame
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
+      // Start smooth scrolling
+      animationFrameRef.current = requestAnimationFrame(smoothAutoScroll)
     } else {
-      if (autoScrollRef.current) {
-        clearInterval(autoScrollRef.current)
+      // Cancel animation frame when paused
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
       }
     }
 
+    // Cleanup function
     return () => {
-      if (autoScrollRef.current) {
-        clearInterval(autoScrollRef.current)
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
       }
     }
   }, [isHovered, isPaused, streamers.length, loading, totalWidth])
 
-  // Update the animation based on currentX
+  // Update the animation with iOS-optimized transform
   useEffect(() => {
-    controls.set({ x: currentX })
+    controls.set({ 
+      x: currentX,
+      transition: { type: "tween", ease: "linear", duration: 0 }
+    })
   }, [currentX, controls])
 
-  // FIXED NAVIGATION FUNCTIONS
+  // FIXED NAVIGATION FUNCTIONS with iOS optimization
   const handlePrevious = () => {
     console.log("Previous button clicked")
     setIsPaused(true)
 
-    // Clear auto-scroll
-    if (autoScrollRef.current) {
-      clearInterval(autoScrollRef.current)
+    // Cancel smooth scrolling
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current)
     }
 
-    // Move one card width to the right (previous)
+    // Move one card width to the right (previous) with smooth transition
     setCurrentX((prevX) => {
       const newX = prevX + cardWidth
       console.log("Moving from", prevX, "to", newX)
@@ -349,12 +339,12 @@ export default function RisingStarsCarousel() {
     console.log("Next button clicked")
     setIsPaused(true)
 
-    // Clear auto-scroll
-    if (autoScrollRef.current) {
-      clearInterval(autoScrollRef.current)
+    // Cancel smooth scrolling
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current)
     }
 
-    // Move one card width to the left (next)
+    // Move one card width to the left (next) with smooth transition
     setCurrentX((prevX) => {
       const newX = prevX - cardWidth
       console.log("Moving from", prevX, "to", newX)
@@ -367,6 +357,8 @@ export default function RisingStarsCarousel() {
       setIsPaused(false)
     }, 3000)
   }
+
+  // ... keep your existing getStatusMessage function and loading state ...
 
   const getStatusMessage = () => {
     switch (apiStatus) {
@@ -453,13 +445,18 @@ export default function RisingStarsCarousel() {
                 console.log("Mouse left carousel")
                 setIsHovered(false)
               }}
+              // iOS-specific touch handling
+              onTouchStart={() => setIsHovered(true)}
+              onTouchEnd={() => setTimeout(() => setIsHovered(false), 2000)}
             >
               <motion.div
                 className="flex gap-6 px-16"
                 animate={controls}
                 style={{
                   width: `${infiniteCards.length * cardWidth}px`,
-                  transform: `translateX(${currentX}px)`,
+                  transform: `translate3d(${currentX}px, 0, 0)`, // Use translate3d for better iOS performance
+                  WebkitTransform: `translate3d(${currentX}px, 0, 0)`, // iOS-specific prefix
+                  willChange: 'transform', // Optimize for animations
                 }}
               >
                 {infiniteCards.map((player, index) => (
@@ -467,8 +464,12 @@ export default function RisingStarsCarousel() {
                     key={`${player.ingameName}-${index}`}
                     className="flex-shrink-0 w-72 h-[500px] relative group cursor-pointer"
                     whileHover={{ scale: 1.02 }}
+                    style={{
+                      WebkitTransform: 'translateZ(0)', // Force hardware acceleration on iOS
+                      transform: 'translateZ(0)',
+                    }}
                   >
-                    {/* Card Container */}
+                    {/* Keep your existing card content exactly the same */}
                     <div className="relative w-full h-full rounded-2xl overflow-hidden bg-gray-900 shadow-2xl">
                       {/* Top Section - Background Game Image (50% height) */}
                       <div className="relative h-2/5 overflow-hidden">
