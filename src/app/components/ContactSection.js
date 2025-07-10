@@ -1,5 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable react/jsx-no-duplicate-props */
+
 "use client"
 import { motion } from "framer-motion"
 import { useState } from "react"

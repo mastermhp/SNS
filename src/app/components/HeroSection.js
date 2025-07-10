@@ -27,7 +27,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 z-20 bg-gradient-to-b from-black/70 via-black/80 to-black"></div>
 
       {/* Hero Content */}
-      <div className="relative z-30 text-center -mt-32 sm:-mt-64 px-4 max-w-6xl mx-auto">
+      <div className="relative z-30 text-center -mt-68 lg:-mt-64 px-4 max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -43,13 +43,13 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.7 }}
-          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold mb-4 sm:mb-8 leading-tight"
+          className="text-xl sm:text-xl md:text-4xl lg:text-5xl font-semibold mb-4 sm:mb-8 leading-tight"
         >
-          <span className="display-alt text-xl sm:text-xl md:text-4xl lg:text-5xl xl:text-6xl">
+          <span className="display-alt text-[14px] md:text-4xl lg:text-5xl xl:text-6xl">
             EMPOWERING THE NEXT
           </span>
           <br />
-          <span className="display-alt text-xl sm:text-xl md:text-4xl lg:text-5xl xl:text-6xl">
+          <span className="display-alt text-[14px] md:text-4xl lg:text-5xl xl:text-6xl">
             GENERATION OF ESPORTS TALENT
           </span>
         </motion.h1>
@@ -58,7 +58,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.9 }}
-          className="text-gray-200 text-base sm:text-lg md:text-xl mb-12 sm:mb-16 font-medium px-4"
+          className="text-gray-200 text-base md:text-xl mb-12 sm:mb-16 font-medium px-4"
         >
           Join us early — as a user, a believer, or a backer.
         </motion.p>
