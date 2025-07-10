@@ -132,19 +132,14 @@ export default function ContactSection() {
                 }}
                 initial={{ opacity: 1, scale: 1, y: 50 }}
                 whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{
-                  duration: 0.8,
-                  delay: item.delay,
-                  type: "spring",
-                  stiffness: 100,
-                }}
                 animate={{
-                  y: [0, -8, 0],
-                  rotate: item.rotate ? [item.rotate, item.rotate + 5, item.rotate - 5, item.rotate] : [0, 2, -2, 0],
+                  y: [-8, 8],
+                  rotate: item.rotate ? [item.rotate - 5, item.rotate + 5] : [-2, 2],
                 }}
                 transition={{
-                  duration: 4,
+                  duration: 3 + index * 0.5, // Stagger the animation timing
                   repeat: Number.POSITIVE_INFINITY,
+                  repeatType: "reverse",
                   ease: "easeInOut",
                 }}
                 whileHover={{
