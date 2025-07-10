@@ -99,7 +99,7 @@ const fallbackPlayers = [
     borderColor: "border-purple-500",
   },
   {
-    ingameName: "Xenternite E-sports ",
+    ingameName: "Xenternite E-sports",
     fullName: "ANAYET HOSSAIN",
     avatar: "/Streamers/Xenternite.jpg",
     primaryGameTitles: ["Valorant"],
@@ -131,13 +131,12 @@ const getAvatarForStreamer = (ingameName) => {
     DeathTrio: "/Streamers/DeathTrio.jpg",
     InsaneRuly: "/Streamers/InsaneRuly.jpg",
     Moonstone: "/Streamers/Moonstone.jpg",
-    IkuSensei: "/Streamers/MrIKU.jpg",
-    SavageSteam: "/Streamers/Savage.jpg",
-    ApySheikh: "/Streamers/sonic.jpg",
-    Swajan: "/Streamers/URLoveBlank.jpg",
-    XtropeGaming: "/Streamers/Xenternite.jpg",
-    SifhPlays: "/Streamers/Gameoverr.jpg",
-    MHFiroz: "/Streamers/Torpedo.jpg", // Default fallback
+    "Mr. IKU": "/Streamers/MrIKU.jpg",
+    Savage: "/Streamers/Savage.jpg",
+    "Sonic fps": "/Streamers/sonic.jpg",
+    URLoveBlank: "/Streamers/URLoveBlank.jpg",
+    "Xenternite E-sports": "/Streamers/Xenternite.jpg",
+    Gameoverr: "/Streamers/Gameoverr.jpg"
   }
 
   return avatarMap[ingameName] || "/Streamers/Torpedo.jpg"
