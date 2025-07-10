@@ -42,7 +42,7 @@ const fallbackPlayers = [
     borderColor: "border-red-500",
   },
   {
-    ingameName: "Moonstone",
+    ingameName: "moonstone_herself",
     fullName: "Sabrina M Sarah",
     avatar: "/Streamers/Moonstone.jpg",
     primaryGameTitles: ["Valorant"],
@@ -130,7 +130,7 @@ const getAvatarForStreamer = (ingameName) => {
     TorpedoGaming: "/Streamers/Torpedo.jpg",
     DeathTrio: "/Streamers/DeathTrio.jpg",
     InsaneRuly: "/Streamers/InsaneRuly.jpg",
-    Moonstone: "/Streamers/Moonstone.jpg",
+    moonstone_herself: "/Streamers/Moonstone.jpg",
     "Mr. IKU": "/Streamers/MrIKU.jpg",
     Savage: "/Streamers/Savage.jpg",
     "Sonic fps": "/Streamers/sonic.jpg",
@@ -207,7 +207,7 @@ export default function RisingStarsCarousel() {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 8000)
 
-        const response = await fetch("https://api.slicenshare.com/api/v1/auth/streamers", {
+        const response = await fetch("https://api.slicenshare.com/api/v1/auth/streamers/rising-stars", {
           signal: controller.signal,
           headers: {
             "Content-Type": "application/json",
