@@ -257,25 +257,24 @@ export default function RisingStarsCarousel() {
     }
   }, [])
 
-  // Create infinite loop by tripling the array
-  const infiniteCards = [...streamers, ...streamers, ...streamers]
+  // Create seamless infinite loop - duplicate the array enough times for smooth transition
+  const infiniteCards = [...streamers, ...streamers, ...streamers, ...streamers]
   const cardWidth = 300
   const totalWidth = streamers.length * cardWidth
 
-  // iOS-optimized smooth auto-scroll function using requestAnimationFrame
+  // Seamless infinite scroll function
   const smoothAutoScroll = () => {
     if (!isHovered && !isPaused && streamers.length > 0 && !loading) {
       setCurrentX((prevX) => {
-        const newX = prevX - 1 // Reduced from 2px to 1px for smoother movement on iOS
-        // Reset position when we've scrolled through one full set
+        const newX = prevX - 0.5 // Slower, smoother movement
+        // Reset position seamlessly when we've moved one full set
         if (Math.abs(newX) >= totalWidth) {
-          return 0
+          return 0 // Reset to start position seamlessly
         }
         return newX
       })
     }
-    
-    // Use requestAnimationFrame for smoother animation on iOS
+
     animationFrameRef.current = requestAnimationFrame(smoothAutoScroll)
   }
 
@@ -305,57 +304,47 @@ export default function RisingStarsCarousel() {
 
   // Update the animation with iOS-optimized transform
   useEffect(() => {
-    controls.set({ 
+    controls.set({
       x: currentX,
-      transition: { type: "tween", ease: "linear", duration: 0 }
+      transition: { type: "tween", ease: "linear", duration: 0 },
     })
   }, [currentX, controls])
 
   // FIXED NAVIGATION FUNCTIONS with iOS optimization
   const handlePrevious = () => {
-    console.log("Previous button clicked")
     setIsPaused(true)
-
-    // Cancel smooth scrolling
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current)
     }
 
-    // Move one card width to the right (previous) with smooth transition
     setCurrentX((prevX) => {
-      const newX = prevX + cardWidth
-      console.log("Moving from", prevX, "to", newX)
+      let newX = prevX + cardWidth
+      // If we go too far forward, wrap to the end
+      if (newX > 0) {
+        newX = -(totalWidth - cardWidth)
+      }
       return newX
     })
 
-    // Resume auto-scroll after 3 seconds
-    setTimeout(() => {
-      console.log("Resuming auto-scroll")
-      setIsPaused(false)
-    }, 3000)
+    setTimeout(() => setIsPaused(false), 3000)
   }
 
   const handleNext = () => {
-    console.log("Next button clicked")
     setIsPaused(true)
-
-    // Cancel smooth scrolling
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current)
     }
 
-    // Move one card width to the left (next) with smooth transition
     setCurrentX((prevX) => {
-      const newX = prevX - cardWidth
-      console.log("Moving from", prevX, "to", newX)
+      let newX = prevX - cardWidth
+      // If we go too far back, wrap to the beginning
+      if (Math.abs(newX) >= totalWidth) {
+        newX = 0
+      }
       return newX
     })
 
-    // Resume auto-scroll after 3 seconds
-    setTimeout(() => {
-      console.log("Resuming auto-scroll")
-      setIsPaused(false)
-    }, 3000)
+    setTimeout(() => setIsPaused(false), 3000)
   }
 
   // ... keep your existing getStatusMessage function and loading state ...
@@ -454,9 +443,9 @@ export default function RisingStarsCarousel() {
                 animate={controls}
                 style={{
                   width: `${infiniteCards.length * cardWidth}px`,
-                  transform: `translate3d(${currentX}px, 0, 0)`, // Use translate3d for better iOS performance
-                  WebkitTransform: `translate3d(${currentX}px, 0, 0)`, // iOS-specific prefix
-                  willChange: 'transform', // Optimize for animations
+                  transform: `translate3d(${currentX}px, 0, 0)`,
+                  WebkitTransform: `translate3d(${currentX}px, 0, 0)`,
+                  willChange: "transform",
                 }}
               >
                 {infiniteCards.map((player, index) => (
@@ -465,8 +454,8 @@ export default function RisingStarsCarousel() {
                     className="flex-shrink-0 w-72 h-[500px] relative group cursor-pointer"
                     whileHover={{ scale: 1.02 }}
                     style={{
-                      WebkitTransform: 'translateZ(0)', // Force hardware acceleration on iOS
-                      transform: 'translateZ(0)',
+                      WebkitTransform: "translateZ(0)", // Force hardware acceleration on iOS
+                      transform: "translateZ(0)",
                     }}
                   >
                     {/* Keep your existing card content exactly the same */}
