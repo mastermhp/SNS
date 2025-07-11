@@ -42,7 +42,7 @@ const fallbackPlayers = [
     borderColor: "border-red-500",
   },
   {
-    ingameName: "Moonstone",
+    ingameName: "moonstone_herself",
     fullName: "Sabrina M Sarah",
     avatar: "/Streamers/Moonstone.jpg",
     primaryGameTitles: ["Valorant"],
@@ -54,7 +54,7 @@ const fallbackPlayers = [
     borderColor: "border-purple-500",
   },
   {
-    ingameName: "IkuSensei",
+    ingameName: "Mr. IKU",
     fullName: "Mr. IKU",
     avatar: "/Streamers/MrIKU.jpg",
     primaryGameTitles: ["Valorant"],
@@ -66,7 +66,7 @@ const fallbackPlayers = [
     borderColor: "border-red-500",
   },
   {
-    ingameName: "SavageSteam",
+    ingameName: "Savage",
     fullName: "Raihanul Islam",
     avatar: "/Streamers/Savage.jpg",
     primaryGameTitles: ["Valorant"],
@@ -75,7 +75,7 @@ const fallbackPlayers = [
     borderColor: "border-purple-500",
   },
   {
-    ingameName: "ApySheikh",
+    ingameName: "Sonic fps",
     fullName: "Apy Sheikh",
     avatar: "/Streamers/sonic.jpg",
     primaryGameTitles: ["Valorant"],
@@ -87,7 +87,7 @@ const fallbackPlayers = [
     borderColor: "border-red-500",
   },
   {
-    ingameName: "Swajan",
+    ingameName: "URLoveBlank",
     fullName: "Effat Bin Hossain Swajan",
     avatar: "/Streamers/URLoveBlank.jpg",
     primaryGameTitles: ["Valorant"],
@@ -99,7 +99,7 @@ const fallbackPlayers = [
     borderColor: "border-purple-500",
   },
   {
-    ingameName: "XtropeGaming",
+    ingameName: "Xenternite E-sports",
     fullName: "ANAYET HOSSAIN",
     avatar: "/Streamers/Xenternite.jpg",
     primaryGameTitles: ["Valorant"],
@@ -111,7 +111,7 @@ const fallbackPlayers = [
     borderColor: "border-red-500",
   },
   {
-    ingameName: "SifhPlays",
+    ingameName: "Gameoverr",
     fullName: "Md Abdulla Al Mamun",
     avatar: "/Streamers/Gameoverr.jpg",
     primaryGameTitles: ["Valorant"],
@@ -130,14 +130,13 @@ const getAvatarForStreamer = (ingameName) => {
     TorpedoGaming: "/Streamers/Torpedo.jpg",
     DeathTrio: "/Streamers/DeathTrio.jpg",
     InsaneRuly: "/Streamers/InsaneRuly.jpg",
-    Moonstone: "/Streamers/Moonstone.jpg",
-    IkuSensei: "/Streamers/MrIKU.jpg",
-    SavageSteam: "/Streamers/Savage.jpg",
-    ApySheikh: "/Streamers/sonic.jpg",
-    Swajan: "/Streamers/URLoveBlank.jpg",
-    XtropeGaming: "/Streamers/Xenternite.jpg",
-    SifhPlays: "/Streamers/Gameoverr.jpg",
-    MHFiroz: "/Streamers/Torpedo.jpg", // Default fallback
+    moonstone_herself: "/Streamers/Moonstone.jpg",
+    "Mr. IKU": "/Streamers/MrIKU.jpg",
+    Savage: "/Streamers/Savage.jpg",
+    "Sonic fps": "/Streamers/sonic.jpg",
+    URLoveBlank: "/Streamers/URLoveBlank.jpg",
+    "Xenternite E-sports": "/Streamers/Xenternite.jpg",
+    Gameoverr: "/Streamers/Gameoverr.jpg"
   }
 
   return avatarMap[ingameName] || "/Streamers/Torpedo.jpg"
@@ -208,7 +207,7 @@ export default function RisingStarsCarousel() {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 8000)
 
-        const response = await fetch("https://api.slicenshare.com/api/v1/auth/streamers", {
+        const response = await fetch("https://api.slicenshare.com/api/v1/auth/streamers/rising-stars", {
           signal: controller.signal,
           headers: {
             "Content-Type": "application/json",
