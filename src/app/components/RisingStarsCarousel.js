@@ -1,6 +1,6 @@
 "use client"
 import { motion, useAnimation } from "framer-motion"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 // Enhanced fallback data with real streamer info from your API
@@ -124,7 +124,7 @@ const fallbackPlayers = [
   },
 ]
 
-// Function to get avatar based on display name
+// Memoized helper functions to prevent re-renders
 const getAvatarForStreamer = (ingameName) => {
   const avatarMap = {
     TorpedoGaming: "/Streamers/Torpedo.jpg",
@@ -136,13 +136,11 @@ const getAvatarForStreamer = (ingameName) => {
     "Sonic fps": "/Streamers/sonic.jpg",
     URLoveBlank: "/Streamers/URLoveBlank.jpg",
     "Xenternite E-sports": "/Streamers/Xenternite.jpg",
-    Gameoverr: "/Streamers/Gameoverr.jpg"
+    Gameoverr: "/Streamers/Gameoverr.jpg",
   }
-
   return avatarMap[ingameName] || "/Streamers/Torpedo.jpg"
 }
 
-// Function to get background image based on game
 const getGameBackground = (games) => {
   if (!games || games.length === 0)
     return "https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
@@ -157,21 +155,8 @@ const getGameBackground = (games) => {
   }
 }
 
-// Function to get border color based on plan or random
 const getBorderColor = (index) => {
-  const colors = [
-    // "border-white",
-    "border-purple-500",
-    "border-red-500",
-    // "border-yellow-500",
-    // "border-orange-500",
-    // "border-green-500",
-    // "border-blue-500",
-    // "border-cyan-500",
-    // "border-pink-500",
-    // "border-indigo-500",
-    // "border-teal-500",
-  ]
+  const colors = ["border-purple-500", "border-red-500"]
   return colors[index % colors.length]
 }
 
@@ -180,12 +165,45 @@ export default function RisingStarsCarousel() {
   const [loading, setLoading] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
-  const [currentX, setCurrentX] = useState(0)
+  const [currentIndex, setCurrentIndex] = useState(0)
   const [apiStatus, setApiStatus] = useState("fallback")
+  const [isMobile, setIsMobile] = useState(false)
+  
   const controls = useAnimation()
-  const autoScrollRef = useRef(null)
-  const animationFrameRef = useRef(null)
+  const intervalRef = useRef(null)
 
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  // Memoize card dimensions based on screen size
+  const { cardWidth, cardsToShow, gap } = useMemo(() => {
+    if (typeof window === 'undefined') return { cardWidth: 300, cardsToShow: 3, gap: 24 }
+    
+    const width = window.innerWidth
+    if (width < 768) {
+      return { cardWidth: 280, cardsToShow: 1, gap: 16 }
+    } else if (width < 1024) {
+      return { cardWidth: 300, cardsToShow: 2, gap: 20 }
+    } else {
+      return { cardWidth: 300, cardsToShow: 3, gap: 24 }
+    }
+  }, [isMobile])
+
+  // Create infinite array - triple the original for smooth infinite scroll
+  const infiniteStreamers = useMemo(() => {
+    if (streamers.length === 0) return []
+    return [...streamers, ...streamers, ...streamers]
+  }, [streamers])
+
+  // Fetch streamers data
   useEffect(() => {
     const fetchStreamers = async () => {
       const shouldFetchAPI =
@@ -256,99 +274,78 @@ export default function RisingStarsCarousel() {
     }
   }, [])
 
-  // Create seamless infinite loop - duplicate the array enough times for smooth transition
-  const infiniteCards = [...streamers, ...streamers, ...streamers, ...streamers]
-  const cardWidth = 300
-  const totalWidth = streamers.length * cardWidth
-
-  // Seamless infinite scroll function
-  const smoothAutoScroll = () => {
+  // Auto-scroll functionality
+  useEffect(() => {
     if (!isHovered && !isPaused && streamers.length > 0 && !loading) {
-      setCurrentX((prevX) => {
-        const newX = prevX - 0.5 // Slower, smoother movement
-        // Reset position seamlessly when we've moved one full set
-        if (Math.abs(newX) >= totalWidth) {
-          return 0 // Reset to start position seamlessly
-        }
-        return newX
+      intervalRef.current = setInterval(() => {
+        setCurrentIndex(prevIndex => {
+          const nextIndex = prevIndex + 1
+          // Reset to beginning of second set when reaching end of second set
+          if (nextIndex >= streamers.length * 2) {
+            return streamers.length // Jump to start of second set
+          }
+          return nextIndex
+        })
+      }, 3000) // Move every 3 seconds
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+    }
+  }, [isHovered, isPaused, streamers.length, loading])
+
+  // Update animation when currentIndex changes
+  useEffect(() => {
+    if (infiniteStreamers.length > 0) {
+      const translateX = -(currentIndex * (cardWidth + gap))
+      controls.set({
+        x: translateX,
+        transition: { type: "spring", stiffness: 300, damping: 30 }
       })
     }
+  }, [currentIndex, cardWidth, gap, controls, infiniteStreamers.length])
 
-    animationFrameRef.current = requestAnimationFrame(smoothAutoScroll)
-  }
-
-  // Start auto-scroll when component mounts and conditions are met
-  useEffect(() => {
-    if (!isHovered && !isPaused && streamers.length > 0 && !loading) {
-      // Cancel any existing animation frame
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
-      // Start smooth scrolling
-      animationFrameRef.current = requestAnimationFrame(smoothAutoScroll)
-    } else {
-      // Cancel animation frame when paused
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
-    }
-
-    // Cleanup function
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
-    }
-  }, [isHovered, isPaused, streamers.length, loading, totalWidth])
-
-  // Update the animation with iOS-optimized transform
-  useEffect(() => {
-    controls.set({
-      x: currentX,
-      transition: { type: "tween", ease: "linear", duration: 0 },
-    })
-  }, [currentX, controls])
-
-  // FIXED NAVIGATION FUNCTIONS with iOS optimization
-  const handlePrevious = () => {
+  // Navigation handlers with proper mobile support
+  const handlePrevious = useCallback(() => {
     setIsPaused(true)
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current)
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
     }
 
-    setCurrentX((prevX) => {
-      let newX = prevX + cardWidth
-      // If we go too far forward, wrap to the end
-      if (newX > 0) {
-        newX = -(totalWidth - cardWidth)
+    setCurrentIndex(prevIndex => {
+      let newIndex = prevIndex - (isMobile ? 1 : cardsToShow)
+      if (newIndex < 0) {
+        // Jump to end of second set
+        newIndex = streamers.length * 2 - (isMobile ? 1 : cardsToShow)
       }
-      return newX
+      return newIndex
     })
 
     setTimeout(() => setIsPaused(false), 3000)
-  }
+  }, [isMobile, cardsToShow, streamers.length])
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     setIsPaused(true)
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current)
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
     }
 
-    setCurrentX((prevX) => {
-      let newX = prevX - cardWidth
-      // If we go too far back, wrap to the beginning
-      if (Math.abs(newX) >= totalWidth) {
-        newX = 0
+    setCurrentIndex(prevIndex => {
+      let newIndex = prevIndex + (isMobile ? 1 : cardsToShow)
+      if (newIndex >= streamers.length * 2) {
+        // Jump to start of second set
+        newIndex = streamers.length
       }
-      return newX
+      return newIndex
     })
 
     setTimeout(() => setIsPaused(false), 3000)
-  }
+  }, [isMobile, cardsToShow, streamers.length])
 
-  // ... keep your existing getStatusMessage function and loading state ...
-
-  const getStatusMessage = () => {
+  // Memoized status message
+  const status = useMemo(() => {
     switch (apiStatus) {
       case "loading":
         return { text: "Loading live streamer data...", color: "text-blue-500", icon: "🔄" }
@@ -360,9 +357,24 @@ export default function RisingStarsCarousel() {
       default:
         return { text: `Our ${streamers.length} July Stars (default)`, color: "text-purple-500", icon: "⭐" }
     }
-  }
+  }, [apiStatus, streamers.length])
 
-  const status = getStatusMessage()
+  // Memoized hover handlers
+  const handleMouseEnter = useCallback(() => {
+    setIsHovered(true)
+  }, [])
+
+  const handleMouseLeave = useCallback(() => {
+    setIsHovered(false)
+  }, [])
+
+  const handleTouchStart = useCallback(() => {
+    setIsHovered(true)
+  }, [])
+
+  const handleTouchEnd = useCallback(() => {
+    setTimeout(() => setIsHovered(false), 2000)
+  }, [])
 
   if (loading) {
     return (
@@ -425,39 +437,30 @@ export default function RisingStarsCarousel() {
 
             <div
               className="overflow-hidden"
-              onMouseEnter={() => {
-                console.log("Mouse entered carousel")
-                setIsHovered(true)
-              }}
-              onMouseLeave={() => {
-                console.log("Mouse left carousel")
-                setIsHovered(false)
-              }}
-              // iOS-specific touch handling
-              onTouchStart={() => setIsHovered(true)}
-              onTouchEnd={() => setTimeout(() => setIsHovered(false), 2000)}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
             >
               <motion.div
-                className="flex gap-6 px-16"
+                className="flex px-16"
                 animate={controls}
                 style={{
-                  width: `${infiniteCards.length * cardWidth}px`,
-                  transform: `translate3d(${currentX}px, 0, 0)`,
-                  WebkitTransform: `translate3d(${currentX}px, 0, 0)`,
+                  gap: `${gap}px`,
+                  width: `${infiniteStreamers.length * (cardWidth + gap)}px`,
                   willChange: "transform",
+                  WebkitTransform: "translateZ(0)",
+                  transform: "translateZ(0)",
                 }}
               >
-                {infiniteCards.map((player, index) => (
+                {infiniteStreamers.map((player, index) => (
                   <motion.div
                     key={`${player.ingameName}-${index}`}
-                    className="flex-shrink-0 w-72 h-[500px] relative group cursor-pointer"
+                    className="flex-shrink-0 h-[500px] relative group cursor-pointer"
+                    style={{ width: `${cardWidth}px` }}
                     whileHover={{ scale: 1.02 }}
-                    style={{
-                      WebkitTransform: "translateZ(0)", // Force hardware acceleration on iOS
-                      transform: "translateZ(0)",
-                    }}
                   >
-                    {/* Keep your existing card content exactly the same */}
+                    {/* Card content remains exactly the same */}
                     <div className="relative w-full h-full rounded-2xl overflow-hidden bg-gray-900 shadow-2xl">
                       {/* Top Section - Background Game Image (50% height) */}
                       <div className="relative h-2/5 overflow-hidden">
