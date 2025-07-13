@@ -3,143 +3,10 @@ import { motion, useAnimation } from "framer-motion"
 import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
-// Enhanced fallback data with real streamer info from your API
-const fallbackPlayers = [
-  {
-    ingameName: "TorpedoGaming",
-    fullName: "Rifat Khondokar",
-    avatar: "/Streamers/Torpedo.jpg",
-    primaryGameTitles: ["Valorant"],
-    socials: [
-      { platform: "Facebook", url: "https://www.facebook.com/gaming/torpedo.gaming.bd" },
-      { platform: "YouTube", url: "https://www.youtube.com/@torpedo.121" },
-    ],
-    isSponsored: false,
-    borderColor: "border-red-500",
-  },
-  {
-    ingameName: "DeathTrio",
-    fullName: "Nasif Ahmed",
-    avatar: "/Streamers/DeathTrio.jpg",
-    primaryGameTitles: ["Valorant"],
-    socials: [
-      { platform: "Facebook", url: "https://www.facebook.com/deathtrio/" },
-      { platform: "YouTube", url: "https://www.youtube.com/@DeathTrio99" },
-    ],
-    isSponsored: false,
-    borderColor: "border-purple-500",
-  },
-  {
-    ingameName: "InsaneRuly",
-    fullName: "Atik Yasir Risad",
-    avatar: "/Streamers/InsaneRuly.jpg",
-    primaryGameTitles: ["PUBG PC"],
-    socials: [
-      { platform: "Facebook", url: "https://www.facebook.com/InsaneRuly" },
-      { platform: "YouTube", url: "https://www.youtube.com/@insaneruly2392" },
-    ],
-    isSponsored: false,
-    borderColor: "border-red-500",
-  },
-  {
-    ingameName: "moonstone_herself",
-    fullName: "Sabrina M Sarah",
-    avatar: "/Streamers/Moonstone.jpg",
-    primaryGameTitles: ["Valorant"],
-    socials: [
-      { platform: "Facebook", url: "https://www.facebook.com/themoonstone98" },
-      { platform: "YouTube", url: "https://www.youtube.com/@moonstoneherself" },
-    ],
-    isSponsored: false,
-    borderColor: "border-purple-500",
-  },
-  {
-    ingameName: "Mr. IKU",
-    fullName: "Mr. IKU",
-    avatar: "/Streamers/MrIKU.jpg",
-    primaryGameTitles: ["Valorant"],
-    socials: [
-      { platform: "Facebook", url: "https://www.facebook.com/ikusensei" },
-      { platform: "YouTube", url: "https://www.youtube.com/@ikusensei2528" },
-    ],
-    isSponsored: false,
-    borderColor: "border-red-500",
-  },
-  {
-    ingameName: "Savage",
-    fullName: "Raihanul Islam",
-    avatar: "/Streamers/Savage.jpg",
-    primaryGameTitles: ["Valorant"],
-    socials: [{ platform: "Facebook", url: "https://www.facebook.com/HHxSavage" }],
-    isSponsored: false,
-    borderColor: "border-purple-500",
-  },
-  {
-    ingameName: "Sonic fps",
-    fullName: "Apy Sheikh",
-    avatar: "/Streamers/sonic.jpg",
-    primaryGameTitles: ["Valorant"],
-    socials: [
-      { platform: "Facebook", url: "https://www.facebook.com/share/16bmDrNYjU/" },
-      { platform: "YouTube", url: "https://youtube.com/@sonicfps709?si=aKE-l228cUN3uomq" },
-    ],
-    isSponsored: false,
-    borderColor: "border-red-500",
-  },
-  {
-    ingameName: "URLoveBlank",
-    fullName: "Effat Bin Hossain Swajan",
-    avatar: "/Streamers/URLoveBlank.jpg",
-    primaryGameTitles: ["Valorant"],
-    socials: [
-      { platform: "Facebook", url: "https://www.facebook.com/share/173Aa2eydL/?mibextid=qi2Omg" },
-      { platform: "YouTube", url: "https://youtube.com/@urloveblank?si=tNtY5du6Y-mAFk7Z" },
-    ],
-    isSponsored: false,
-    borderColor: "border-purple-500",
-  },
-  {
-    ingameName: "Xenternite E-sports",
-    fullName: "ANAYET HOSSAIN",
-    avatar: "/Streamers/Xenternite.jpg",
-    primaryGameTitles: ["Valorant"],
-    socials: [
-      { platform: "Facebook", url: "https://www.facebook.com/xenterniteofficial" },
-      { platform: "YouTube", url: "https://www.youtube.com/@xtropegaming" },
-    ],
-    isSponsored: false,
-    borderColor: "border-red-500",
-  },
-  {
-    ingameName: "Gameoverr",
-    fullName: "Md Abdulla Al Mamun",
-    avatar: "/Streamers/Gameoverr.jpg",
-    primaryGameTitles: ["Valorant"],
-    socials: [
-      { platform: "Facebook", url: "https://www.facebook.com/share/1CBnQpQ8js/" },
-      { platform: "YouTube", url: "https://m.youtube.com/@sifh_plays" },
-    ],
-    isSponsored: false,
-    borderColor: "border-purple-500",
-  },
-]
+// Empty array for streamers - will be populated from API
+const fallbackPlayers = []
 
 // Memoized helper functions to prevent re-renders
-const getAvatarForStreamer = (ingameName) => {
-  const avatarMap = {
-    TorpedoGaming: "/Streamers/Torpedo.jpg",
-    DeathTrio: "/Streamers/DeathTrio.jpg",
-    InsaneRuly: "/Streamers/InsaneRuly.jpg",
-    moonstone_herself: "/Streamers/Moonstone.jpg",
-    "Mr. IKU": "/Streamers/MrIKU.jpg",
-    Savage: "/Streamers/Savage.jpg",
-    "Sonic fps": "/Streamers/sonic.jpg",
-    URLoveBlank: "/Streamers/URLoveBlank.jpg",
-    "Xenternite E-sports": "/Streamers/Xenternite.jpg",
-    Gameoverr: "/Streamers/Gameoverr.jpg",
-  }
-  return avatarMap[ingameName] || "/Streamers/Torpedo.jpg"
-}
 
 const getGameBackground = (games) => {
   if (!games || games.length === 0)
@@ -206,18 +73,6 @@ export default function RisingStarsCarousel() {
   // Fetch streamers data
   useEffect(() => {
     const fetchStreamers = async () => {
-      const shouldFetchAPI =
-        process.env.NODE_ENV === "production" ||
-        window.location.hostname === "localhost" ||
-        window.location.hostname === "slicenshare.com" ||
-        window.location.hostname.includes("vercel.app")
-
-      if (!shouldFetchAPI) {
-        console.log("🔧 Development mode: Using enhanced fallback data with real streamer info")
-        setApiStatus("fallback")
-        return
-      }
-
       try {
         setLoading(true)
         setApiStatus("loading")
@@ -225,7 +80,7 @@ export default function RisingStarsCarousel() {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 8000)
 
-        const response = await fetch("https://api.slicenshare.com/api/v1/auth/streamers/rising-stars", {
+        const response = await fetch("https://api.slicenshare.com/api/v1/public/streamers/rising-stars", {
           signal: controller.signal,
           headers: {
             "Content-Type": "application/json",
@@ -240,7 +95,7 @@ export default function RisingStarsCarousel() {
           if (apiData.success && apiData.data && apiData.data.length > 0) {
             const transformedStreamers = apiData.data.map((streamer, index) => ({
               ...streamer,
-              avatar: getAvatarForStreamer(streamer.ingameName),
+              avatar: streamer.avatar?.url || "/Logo/Logo.png",
               gameImage: getGameBackground(streamer.primaryGameTitles),
               borderColor: getBorderColor(index),
             }))
@@ -257,13 +112,13 @@ export default function RisingStarsCarousel() {
       } catch (error) {
         setApiStatus("error")
         if (error.name === "AbortError") {
-          console.log("⚠️ API request timed out, using enhanced fallback data")
+          console.log("⚠️ API request timed out")
         } else if (error.message.includes("CORS")) {
-          console.log("🔒 CORS restriction detected, using enhanced fallback data")
+          console.log("🔒 CORS restriction detected")
         } else {
-          console.log("⚠️ API error, using enhanced fallback data:", error.message)
+          console.log("⚠️ API error:", error.message)
         }
-        setStreamers(fallbackPlayers)
+        setStreamers([])
       } finally {
         setLoading(false)
       }
@@ -300,10 +155,10 @@ export default function RisingStarsCarousel() {
   useEffect(() => {
     if (infiniteStreamers.length > 0) {
       const translateX = -(currentIndex * (cardWidth + gap))
-      controls.set({
+    controls.set({
         x: translateX,
         transition: { type: "spring", stiffness: 300, damping: 30 }
-      })
+    })
     }
   }, [currentIndex, cardWidth, gap, controls, infiniteStreamers.length])
 
@@ -350,12 +205,11 @@ export default function RisingStarsCarousel() {
       case "loading":
         return { text: "Loading live streamer data...", color: "text-blue-500", icon: "🔄" }
       case "success":
-        return { text: `Our ${streamers.length} July Stars`, color: "text-green-500", icon: "✅" }
+        return { text: `Our ${streamers.length} Rising Stars`, color: "text-green-500", icon: "✅" }
       case "error":
-        return { text: "API temporarily unavailable - showing featured streamers", color: "text-yellow-500", icon: "⚠️" }
-      case "fallback":
+        return { text: "No streamers available at the moment", color: "text-yellow-500", icon: "⚠️" }
       default:
-        return { text: `Our ${streamers.length} July Stars (default)`, color: "text-purple-500", icon: "⭐" }
+        return { text: "Loading...", color: "text-purple-500", icon: "⭐" }
     }
   }, [apiStatus, streamers.length])
 
@@ -482,11 +336,11 @@ export default function RisingStarsCarousel() {
                             className={`w-24 h-24 rounded-full overflow-hidden border-b-5 ${player.borderColor || "border-white"} bg-white shadow-lg`}
                           >
                             <img
-                              src={player.avatar || getAvatarForStreamer(player.ingameName)}
+                              src={player.avatar}
                               alt={player.ingameName}
                               className="w-full h-full object-cover"
                               onError={(e) => {
-                                e.target.src = "/Streamers/Torpedo.jpg"
+                                e.target.src = "/Logo/Logo.png"
                               }}
                             />
                           </div>
