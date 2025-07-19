@@ -3,144 +3,10 @@ import { motion, useAnimation } from "framer-motion"
 import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
-// Enhanced fallback data with real streamer info from your API
-const fallbackPlayers = [
-  {
-    ingameName: "TorpedoGaming",
-    fullName: "Rifat Khondokar",
-    avatar: "/Streamers/Torpedo.jpg",
-    primaryGameTitles: ["Valorant"],
-    socials: [
-      { platform: "Facebook", url: "https://www.facebook.com/gaming/torpedo.gaming.bd" },
-      { platform: "YouTube", url: "https://www.youtube.com/@torpedo.121" },
-    ],
-    isSponsored: false,
-    borderColor: "border-red-500",
-  },
-  {
-    ingameName: "DeathTrio",
-    fullName: "Nasif Ahmed",
-    avatar: "/Streamers/DeathTrio.jpg",
-    primaryGameTitles: ["Valorant"],
-    socials: [
-      { platform: "Facebook", url: "https://www.facebook.com/deathtrio/" },
-      { platform: "YouTube", url: "https://www.youtube.com/@DeathTrio99" },
-    ],
-    isSponsored: false,
-    borderColor: "border-purple-500",
-  },
-  {
-    ingameName: "InsaneRuly",
-    fullName: "Atik Yasir Risad",
-    avatar: "/Streamers/InsaneRuly.jpg",
-    primaryGameTitles: ["PUBG PC"],
-    socials: [
-      { platform: "Facebook", url: "https://www.facebook.com/InsaneRuly" },
-      { platform: "YouTube", url: "https://www.youtube.com/@insaneruly2392" },
-    ],
-    isSponsored: false,
-    borderColor: "border-red-500",
-  },
-  {
-    ingameName: "moonstone_herself",
-    fullName: "Sabrina M Sarah",
-    avatar: "/Streamers/Moonstone.jpg",
-    primaryGameTitles: ["Valorant"],
-    socials: [
-      { platform: "Facebook", url: "https://www.facebook.com/themoonstone98" },
-      { platform: "YouTube", url: "https://www.youtube.com/@moonstoneherself" },
-    ],
-    isSponsored: false,
-    borderColor: "border-purple-500",
-  },
-  {
-    ingameName: "Mr. IKU",
-    fullName: "Mr. IKU",
-    avatar: "/Streamers/MrIKU.jpg",
-    primaryGameTitles: ["Valorant"],
-    socials: [
-      { platform: "Facebook", url: "https://www.facebook.com/ikusensei" },
-      { platform: "YouTube", url: "https://www.youtube.com/@ikusensei2528" },
-    ],
-    isSponsored: false,
-    borderColor: "border-red-500",
-  },
-  {
-    ingameName: "Savage",
-    fullName: "Raihanul Islam",
-    avatar: "/Streamers/Savage.jpg",
-    primaryGameTitles: ["Valorant"],
-    socials: [{ platform: "Facebook", url: "https://www.facebook.com/HHxSavage" }],
-    isSponsored: false,
-    borderColor: "border-purple-500",
-  },
-  {
-    ingameName: "Sonic fps",
-    fullName: "Apy Sheikh",
-    avatar: "/Streamers/sonic.jpg",
-    primaryGameTitles: ["Valorant"],
-    socials: [
-      { platform: "Facebook", url: "https://www.facebook.com/share/16bmDrNYjU/" },
-      { platform: "YouTube", url: "https://youtube.com/@sonicfps709?si=aKE-l228cUN3uomq" },
-    ],
-    isSponsored: false,
-    borderColor: "border-red-500",
-  },
-  {
-    ingameName: "URLoveBlank",
-    fullName: "Effat Bin Hossain Swajan",
-    avatar: "/Streamers/URLoveBlank.jpg",
-    primaryGameTitles: ["Valorant"],
-    socials: [
-      { platform: "Facebook", url: "https://www.facebook.com/share/173Aa2eydL/?mibextid=qi2Omg" },
-      { platform: "YouTube", url: "https://youtube.com/@urloveblank?si=tNtY5du6Y-mAFk7Z" },
-    ],
-    isSponsored: false,
-    borderColor: "border-purple-500",
-  },
-  {
-    ingameName: "Xenternite E-sports",
-    fullName: "ANAYET HOSSAIN",
-    avatar: "/Streamers/Xenternite.jpg",
-    primaryGameTitles: ["Valorant"],
-    socials: [
-      { platform: "Facebook", url: "https://www.facebook.com/xenterniteofficial" },
-      { platform: "YouTube", url: "https://www.youtube.com/@xtropegaming" },
-    ],
-    isSponsored: false,
-    borderColor: "border-red-500",
-  },
-  {
-    ingameName: "Gameoverr",
-    fullName: "Md Abdulla Al Mamun",
-    avatar: "/Streamers/Gameoverr.jpg",
-    primaryGameTitles: ["Valorant"],
-    socials: [
-      { platform: "Facebook", url: "https://www.facebook.com/share/1CBnQpQ8js/" },
-      { platform: "YouTube", url: "https://m.youtube.com/@sifh_plays" },
-    ],
-    isSponsored: false,
-    borderColor: "border-purple-500",
-  },
-]
+// Empty array for streamers - will be populated from API
+const fallbackPlayers = []
 
 // Memoized helper functions to prevent re-renders
-const getAvatarForStreamer = (ingameName) => {
-  const avatarMap = {
-    TorpedoGaming: "/Streamers/Torpedo.jpg",
-    DeathTrio: "/Streamers/DeathTrio.jpg",
-    InsaneRuly: "/Streamers/InsaneRuly.jpg",
-    moonstone_herself: "/Streamers/Moonstone.jpg",
-    "Mr. IKU": "/Streamers/MrIKU.jpg",
-    Savage: "/Streamers/Savage.jpg",
-    "Sonic fps": "/Streamers/sonic.jpg",
-    URLoveBlank: "/Streamers/URLoveBlank.jpg",
-    "Xenternite E-sports": "/Streamers/Xenternite.jpg",
-    Gameoverr: "/Streamers/Gameoverr.jpg",
-  }
-  return avatarMap[ingameName] || "/Streamers/Torpedo.jpg"
-}
-
 const getGameBackground = (games) => {
   if (!games || games.length === 0)
     return "https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
@@ -168,25 +34,55 @@ export default function RisingStarsCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [apiStatus, setApiStatus] = useState("fallback")
   const [isMobile, setIsMobile] = useState(false)
-  
+  const [isVisible, setIsVisible] = useState(false)
+  const [isClient, setIsClient] = useState(false)
+
   const controls = useAnimation()
   const intervalRef = useRef(null)
+  const sectionRef = useRef(null)
+
+  // Initialize client-side rendering
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  // Intersection Observer for smooth entrance
+  useEffect(() => {
+    if (!isClient) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+        }
+      },
+      { threshold: 0.1, rootMargin: "50px" },
+    )
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [isClient])
 
   // Detect mobile screen size
   useEffect(() => {
+    if (!isClient) return
+
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024)
     }
-    
+
     checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [isClient])
 
   // Memoize card dimensions based on screen size
   const { cardWidth, cardsToShow, gap } = useMemo(() => {
-    if (typeof window === 'undefined') return { cardWidth: 300, cardsToShow: 3, gap: 24 }
-    
+    if (!isClient) return { cardWidth: 300, cardsToShow: 3, gap: 24 }
+
     const width = window.innerWidth
     if (width < 768) {
       return { cardWidth: 280, cardsToShow: 1, gap: 16 }
@@ -195,7 +91,7 @@ export default function RisingStarsCarousel() {
     } else {
       return { cardWidth: 300, cardsToShow: 3, gap: 24 }
     }
-  }, [isMobile])
+  }, [isMobile, isClient])
 
   // Create infinite array - triple the original for smooth infinite scroll
   const infiniteStreamers = useMemo(() => {
@@ -205,19 +101,9 @@ export default function RisingStarsCarousel() {
 
   // Fetch streamers data
   useEffect(() => {
+    if (!isClient) return
+
     const fetchStreamers = async () => {
-      const shouldFetchAPI =
-        process.env.NODE_ENV === "production" ||
-        window.location.hostname === "localhost" ||
-        window.location.hostname === "slicenshare.com" ||
-        window.location.hostname.includes("vercel.app")
-
-      if (!shouldFetchAPI) {
-        console.log("🔧 Development mode: Using enhanced fallback data with real streamer info")
-        setApiStatus("fallback")
-        return
-      }
-
       try {
         setLoading(true)
         setApiStatus("loading")
@@ -225,7 +111,7 @@ export default function RisingStarsCarousel() {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 8000)
 
-        const response = await fetch("https://api.slicenshare.com/api/v1/auth/streamers/rising-stars", {
+        const response = await fetch("https://api.slicenshare.com/api/v1/public/streamers/rising-stars", {
           signal: controller.signal,
           headers: {
             "Content-Type": "application/json",
@@ -240,7 +126,7 @@ export default function RisingStarsCarousel() {
           if (apiData.success && apiData.data && apiData.data.length > 0) {
             const transformedStreamers = apiData.data.map((streamer, index) => ({
               ...streamer,
-              avatar: getAvatarForStreamer(streamer.ingameName),
+              avatar: streamer.avatar?.url || "/Logo/Logo.png",
               gameImage: getGameBackground(streamer.primaryGameTitles),
               borderColor: getBorderColor(index),
             }))
@@ -257,36 +143,33 @@ export default function RisingStarsCarousel() {
       } catch (error) {
         setApiStatus("error")
         if (error.name === "AbortError") {
-          console.log("⚠️ API request timed out, using enhanced fallback data")
+          console.log("⚠️ API request timed out")
         } else if (error.message.includes("CORS")) {
-          console.log("🔒 CORS restriction detected, using enhanced fallback data")
+          console.log("🔒 CORS restriction detected")
         } else {
-          console.log("⚠️ API error, using enhanced fallback data:", error.message)
+          console.log("⚠️ API error:", error.message)
         }
-        setStreamers(fallbackPlayers)
+        setStreamers([])
       } finally {
         setLoading(false)
       }
     }
 
-    if (typeof window !== "undefined") {
-      fetchStreamers()
-    }
-  }, [])
+    fetchStreamers()
+  }, [isClient])
 
-  // Auto-scroll functionality
+  // Auto-scroll functionality - optimized
   useEffect(() => {
-    if (!isHovered && !isPaused && streamers.length > 0 && !loading) {
+    if (!isClient || (!isHovered && !isPaused && streamers.length > 0 && !loading && isVisible)) {
       intervalRef.current = setInterval(() => {
-        setCurrentIndex(prevIndex => {
+        setCurrentIndex((prevIndex) => {
           const nextIndex = prevIndex + 1
-          // Reset to beginning of second set when reaching end of second set
           if (nextIndex >= streamers.length * 2) {
-            return streamers.length // Jump to start of second set
+            return streamers.length
           }
           return nextIndex
         })
-      }, 3000) // Move every 3 seconds
+      }, 3000)
     }
 
     return () => {
@@ -294,55 +177,62 @@ export default function RisingStarsCarousel() {
         clearInterval(intervalRef.current)
       }
     }
-  }, [isHovered, isPaused, streamers.length, loading])
+  }, [isClient, isHovered, isPaused, streamers.length, loading, isVisible])
 
-  // Update animation when currentIndex changes
+  // Smooth animation updates
   useEffect(() => {
-    if (infiniteStreamers.length > 0) {
-      const translateX = -(currentIndex * (cardWidth + gap))
-      controls.set({
-        x: translateX,
-        transition: { type: "spring", stiffness: 300, damping: 30 }
-      })
-    }
-  }, [currentIndex, cardWidth, gap, controls, infiniteStreamers.length])
+    if (!isClient || infiniteStreamers.length === 0 || !isVisible) return
+
+    const translateX = -(currentIndex * (cardWidth + gap))
+    controls.start({
+      x: translateX,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 30,
+        mass: 0.8,
+      },
+    })
+  }, [isClient, currentIndex, cardWidth, gap, controls, infiniteStreamers.length, isVisible])
 
   // Navigation handlers with proper mobile support
   const handlePrevious = useCallback(() => {
+    if (!isClient) return
+
     setIsPaused(true)
     if (intervalRef.current) {
       clearInterval(intervalRef.current)
     }
 
-    setCurrentIndex(prevIndex => {
+    setCurrentIndex((prevIndex) => {
       let newIndex = prevIndex - (isMobile ? 1 : cardsToShow)
       if (newIndex < 0) {
-        // Jump to end of second set
         newIndex = streamers.length * 2 - (isMobile ? 1 : cardsToShow)
       }
       return newIndex
     })
 
     setTimeout(() => setIsPaused(false), 3000)
-  }, [isMobile, cardsToShow, streamers.length])
+  }, [isClient, isMobile, cardsToShow, streamers.length])
 
   const handleNext = useCallback(() => {
+    if (!isClient) return
+
     setIsPaused(true)
     if (intervalRef.current) {
       clearInterval(intervalRef.current)
     }
 
-    setCurrentIndex(prevIndex => {
+    setCurrentIndex((prevIndex) => {
       let newIndex = prevIndex + (isMobile ? 1 : cardsToShow)
       if (newIndex >= streamers.length * 2) {
-        // Jump to start of second set
         newIndex = streamers.length
       }
       return newIndex
     })
 
     setTimeout(() => setIsPaused(false), 3000)
-  }, [isMobile, cardsToShow, streamers.length])
+  }, [isClient, isMobile, cardsToShow, streamers.length])
 
   // Memoized status message
   const status = useMemo(() => {
@@ -350,12 +240,11 @@ export default function RisingStarsCarousel() {
       case "loading":
         return { text: "Loading live streamer data...", color: "text-blue-500", icon: "🔄" }
       case "success":
-        return { text: `Our ${streamers.length} July Stars`, color: "text-green-500", icon: "✅" }
+        return { text: `Our ${streamers.length} Rising Stars`, color: "text-green-500", icon: "✅" }
       case "error":
-        return { text: "API temporarily unavailable - showing featured streamers", color: "text-yellow-500", icon: "⚠️" }
-      case "fallback":
+        return { text: "No streamers available at the moment", color: "text-yellow-500", icon: "⚠️" }
       default:
-        return { text: `Our ${streamers.length} July Stars (default)`, color: "text-purple-500", icon: "⭐" }
+        return { text: "Loading...", color: "text-purple-500", icon: "⭐" }
     }
   }, [apiStatus, streamers.length])
 
@@ -376,7 +265,8 @@ export default function RisingStarsCarousel() {
     setTimeout(() => setIsHovered(false), 2000)
   }, [])
 
-  if (loading) {
+  // Don't render anything until client-side hydration is complete
+  if (!isClient) {
     return (
       <section className="relative -mt-[300px] md:-mt-[400px] z-30 py-32" style={{ top: "-10%" }}>
         <div className="w-full flex justify-center">
@@ -394,41 +284,75 @@ export default function RisingStarsCarousel() {
     )
   }
 
+  if (loading) {
+    return (
+      <section ref={sectionRef} className="relative -mt-[300px] md:-mt-[400px] z-30 py-32" style={{ top: "-10%" }}>
+        <div className="w-full flex justify-center">
+          <div className="w-full max-w-7xl relative">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="text-center mb-12"
+            >
+              <h2 className="rising-title">OUR RISING STARS</h2>
+              <div className="flex items-center justify-center space-x-2 mt-4">
+                <div className="w-4 h-4 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin"></div>
+                <p className="text-gray-500 text-sm">Loading our amazing streamers...</p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
-    <section className="relative -mt-[450px] md:-mt-[500px] z-30 py-32" style={{ top: "-10%" }}>
+    <section ref={sectionRef} className="rising-carousel-section" style={{ top: "-10%" }}>
       <div className="w-full flex justify-center">
-        <div className="w-full max-w-7xl relative">
+        <div className="rising-carousel-container">
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="text-center mb-12"
           >
-            <h2 className="h4-alt flex items-center justify-center text-3xl">THE RISING STARS</h2>
-            <p className={`text-white/65 text-lg mt-2 flex items-center justify-center space-x-1`}>
+            <h2 className="h4-alt flex items-center justify-center rising-carousel-title">THE RISING STARS</h2>
+            <p className={`body flex items-center justify-center rising-carousel-subtitle`}>
               <span>{status.text}</span>
             </p>
           </motion.div>
 
           {/* Navigation Buttons */}
-          <button
+          <motion.button
+            initial={{ opacity: 0, x: -20 }}
+            animate={isVisible ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
             onClick={handlePrevious}
             className="absolute left-4 top-1/2 transform -translate-y-1/2 z-40 w-12 h-12 bg-black/70 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-black/90 transition-all border border-gray-600 hover:border-purple-500 hover:scale-110"
             style={{ cursor: "pointer" }}
           >
             <ChevronLeft size={24} />
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
+            initial={{ opacity: 0, x: 20 }}
+            animate={isVisible ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
             onClick={handleNext}
             className="absolute right-4 top-1/2 transform -translate-y-1/2 z-40 w-12 h-12 bg-black/70 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-black/90 transition-all border border-gray-600 hover:border-purple-500 hover:scale-110"
             style={{ cursor: "pointer" }}
           >
             <ChevronRight size={24} />
-          </button>
+          </motion.button>
 
           {/* Carousel Container with Fade Edges */}
-          <div className="relative">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+            transition={{ duration: 0.8, delay: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="relative"
+          >
             {/* Left Fade Overlay */}
             <div className="absolute left-0 top-0 w-32 h-full bg-gradient-to-r from-black via-black/80 to-transparent z-30 pointer-events-none"></div>
 
@@ -447,9 +371,8 @@ export default function RisingStarsCarousel() {
                 animate={controls}
                 style={{
                   gap: `${gap}px`,
-                  width: `${infiniteStreamers.length * (cardWidth + gap)}px`,
+                  width: infiniteStreamers.length > 0 ? `${infiniteStreamers.length * (cardWidth + gap)}px` : "0px",
                   willChange: "transform",
-                  WebkitTransform: "translateZ(0)",
                   transform: "translateZ(0)",
                 }}
               >
@@ -458,7 +381,10 @@ export default function RisingStarsCarousel() {
                     key={`${player.ingameName}-${index}`}
                     className="flex-shrink-0 h-[500px] relative group cursor-pointer"
                     style={{ width: `${cardWidth}px` }}
-                    whileHover={{ scale: 1.02 }}
+                    whileHover={{
+                      scale: 1.02,
+                      transition: { duration: 0.2, ease: "easeOut" },
+                    }}
                   >
                     {/* Card content remains exactly the same */}
                     <div className="relative w-full h-full rounded-2xl overflow-hidden bg-gray-900 shadow-2xl">
@@ -482,11 +408,11 @@ export default function RisingStarsCarousel() {
                             className={`w-24 h-24 rounded-full overflow-hidden border-b-5 ${player.borderColor || "border-white"} bg-white shadow-lg`}
                           >
                             <img
-                              src={player.avatar || getAvatarForStreamer(player.ingameName)}
+                              src={player.avatar || "/placeholder.svg"}
                               alt={player.ingameName}
                               className="w-full h-full object-cover"
                               onError={(e) => {
-                                e.target.src = "/Streamers/Torpedo.jpg"
+                                e.target.src = "/Logo/Logo.png"
                               }}
                             />
                           </div>
@@ -520,7 +446,10 @@ export default function RisingStarsCarousel() {
                               target="_blank"
                               rel="noopener noreferrer"
                               className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
-                              whileHover={{ scale: 1.1 }}
+                              whileHover={{
+                                scale: 1.1,
+                                transition: { duration: 0.2 },
+                              }}
                               whileTap={{ scale: 0.9 }}
                             >
                               {social.platform === "YouTube" && (
@@ -600,7 +529,7 @@ export default function RisingStarsCarousel() {
                 ))}
               </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

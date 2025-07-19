@@ -1,6 +1,6 @@
 "use client"
 import { motion } from "framer-motion"
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import SignupModal from "./SignupModal"
 
 const plans = [
@@ -95,6 +95,26 @@ export default function PricingPlans() {
   const [hoveredIndex, setHoveredIndex] = useState(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState(null)
+  const [isVisible, setIsVisible] = useState(false)
+  const sectionRef = useRef(null)
+
+  // Intersection Observer for smooth entrance
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+        }
+      },
+      { threshold: 0.1, rootMargin: "100px" },
+    )
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [])
 
   const handleGetStarted = (planName) => {
     setSelectedPlan(planName)
@@ -102,26 +122,18 @@ export default function PricingPlans() {
   }
 
   return (
-    <section id="plans" className="py-20 sm:py-32 lg:py-40 bg-black relative">
+    <section ref={sectionRef} id="plans" className="py-20 sm:py-32 lg:py-40 bg-black relative">
       <div className="container mx-auto px-4">
-        <motion.div
+       <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-12 sm:mb-16"
+          className="text-center mb-8"
         >
-          <p
-            className="pricing-p text-sm sm:text-base mb-4"
-            style={{
-              backgroundImage: `linear-gradient(300deg, var(--token-dc9856fd-0400-432f-8bac-dca82295da25, rgb(255, 0, 64)) 0%, rgb(255, 145, 173) 19.91370160204264%, rgb(182, 214, 241) 36.19087837837838%, rgb(254, 221, 194) 52.43997912726201%, rgb(255, 195, 161) 65.35754504504504%, rgb(252, 161, 43) 82.6090811186774%, var(--token-8a3f945e-7097-47e8-ae48-c03cf8e5cf8b, rgb(129, 23, 241)) 100%)`,
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
-          >
+          <p className="callout mb-2 flex items-center justify-center gradient-text-primary">
             No gatekeeping. Your skills, our platform.
           </p>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">
+          <h2 className="h4-alt mb-4 flex justify-center text-center-inline">
             WE HAVE GOT YOUR BACK — PICK YOUR PLAN
           </h2>
         </motion.div>
@@ -131,9 +143,13 @@ export default function PricingPlans() {
           {plans.map((plan, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: index * 0.2 }}
+              initial={{ opacity: 0, y: 40 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+              transition={{
+                duration: 0.8,
+                delay: index * 0.2,
+                ease: [0.25, 0.46, 0.45, 0.94],
+              }}
               className="relative flex-1 max-w-sm mx-auto lg:mx-0"
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
@@ -149,7 +165,14 @@ export default function PricingPlans() {
                         : "linear-gradient(247deg, #8117f1 0%, rgb(255, 0, 64) 43.46%, rgb(27, 20, 100) 75.92%, rgb(129, 23, 241) 100%)",
                     transition: "background 0.3s ease",
                   }}
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{
+                    scale: 1.02,
+                    transition: {
+                      duration: 0.2,
+                      ease: [0.25, 0.46, 0.45, 0.94],
+                      type: "tween",
+                    },
+                  }}
                 >
                   <div className="w-full bg-black rounded-2xl overflow-hidden">
                     {/* Top Section with Variable Height */}
@@ -207,8 +230,6 @@ export default function PricingPlans() {
                           >
                             {plan.description}
                           </h3>
-
-                          <h4 className="text-xs font-semibold text-orange-400">{plan.subtitle}</h4>
                         </div>
                       </div>
                     </div>
@@ -233,7 +254,14 @@ export default function PricingPlans() {
                       <motion.button
                         onClick={() => handleGetStarted(plan.name)}
                         className="w-full py-3 px-4 rounded-full font-semibold text-white bg-gradient-to-r from-purple-600 to-purple-700 text-sm"
-                        whileHover={{ scale: 1.02 }}
+                        whileHover={{
+                          scale: 1.02,
+                          transition: {
+                            duration: 0.2,
+                            ease: [0.25, 0.46, 0.45, 0.94],
+                            type: "tween",
+                          },
+                        }}
                         whileTap={{ scale: 0.98 }}
                       >
                         <span className="flex items-center justify-center space-x-2">
@@ -253,7 +281,17 @@ export default function PricingPlans() {
                 </motion.div>
               ) : (
                 /* Basic and Advanced Cards */
-                <motion.div className="flex flex-col" whileHover={{ scale: 1.02 }}>
+                <motion.div
+                  className="flex flex-col"
+                  whileHover={{
+                    scale: 1.02,
+                    transition: {
+                      duration: 0.2,
+                      ease: [0.25, 0.46, 0.45, 0.94],
+                      type: "tween",
+                    },
+                  }}
+                >
                   {/* Top Section with Variable Height */}
                   <div
                     className={`${plan.topHeight} w-full bg-gray-900/50 backdrop-blur-sm rounded-t-2xl p-4 sm:p-6 border-t border-l border-r border-gray-800 hover:border-purple-500 transition-all duration-300 flex flex-col relative overflow-hidden`}
@@ -350,7 +388,14 @@ export default function PricingPlans() {
                     <motion.button
                       onClick={() => handleGetStarted(plan.name)}
                       className="w-full py-3 px-4 rounded-full font-semibold text-white bg-gray-800 hover:bg-gray-700 transition-all text-sm"
-                      whileHover={{ scale: 1.02 }}
+                      whileHover={{
+                        scale: 1.02,
+                        transition: {
+                          duration: 0.2,
+                          ease: [0.25, 0.46, 0.45, 0.94],
+                          type: "tween",
+                        },
+                      }}
                       whileTap={{ scale: 0.98 }}
                     >
                       <span className="flex items-center justify-center space-x-2">

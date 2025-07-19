@@ -1,13 +1,21 @@
 "use client"
+
 import { motion } from "framer-motion"
 
-export default function HeroSection() {
-  return (
-    <section id="home" className="relative h-screen flex flex-col items-center justify-center overflow-hidden">
-      {/* Background Video - iOS Optimized */}
-      <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
+// Constants
+const ANIMATION_DELAYS = {
+  logo: 0.5,
+  title: 0.7,
+  subtitle: 0.9,
+}
+
+const ANIMATION_DURATION = 1
+
+// Components
+const BackgroundVideo = () => (
+  <div className="absolute inset-0 z-0">
+    <video 
+      autoPlay
           muted
           loop
           playsInline
@@ -17,62 +25,79 @@ export default function HeroSection() {
             WebkitTransform: "translateZ(0)",
             transform: "translateZ(0)",
           }}
-        >
-          <source src="/Hero_Video/hero_video.webm" type="video/webm" />
-          {/* Fallback for browsers that don't support WebM */}
-          Your browser does not support the video tag.
-        </video>
-      </div>
+    >
+      <source src="/Hero_video/hero_video.webm" type="video/webm" />
+      <source src="/Hero_video/hero_video.mp4" type="video/mp4" />
+    </video>
+  </div>
+)
 
-      {/* Rest of your component remains the same */}
-      <div className="absolute inset-0 z-10 opacity-40">
-        <div
-          className="w-full h-full"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.4'%3E%3Ccircle cx='4' cy='4' r='2'/%3E%3C/g%3E%3C/svg%3E")`,
-            backgroundSize: "5px 5px",
-            backgroundRepeat: "repeat",
-          }}
-        />
-      </div>
+const DotPattern = () => (
+  <div className="absolute inset-0 z-10 opacity-40 hero-dot-pattern" />
+)
 
-      {/* Dark Gradient Overlay */}
-      <div className="absolute inset-0 z-20 bg-gradient-to-b from-black/70 via-black/80 to-black"></div>
+const GradientOverlay = () => (
+  <div className="absolute inset-0 z-20 bg-gradient-to-b from-black/70 via-black/80 to-black" />
+)
+
+const Logo = () => (
+  <motion.div
+    initial={{ opacity: 0, y: 50 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: ANIMATION_DURATION, delay: ANIMATION_DELAYS.logo }}
+    className="mb-1"
+  >
+    <div className="flex items-center justify-center space-x-2 mb-2">
+      <img 
+        src="/Logo/SNS_Logo.svg" 
+        alt="SNS Logo" 
+        className="hero-logo"
+      />
+    </div>
+  </motion.div>
+)
+
+const Title = () => (
+  <motion.h1
+    initial={{ opacity: 0, y: 50 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: ANIMATION_DURATION, delay: ANIMATION_DELAYS.title }}
+    className="hero-title"
+  >
+    <span className="display-alt hero-title-line">
+      EMPOWERING THE NEXT
+    </span>
+    <br />
+    <span className="display-alt hero-title-line">
+      GENERATION OF ESPORTS TALENT
+    </span>
+  </motion.h1>
+)
+
+const Subtitle = () => (
+  <motion.p
+    initial={{ opacity: 0, y: 30 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: ANIMATION_DURATION, delay: ANIMATION_DELAYS.subtitle }}
+    className="hero-subtitle"
+  >
+    Join us early — as a user, a believer, or a backer.
+  </motion.p>
+)
+
+// Main Component
+export default function HeroSection() {
+  return (
+    <section id="home" className="hero-section">
+      <BackgroundVideo />
+      <DotPattern />
+      <GradientOverlay />
 
       {/* Hero Content */}
-      <div className="relative z-30 text-center -mt-68 lg:-mt-64 px-4 max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.5 }}
-          className="mb-1"
-        >
-          <div className="flex items-center justify-center space-x-2 mb-2">
-            <img src="/Logo/SNS_Logo.svg" alt="Slice N Share Logo" className="h-8 w-20 sm:h-12 w-30 md:h-16 w-40" />
-          </div>
-        </motion.div>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.7 }}
-          className="text-xl sm:text-xl md:text-4xl lg:text-5xl font-semibold mb-4 sm:mb-8 leading-tight"
-        >
-          <span className="display-alt text-[14px] md:text-4xl lg:text-5xl xl:text-6xl">EMPOWERING THE NEXT</span>
-          <br />
-          <span className="display-alt text-[14px] md:text-4xl lg:text-5xl xl:text-6xl">
-            GENERATION OF ESPORTS TALENT
-          </span>
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.9 }}
-          className="text-gray-200 text-base md:text-xl mb-12 sm:mb-16 font-medium px-4"
-        >
-          Join us early — as a user, a believer, or a backer.
-        </motion.p>
+      <div className="hero-content">
+        <Logo />
+        <Title />
+        <Subtitle />
       </div>
     </section>
   )
