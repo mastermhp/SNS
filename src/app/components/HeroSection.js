@@ -26,8 +26,8 @@ const BackgroundVideo = () => (
             transform: "translateZ(0)",
           }}
     >
-      <source src="/Hero_video/hero_video.webm" type="video/webm" />
-      <source src="/Hero_video/hero_video.mp4" type="video/mp4" />
+      <source src="/Hero_Video/hero_video.webm" type="video/webm" />
+      <source src="/Hero_Video/hero_video.mp4" type="video/mp4" />
     </video>
   </div>
 )
