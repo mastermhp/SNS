@@ -88,7 +88,7 @@ const Subtitle = () => (
 // Main Component
 export default function HeroSection() {
   return (
-    <section id="home" className="hero-section">
+    <section id="home" className="hero-section mb-[50px] -mt-[30px] md:-mt-0 lg:-mt-0">
       <BackgroundVideo />
       <DotPattern />
       <GradientOverlay />

@@ -297,7 +297,7 @@ export default function RisingStarsCarousel() {
 
   if (loading) {
     return (
-      <section ref={sectionRef} className="relative -mt-[300px] md:-mt-[400px] z-30 py-32" style={{ top: "-10%" }}>
+      <section ref={sectionRef} className="relative -mt-[100px] md:-mt-[400px] z-30 py-32" style={{ top: "-10%" }}>
         <div className="w-full flex justify-center">
           <div className="w-full max-w-7xl relative">
             <motion.div
@@ -319,7 +319,7 @@ export default function RisingStarsCarousel() {
   }
 
   return (
-    <section ref={sectionRef} className="rising-carousel-section" style={{ top: "-10%" }}>
+    <section ref={sectionRef} className="rising-carousel-section">
       <div className="w-full flex justify-center">
         <div className="rising-carousel-container">
           <motion.div
