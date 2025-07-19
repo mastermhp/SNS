@@ -7,6 +7,22 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 const fallbackPlayers = []
 
 // Memoized helper functions to prevent re-renders
+const getAvatarForStreamer = (ingameName) => {
+  const avatarMap = {
+    TorpedoGaming: "/Streamers/Torpedo.jpg",
+    DeathTrio: "/Streamers/DeathTrio.jpg",
+    InsaneRuly: "/Streamers/InsaneRuly.jpg",
+    moonstone_herself: "/Streamers/Moonstone.jpg",
+    "Mr. IKU": "/Streamers/MrIKU.jpg",
+    Savage: "/Streamers/Savage.jpg",
+    "Sonic fps": "/Streamers/sonic.jpg",
+    URLoveBlank: "/Streamers/URLoveBlank.jpg",
+    "Xenternite E-sports": "/Streamers/Xenternite.jpg",
+    Gameoverr: "/Streamers/Gameoverr.jpg",
+  }
+  return avatarMap[ingameName] || "/Streamers/Torpedo.jpg"
+}
+
 const getGameBackground = (games) => {
   if (!games || games.length === 0)
     return "https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
@@ -181,19 +197,14 @@ export default function RisingStarsCarousel() {
 
   // Smooth animation updates
   useEffect(() => {
-    if (!isClient || infiniteStreamers.length === 0 || !isVisible) return
-
-    const translateX = -(currentIndex * (cardWidth + gap))
-    controls.start({
-      x: translateX,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 30,
-        mass: 0.8,
-      },
-    })
-  }, [isClient, currentIndex, cardWidth, gap, controls, infiniteStreamers.length, isVisible])
+    if (infiniteStreamers.length > 0) {
+      const translateX = -(currentIndex * (cardWidth + gap))
+      controls.set({
+        x: translateX,
+        transition: { type: "spring", stiffness: 300, damping: 30 }
+      })
+    }
+  }, [currentIndex, cardWidth, gap, controls, infiniteStreamers.length])
 
   // Navigation handlers with proper mobile support
   const handlePrevious = useCallback(() => {
@@ -408,7 +419,7 @@ export default function RisingStarsCarousel() {
                             className={`w-24 h-24 rounded-full overflow-hidden border-b-5 ${player.borderColor || "border-white"} bg-white shadow-lg`}
                           >
                             <img
-                              src={player.avatar || "/placeholder.svg"}
+                              src={player.avatar || getAvatarForStreamer(player.ingameName)}
                               alt={player.ingameName}
                               className="w-full h-full object-cover"
                               onError={(e) => {

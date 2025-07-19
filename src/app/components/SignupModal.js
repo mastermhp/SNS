@@ -270,10 +270,7 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
         primaryGameTitles: [formData.primaryGameTitles],
         secondaryGameTitles: formData.secondaryGameTitles ? [formData.secondaryGameTitles] : [], // Convert single game to array
         phone: `${formData.countryCode}${formData.phone}`, // Combine country code with phone
-        avatar: {
-          url: "https://example.com/avatar.jpg",
-          publicId: "avatar_public_id",
-        },
+        // avatar will be handled by backend with default values
       }
 
       const response = await fetch("https://api.slicenshare.com/api/v1/auth/streamers/signup", {
