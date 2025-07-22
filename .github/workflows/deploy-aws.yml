@@ -28,7 +28,6 @@ jobs:
         run: |
           echo "Building Next.js application..."
           npm run build
-          npm run export
       
       - name: Set up SSH
         run: |
