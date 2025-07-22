@@ -1,0 +1,74 @@
+name: Deploy Frontend to AWS EC2
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.17.1'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: |
+          echo "Installing dependencies..."
+          npm install
+
+      - name: Build Next.js application
+        run: |
+          echo "Building Next.js application..."
+          npm run build
+          npm run export
+      
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AWS_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.AWS_HOST }} >> ~/.ssh/known_hosts
+      
+      - name: Deploy to AWS EC2
+        env:
+          AWS_HOST: ${{ secrets.AWS_HOST }}
+          AWS_USER: ${{ secrets.AWS_USER }}
+        run: |
+          echo "Deploying to $AWS_HOST as $AWS_USER"
+          
+          # Create directory if it doesn't exist
+          ssh $AWS_USER@$AWS_HOST 'sudo mkdir -p /var/www/slicenshare/slicenshare.com'
+          
+          # Copy static export (excluding dotfiles)
+          rsync -avz --exclude='._*' --exclude='.DS_Store' --exclude='.git' \
+            out/ $AWS_USER@$AWS_HOST:/tmp/out/
+          ssh $AWS_USER@$AWS_HOST 'sudo cp -r /tmp/out/* /var/www/slicenshare/slicenshare.com/'
+          
+          # Copy favicon and README if present
+          scp favicon.ico $AWS_USER@$AWS_HOST:/tmp/ 2>/dev/null || true
+          ssh $AWS_USER@$AWS_HOST 'sudo cp /tmp/favicon.ico /var/www/slicenshare/slicenshare.com/ 2>/dev/null || true'
+          scp README.md $AWS_USER@$AWS_HOST:/tmp/ 2>/dev/null || true
+          ssh $AWS_USER@$AWS_HOST 'sudo cp /tmp/README.md /var/www/slicenshare/slicenshare.com/ 2>/dev/null || true'
+          
+          # Set proper ownership
+          ssh $AWS_USER@$AWS_HOST 'sudo chown -R $AWS_USER:$AWS_USER /var/www/slicenshare/slicenshare.com'
+      
+      - name: Verify Deployment
+        env:
+          AWS_HOST: ${{ secrets.AWS_HOST }}
+          AWS_USER: ${{ secrets.AWS_USER }}
+        run: |
+          echo "Waiting for deployment to complete..."
+          sleep 5
+          echo "Checking deployment directory..."
+          ssh $AWS_USER@$AWS_HOST 'ls -la /var/www/slicenshare/slicenshare.com/'
+          echo "Testing website..."
+          ssh $AWS_USER@$AWS_HOST 'curl -I https://slicenshare.com || echo "Website not responding"' 
