@@ -44,21 +44,21 @@ jobs:
           echo "Deploying to $AWS_HOST as $AWS_USER"
           
           # Create directory if it doesn't exist
-          ssh $AWS_USER@$AWS_HOST 'sudo mkdir -p /var/www/slicenshare/slicenshare.com'
+          ssh $AWS_USER@$AWS_HOST 'sudo mkdir -p /var/www/slicenshare'
           
           # Copy static export (excluding dotfiles)
           rsync -avz --exclude='._*' --exclude='.DS_Store' --exclude='.git' \
             out/ $AWS_USER@$AWS_HOST:/tmp/out/
-          ssh $AWS_USER@$AWS_HOST 'sudo cp -r /tmp/out/* /var/www/slicenshare/slicenshare.com/'
+          ssh $AWS_USER@$AWS_HOST 'sudo cp -r /tmp/out/* /var/www/slicenshare/'
           
           # Copy favicon and README if present
           scp favicon.ico $AWS_USER@$AWS_HOST:/tmp/ 2>/dev/null || true
-          ssh $AWS_USER@$AWS_HOST 'sudo cp /tmp/favicon.ico /var/www/slicenshare/slicenshare.com/ 2>/dev/null || true'
+          ssh $AWS_USER@$AWS_HOST 'sudo cp /tmp/favicon.ico /var/www/slicenshare/ 2>/dev/null || true'
           scp README.md $AWS_USER@$AWS_HOST:/tmp/ 2>/dev/null || true
-          ssh $AWS_USER@$AWS_HOST 'sudo cp /tmp/README.md /var/www/slicenshare/slicenshare.com/ 2>/dev/null || true'
+          ssh $AWS_USER@$AWS_HOST 'sudo cp /tmp/README.md /var/www/slicenshare/ 2>/dev/null || true'
           
           # Set proper ownership
-          ssh $AWS_USER@$AWS_HOST 'sudo chown -R $AWS_USER:$AWS_USER /var/www/slicenshare/slicenshare.com'
+          ssh $AWS_USER@$AWS_HOST 'sudo chown -R $AWS_USER:$AWS_USER /var/www/slicenshare'
       
       - name: Verify Deployment
         env:
@@ -68,6 +68,6 @@ jobs:
           echo "Waiting for deployment to complete..."
           sleep 5
           echo "Checking deployment directory..."
-          ssh $AWS_USER@$AWS_HOST 'ls -la /var/www/slicenshare/slicenshare.com/'
+          ssh $AWS_USER@$AWS_HOST 'ls -la /var/www/slicenshare/'
           echo "Testing website..."
           ssh $AWS_USER@$AWS_HOST 'curl -I https://slicenshare.com || echo "Website not responding"' 
