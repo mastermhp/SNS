@@ -1,7 +1,7 @@
-"use client"
-import { motion, AnimatePresence } from "framer-motion"
-import { useState } from "react"
-import { X } from "lucide-react"
+"use client";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { X } from "lucide-react";
 
 const districts = [
   "Bagerhat",
@@ -69,9 +69,9 @@ const districts = [
   "Tangail",
   "Thakurgaon",
   "Jashore",
-]
+];
 
-const platforms = ["PC", "Mobile", "Console"]
+const platforms = ["PC", "Mobile", "Console"];
 
 const gamesList = [
   "PUBG",
@@ -86,15 +86,22 @@ const gamesList = [
   "Rocket League",
   "FIFA",
   "Free Fire",
-]
+];
 
-const socialPlatforms = ["YouTube", "Twitch", "Facebook", "Instagram", "TikTok", "Discord"]
+const socialPlatforms = [
+  "YouTube",
+  "Twitch",
+  "Facebook",
+  "Instagram",
+  "TikTok",
+  "Discord",
+];
 
 const sponsorshipOptions = [
   { value: "no", label: "No" },
   { value: "yes", label: "Yes" },
   { value: "ending_soon", label: "Yes but ending soon" },
-]
+];
 
 const countryCodes = [
   { code: "+880", country: "Bangladesh", flag: "🇧🇩" },
@@ -148,12 +155,12 @@ const countryCodes = [
   { code: "+216", country: "Tunisia", flag: "🇹🇳" },
   { code: "+218", country: "Libya", flag: "🇱🇾" },
   // …continued through codes like +380 (Ukraine), +385 (Croatia), +593 (Ecuador), etc.
-]
+];
 
 export default function SignupModal({ isOpen, onClose, selectedPlan }) {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -169,7 +176,7 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
     monthlyIncomeRange: "",
     socials: [{ platform: "", url: "" }],
     bio: "",
-  })
+  });
 
   const getPlanFeatures = (planName) => {
     const planFeatures = {
@@ -222,73 +229,85 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
         "Access to AI-Powered Training & Performance Tools",
         "500+ Discounts on Global & Local Lifestyle Brands",
       ],
-    }
-    return planFeatures[planName?.toUpperCase()] || []
-  }
+    };
+    return planFeatures[planName?.toUpperCase()] || [];
+  };
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target
+    const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
-    }))
-  }
+    }));
+  };
 
   const handleSocialChange = (index, field, value) => {
     setFormData((prev) => ({
       ...prev,
-      socials: prev.socials.map((social, i) => (i === index ? { ...social, [field]: value } : social)),
-    }))
-  }
+      socials: prev.socials.map((social, i) =>
+        i === index ? { ...social, [field]: value } : social
+      ),
+    }));
+  };
 
   const addSocialField = () => {
     setFormData((prev) => ({
       ...prev,
       socials: [...prev.socials, { platform: "", url: "" }],
-    }))
-  }
+    }));
+  };
 
   const removeSocialField = (index) => {
     setFormData((prev) => ({
       ...prev,
       socials: prev.socials.filter((_, i) => i !== index),
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError("")
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
     try {
       const payload = {
         ...formData,
         displayName: formData.ingameName,
         plan: selectedPlan?.toLowerCase() || "basic",
-        socials: formData.socials.filter((social) => social.platform && social.url),
+        socials: formData.socials.filter(
+          (social) => social.platform && social.url
+        ),
         platform: [formData.platform],
         primaryGameTitles: [formData.primaryGameTitles],
-        secondaryGameTitles: formData.secondaryGameTitles ? [formData.secondaryGameTitles] : [], // Convert single game to array
+        secondaryGameTitles: formData.secondaryGameTitles
+          ? [formData.secondaryGameTitles]
+          : [], // Convert single game to array
         phone: `${formData.countryCode}${formData.phone}`, // Combine country code with phone
         // avatar will be handled by backend with default values
-      }
+      };
 
-      const response = await fetch("https://api.slicenshare.com/api/v1/auth/streamers/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      })
+      const response = await fetch(
+        "https://api.slicenshare.com/api/v1/auth/streamers/signup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Failed to sign up. Please try again.")
+        const errorData = await response.json();
+        throw new Error(
+          errorData?.message || "Something went wrong. Please try again."
+        );
       }
 
-      setSuccess(true)
+      setSuccess(true);
       setTimeout(() => {
-        onClose()
-        setSuccess(false)
+        onClose();
+        setSuccess(false);
         setFormData({
           fullName: "",
           ingameName: "",
@@ -303,14 +322,14 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
           monthlyIncomeRange: "",
           socials: [{ platform: "", url: "" }],
           bio: "",
-        })
-      }, 4000)
+        });
+      }, 4000);
     } catch (err) {
-      setError(err.message)
+      setError(err.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <AnimatePresence>
@@ -337,10 +356,17 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-white mb-2">Join Slice N Share - {selectedPlan} Plan</h2>
-                <p className="text-gray-400">Fill out the form to get started</p>
+                <h2 className="text-2xl font-bold text-white mb-2">
+                  Join Slice N Share - {selectedPlan} Plan
+                </h2>
+                <p className="text-gray-400">
+                  Fill out the form to get started
+                </p>
               </div>
-              <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
+              <button
+                onClick={onClose}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
                 <X size={24} />
               </button>
             </div>
@@ -365,7 +391,12 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                   transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
                   className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mb-6"
                 >
-                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    className="w-10 h-10 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <motion.path
                       initial={{ pathLength: 0 }}
                       animate={{ pathLength: 1 }}
@@ -384,17 +415,27 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                   transition={{ delay: 0.4 }}
                   className="text-center max-w-md px-6"
                 >
-                  <h3 className="text-2xl font-bold text-white mb-3">Welcome to Slice N Share!</h3>
+                  <h3 className="text-2xl font-bold text-white mb-3">
+                    Welcome to Slice N Share!
+                  </h3>
                   <p className="text-gray-400 text-base mb-6">
-                    Your registration for the <span className="text-purple-400 font-semibold">{selectedPlan} Plan</span>{" "}
+                    Your registration for the{" "}
+                    <span className="text-purple-400 font-semibold">
+                      {selectedPlan} Plan
+                    </span>{" "}
                     was successful! We&apos;re excited to have you on board.
                   </p>
 
                   <div className="bg-[#171717] rounded-lg p-4 mb-6">
-                    <h4 className="text-white font-semibold mb-2">What&apos;s Next?</h4>
+                    <h4 className="text-white font-semibold mb-2">
+                      What&apos;s Next?
+                    </h4>
                     <ul className="text-gray-300 text-sm space-y-1 text-left">
                       <li>• Our team will review your application</li>
-                      <li>• You&apos;ll receive a confirmation email within 24 hours</li>
+                      <li>
+                        • You&apos;ll receive a confirmation email within 24
+                        hours
+                      </li>
                       <li>• We&apos;ll contact you to set up your profile</li>
                       <li>• Get ready to level up your gaming journey!</li>
                     </ul>
@@ -409,7 +450,9 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                       className="bg-gradient-to-r from-purple-500 to-green-500 h-2 rounded-full"
                     />
                   </div>
-                  <p className="text-xs text-gray-500">Modal will close automatically</p>
+                  <p className="text-xs text-gray-500">
+                    Modal will close automatically
+                  </p>
                 </motion.div>
               </motion.div>
             )}
@@ -417,14 +460,18 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
             {/* Plan Features Display */}
             {!success && selectedPlan && (
               <div className="mb-8 bg-[#171717] rounded-lg p-6">
-                <h3 className="text-lg font-bold text-white mb-4">{selectedPlan} Plan Features</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-40 overflow-y-auto">
+                <h3 className="text-lg font-bold text-white mb-4">
+                  {selectedPlan} Plan Features
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto">
                   {getPlanFeatures(selectedPlan).map((feature, index) => (
                     <div key={index} className="flex items-start space-x-2">
                       <div className="flex-shrink-0 mt-2">
                         <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
                       </div>
-                      <span className="text-gray-300 text-sm leading-tight">{feature}</span>
+                      <span className="text-gray-300 text-sm leading-tight">
+                        {feature}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -440,7 +487,11 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                     className="bg-red-500/10 border border-red-500 rounded-lg p-4"
                   >
                     <div className="flex items-center space-x-2">
-                      <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                      <svg
+                        className="w-5 h-5 text-red-400"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
                         <path
                           fillRule="evenodd"
                           d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -455,7 +506,9 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                 {/* Basic Information */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-white text-sm font-medium mb-2">Full Name *</label>
+                    <label className="block text-white text-sm font-medium mb-2">
+                      Full Name *
+                    </label>
                     <input
                       type="text"
                       name="fullName"
@@ -467,7 +520,9 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                     />
                   </div>
                   <div>
-                    <label className="block text-white text-sm font-medium mb-2">In-Game Name (IGN) *</label>
+                    <label className="block text-white text-sm font-medium mb-2">
+                      In-Game Name (IGN) *
+                    </label>
                     <input
                       type="text"
                       name="ingameName"
@@ -482,7 +537,9 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-white text-sm font-medium mb-2">Email *</label>
+                    <label className="block text-white text-sm font-medium mb-2">
+                      Email *
+                    </label>
                     <input
                       type="email"
                       name="email"
@@ -494,7 +551,9 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                     />
                   </div>
                   <div>
-                    <label className="block text-white text-sm font-medium mb-2">Phone *</label>
+                    <label className="block text-white text-sm font-medium mb-2">
+                      Phone *
+                    </label>
                     <div className="flex gap-2">
                       <select
                         name="countryCode"
@@ -526,7 +585,9 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                 {/* District and Monthly Income */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-white text-sm font-medium mb-2">District *</label>
+                    <label className="block text-white text-sm font-medium mb-2">
+                      District *
+                    </label>
                     <select
                       name="district"
                       value={formData.district}
@@ -544,7 +605,9 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-white text-sm font-medium mb-2">Monthly Income Range</label>
+                    <label className="block text-white text-sm font-medium mb-2">
+                      Monthly Income Range
+                    </label>
                     <select
                       name="monthlyIncomeRange"
                       value={formData.monthlyIncomeRange}
@@ -563,10 +626,15 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
 
                 {/* Gaming Platform - Single Selection */}
                 <div>
-                  <label className="block text-white text-sm font-medium mb-3">Gaming Platform *</label>
+                  <label className="block text-white text-sm font-medium mb-3">
+                    Gaming Platform *
+                  </label>
                   <div className="flex flex-wrap gap-4">
                     {platforms.map((platform) => (
-                      <label key={platform} className="flex items-center space-x-2 cursor-pointer">
+                      <label
+                        key={platform}
+                        className="flex items-center space-x-2 cursor-pointer"
+                      >
                         <input
                           type="radio"
                           name="platform"
@@ -585,10 +653,15 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
 
                 {/* Primary Game - Single Selection Required */}
                 <div>
-                  <label className="block text-white text-sm font-medium mb-3">Primary Game Title *</label>
+                  <label className="block text-white text-sm font-medium mb-3">
+                    Primary Game Title *
+                  </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {gamesList.map((game) => (
-                      <label key={game} className="flex items-center space-x-2 cursor-pointer">
+                      <label
+                        key={game}
+                        className="flex items-center space-x-2 cursor-pointer"
+                      >
                         <input
                           type="radio"
                           name="primaryGameTitles"
@@ -607,10 +680,15 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
 
                 {/* Secondary Game - Single Selection Optional */}
                 <div>
-                  <label className="block text-white text-sm font-medium mb-3">Secondary Game Title (Optional)</label>
+                  <label className="block text-white text-sm font-medium mb-3">
+                    Secondary Game Title (Optional)
+                  </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {gamesList.map((game) => (
-                      <label key={game} className="flex items-center space-x-2 cursor-pointer">
+                      <label
+                        key={game}
+                        className="flex items-center space-x-2 cursor-pointer"
+                      >
                         <input
                           type="radio"
                           name="secondaryGameTitles"
@@ -628,12 +706,16 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
 
                 {/* Social Media */}
                 <div>
-                  <label className="block text-white text-sm font-medium mb-3">Social Media Profiles</label>
+                  <label className="block text-white text-sm font-medium mb-3">
+                    Social Media Profiles
+                  </label>
                   {formData.socials.map((social, index) => (
                     <div key={index} className="flex gap-3 mb-3">
                       <select
                         value={social.platform}
-                        onChange={(e) => handleSocialChange(index, "platform", e.target.value)}
+                        onChange={(e) =>
+                          handleSocialChange(index, "platform", e.target.value)
+                        }
                         className="px-4 py-3 bg-[#171717] rounded-lg text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         disabled={loading}
                       >
@@ -647,7 +729,9 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
                       <input
                         type="url"
                         value={social.url}
-                        onChange={(e) => handleSocialChange(index, "url", e.target.value)}
+                        onChange={(e) =>
+                          handleSocialChange(index, "url", e.target.value)
+                        }
                         placeholder="Profile URL"
                         className="flex-1 px-4 py-3 bg-[#171717] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                         disabled={loading}
@@ -676,10 +760,15 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
 
                 {/* Sponsorship - Three Options */}
                 <div>
-                  <label className="block text-white text-sm font-medium mb-3">Do you have any Sponsorship? *</label>
+                  <label className="block text-white text-sm font-medium mb-3">
+                    Do you have any Sponsorship? *
+                  </label>
                   <div className="flex flex-wrap gap-4">
                     {sponsorshipOptions.map((option) => (
-                      <label key={option.value} className="flex items-center space-x-2 cursor-pointer">
+                      <label
+                        key={option.value}
+                        className="flex items-center space-x-2 cursor-pointer"
+                      >
                         <input
                           type="radio"
                           name="isSponsored"
@@ -735,5 +824,5 @@ export default function SignupModal({ isOpen, onClose, selectedPlan }) {
         </motion.div>
       )}
     </AnimatePresence>
-  )
+  );
 }

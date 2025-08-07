@@ -1451,7 +1451,7 @@ video {
 .callout {
   font-family: "General Sans", sans-serif;
   color: var(--sns-grey);
-  text-align: left;
+  text-align: center;
   font-weight: 500;
   font-size: 16px;
   line-height: 160%;

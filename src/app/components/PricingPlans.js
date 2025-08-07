@@ -130,7 +130,7 @@ export default function PricingPlans() {
           transition={{ duration: 0.8 }}
           className="text-center mb-8"
         >
-          <p className="callout mb-2 flex items-center justify-center gradient-text-primary">
+          <p className="callout mb-2  gradient-text-primary">
             No gatekeeping. Your skills, our platform.
           </p>
           <h2 className="h4-alt mb-4 flex justify-center text-center-inline">
