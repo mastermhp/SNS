@@ -14,10 +14,6 @@ export default function RootLayout({ children }) {
           href="https://api.fontshare.com/v2/css?f[]=bebas-neue@400&display=swap"
           rel="stylesheet"
         />
-      </head>
-      <body className="bg-black text-white overflow-x-hidden" style={{ fontFamily: "General Sans, sans-serif" }}>
-        {children}
-        
         {/* Google tag (gtag.js) */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-XL5SWYB0WF"
@@ -31,6 +27,9 @@ export default function RootLayout({ children }) {
             gtag('config', 'G-XL5SWYB0WF');
           `}
         </Script>
+      </head>
+      <body className="bg-black text-white overflow-x-hidden" style={{ fontFamily: "General Sans, sans-serif" }}>
+        {children}
       </body>
     </html>
   )
