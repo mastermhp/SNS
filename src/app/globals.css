@@ -804,7 +804,6 @@ video {
 /* --- Rising Stars Carousel Card Styles --- */
 .rising-carousel-section {
   position: relative;
-  margin-top: -12rem; /* 5rem gap from hero section */
   z-index: 30;
   padding: 4rem 0;
   top: 0; /* Remove negative top offset */

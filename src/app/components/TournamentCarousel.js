@@ -48,6 +48,11 @@ export default function TournamentCarousel() {
     setIsClient(true)
   }, [])
 
+  const handleNext = useCallback(() => {
+    setDirection(1)
+    setCurrentIndex((prev) => (prev + 1) % tournamentData.length)
+  }, [])
+
   useEffect(() => {
     if (!isClient || isHovered) return
 
@@ -58,12 +63,7 @@ export default function TournamentCarousel() {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
-  }, [isClient, isHovered, currentIndex])
-
-  const handleNext = useCallback(() => {
-    setDirection(1)
-    setCurrentIndex((prev) => (prev + 1) % tournamentData.length)
-  }, [])
+  }, [isClient, isHovered, handleNext])
 
   const handlePrevious = useCallback(() => {
     setDirection(1)

@@ -15,6 +15,8 @@ export default function UpcomingEvents() {
       time: "9 AM - 6 PM",
       date: "28-29",
       month: "JAN",
+      facebookLink: "https://www.facebook.com/share/p/1CUBDZxJdm/",
+
       // logo: "SLICE/SHARE",
       // venue: "NSU",
       image: "/Event/coming-to-nsu.png",
@@ -183,7 +185,7 @@ export default function UpcomingEvents() {
                   </div>
 
                   {/* View Details Button */}
-                  <button
+                  {/* <button
                     className="w-32 py-2 rounded-full font-bold text-white transition"
                     style={{
                       backgroundColor: "#8117EE",
@@ -192,7 +194,19 @@ export default function UpcomingEvents() {
                     onClick={() => handleEventInterest(event)}
                   >
                     View Details
-                  </button>
+                  </button> */}
+
+                  <a
+                    href={event.facebookLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-36 py-2 rounded-full font-bold text-white text-center transition hover:opacity-90"
+                    style={{
+                      backgroundColor: "#8117ee",
+                    }}
+                  >
+                    View Details
+                  </a>
                 </div>
               </div>
             </div>
