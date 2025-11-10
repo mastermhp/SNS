@@ -1,8 +1,8 @@
-"use client";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { AlertCircle, CheckCircle, X } from "lucide-react";
-import Image from "next/image";
+"use client"
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { AlertCircle, CheckCircle, X } from "lucide-react"
+import Image from "next/image"
 
 const games = [
   { id: "pubg", name: "PUBG Mobile", image: "/games/pubg.png" },
@@ -17,7 +17,7 @@ const games = [
   { id: "apex", name: "Apex Legends", image: "/games/apex.png" },
   { id: "overwatch", name: "Overwatch 2", image: "/games/overwatch.png" },
   { id: "ff", name: "Fatal Fury", image: "/games/ff.jpeg" },
-  
+
   { id: "r6", name: "Rainbow Six Siege", image: "/games/r6.jpeg" },
   { id: "fifa", name: "FIFA 23", image: "/games/fifa.png" },
   { id: "efootball", name: "eFootball", image: "/games/efootball.png" },
@@ -27,7 +27,39 @@ const games = [
   { id: "hk", name: "Honor Kings", image: "/games/hk.jpeg" },
   { id: "cf", name: "Cross Fire", image: "/games/cf.jpeg" },
   { id: "tt", name: "Teamfight Tactics", image: "/games/tt.jpeg" },
-];
+]
+
+const AnimatedInput = ({ label, type = "text", name, value, onChange, required = false, className = "" }) => {
+  const [isFocused, setIsFocused] = useState(false)
+  const hasValue = value && value.length > 0
+
+  return (
+    <div className="relative">
+      <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        className={`w-full bg-gray-800 border border-gray-700 focus:border-purple-500 p-3 pt-6 rounded-lg outline-none transition-all peer ${className}`}
+        required={required}
+      />
+      <motion.label
+        className={`absolute left-3 text-gray-400 pointer-events-none transition-all duration-200 ${
+          isFocused || hasValue ? "top-1.5 text-xs text-purple-400 font-medium" : "top-3.5 text-base"
+        }`}
+        initial={false}
+        animate={{
+          y: isFocused || hasValue ? 0 : 0,
+          scale: isFocused || hasValue ? 0.85 : 1,
+        }}
+      >
+        {label} {required && <span className="text-pink-500">*</span>}
+      </motion.label>
+    </div>
+  )
+}
 
 export default function SignupModal({ isOpen, onClose, showPayment = false, eventType = "", price = 0 }) {
   const [selectedGame, setSelectedGame] = useState(null)
@@ -44,6 +76,24 @@ export default function SignupModal({ isOpen, onClose, showPayment = false, even
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [notification, setNotification] = useState({ show: false, type: "", message: "" })
   const [qrImageError, setQrImageError] = useState(false)
+
+  useEffect(() => {
+    if (!isOpen) {
+      // Reset everything when modal closes
+      setSelectedGame(null)
+      setFormData({
+        fullName: "",
+        email: "",
+        phone: "",
+        University: "",
+        district: "",
+        fbUrl: "",
+        youtubeUrl: "",
+        trnxId: "",
+      })
+      setQrImageError(false)
+    }
+  }, [isOpen])
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -192,6 +242,8 @@ export default function SignupModal({ isOpen, onClose, showPayment = false, even
   if (!isOpen) return null
 
   const isNewsletterMode = !showPayment && !eventType
+  const isMonthlySubscription =
+    eventType && (eventType.toLowerCase().includes("brand") || eventType.toLowerCase().includes("scrim"))
 
   return (
     <AnimatePresence>
@@ -219,6 +271,41 @@ export default function SignupModal({ isOpen, onClose, showPayment = false, even
           <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white z-50">
             <X size={28} />
           </button>
+
+          {price > 0 && selectedGame && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              className="absolute top-6 right-16 z-40"
+            >
+              <div className="relative">
+                {/* Price tag with scalloped edges and string */}
+                <div className="relative">
+                  {/* String attachment */}
+                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-0.5 h-8 bg-gradient-to-b from-gray-400 to-gray-600"></div>
+                  <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-3 h-3 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 border-2 border-gray-600"></div>
+
+                  {/* Scalloped badge */}
+                  <div
+                    className="relative w-24 h-24 flex items-center justify-center"
+                    style={{
+                      background: "linear-gradient(135deg, #8117EE, #E91E63, #FF6B35)",
+                      clipPath:
+                        "polygon(50% 0%, 61% 8%, 73% 5%, 82% 15%, 90% 10%, 95% 22%, 100% 30%, 98% 43%, 100% 55%, 95% 67%, 90% 73%, 82% 78%, 73% 85%, 61% 82%, 50% 90%, 39% 82%, 27% 85%, 18% 78%, 10% 73%, 5% 67%, 0% 55%, 2% 43%, 0% 30%, 5% 22%, 10% 10%, 18% 15%, 27% 5%, 39% 8%)",
+                      boxShadow: "0 10px 25px rgba(129, 23, 238, 0.5), 0 5px 15px rgba(233, 30, 99, 0.3)",
+                    }}
+                  >
+                    <div className="flex flex-col items-center justify-center text-white">
+                      <span className="text-2xl font-bold leading-tight">৳{price}</span>
+                      {isMonthlySubscription && (
+                        <span className="text-[10px] font-semibold uppercase tracking-wide opacity-90">/month</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
 
           <AnimatePresence>
             {notification.show && (
@@ -290,130 +377,112 @@ export default function SignupModal({ isOpen, onClose, showPayment = false, even
                   <h3 className="text-2xl font-bold mt-3 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
                     {selectedGame.name} {isNewsletterMode ? "Newsletter" : "Registration"}
                   </h3>
-                  {eventType && (
-                    <p className="text-gray-400 text-sm mt-1">
-                      {eventType} {price > 0 && `- ৳${price}`}
-                    </p>
+                  {eventType && !isMonthlySubscription && <p className="text-gray-400 text-sm mt-1">{eventType}</p>}
+                  {eventType && isMonthlySubscription && (
+                    <p className="text-gray-400 text-sm mt-1">{eventType} - Monthly Subscription</p>
                   )}
                 </div>
 
                 {isNewsletterMode ? (
-                  // Newsletter mode - only name, email, phone
                   <div className="space-y-4">
-                    <input
+                    <AnimatedInput
+                      label="Full Name"
                       type="text"
                       name="fullName"
-                      placeholder="Full Name *"
                       value={formData.fullName}
                       onChange={handleInputChange}
-                      className="w-full bg-gray-800 border border-gray-700 focus:border-purple-500 p-3 rounded-lg outline-none transition-all"
                       required
                     />
 
-                    <input
+                    <AnimatedInput
+                      label="Email Address"
                       type="email"
                       name="email"
-                      placeholder="Email Address *"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="w-full bg-gray-800 border border-gray-700 focus:border-purple-500 p-3 rounded-lg outline-none transition-all"
                       required
                     />
 
-                    <input
+                    <AnimatedInput
+                      label="Phone Number (01XXXXXXXXX)"
                       type="text"
                       name="phone"
-                      placeholder="Phone Number (01XXXXXXXXX) *"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full bg-gray-800 border border-gray-700 focus:border-purple-500 p-3 rounded-lg outline-none transition-all"
                       required
                     />
                   </div>
                 ) : (
-                  // Event mode - all fields
                   <>
                     <div className="grid md:grid-cols-2 gap-4">
-                      <input
+                      <AnimatedInput
+                        label="Full Name"
                         type="text"
                         name="fullName"
-                        placeholder="Full Name *"
                         value={formData.fullName}
                         onChange={handleInputChange}
-                        className="w-full bg-gray-800 border border-gray-700 focus:border-purple-500 p-3 rounded-lg outline-none transition-all"
                         required
                       />
 
-                      <input
+                      <AnimatedInput
+                        label="Email Address"
                         type="email"
                         name="email"
-                        placeholder="Email Address *"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className="w-full bg-gray-800 border border-gray-700 focus:border-purple-500 p-3 rounded-lg outline-none transition-all"
                         required
                       />
 
-                      <input
+                      <AnimatedInput
+                        label="Phone Number (01XXXXXXXXX)"
                         type="text"
                         name="phone"
-                        placeholder="Phone Number (01XXXXXXXXX) *"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        className="w-full bg-gray-800 border border-gray-700 focus:border-purple-500 p-3 rounded-lg outline-none transition-all"
                         required
                       />
 
-                      <input
+                      <AnimatedInput
+                        label="University"
                         type="text"
                         name="University"
-                        placeholder="University *"
                         value={formData.University}
                         onChange={handleInputChange}
-                        className="w-full bg-gray-800 border border-gray-700 focus:border-purple-500 p-3 rounded-lg outline-none transition-all"
                         required
                       />
 
-                      <input
+                      <AnimatedInput
+                        label="District"
                         type="text"
                         name="district"
-                        placeholder="District *"
                         value={formData.district}
                         onChange={handleInputChange}
-                        className="w-full bg-gray-800 border border-gray-700 focus:border-purple-500 p-3 rounded-lg outline-none transition-all"
                         required
                       />
 
-                      <input
+                      <AnimatedInput
+                        label="Facebook URL (Optional)"
                         type="url"
                         name="fbUrl"
-                        placeholder="Facebook URL (Optional)"
                         value={formData.fbUrl}
                         onChange={handleInputChange}
-                        className="w-full bg-gray-800 border border-gray-700 focus:border-purple-500 p-3 rounded-lg outline-none transition-all"
                       />
 
-                      <input
+                      <AnimatedInput
+                        label="YouTube URL (Optional)"
                         type="url"
                         name="youtubeUrl"
-                        placeholder="YouTube URL (Optional)"
                         value={formData.youtubeUrl}
                         onChange={handleInputChange}
-                        className="w-full bg-gray-800 border border-gray-700 focus:border-purple-500 p-3 rounded-lg outline-none transition-all"
                       />
                     </div>
 
                     {showPayment && (
                       <div className="text-center mt-6 p-4 bg-gray-800 rounded-lg border border-purple-500/30">
-                        <p className="text-lg font-semibold mb-3 text-purple-400">Scan & Pay ৳{price}</p>
-                        <Image
-                          src="/qr.jpeg"
-                          alt="Payment QR"
-                          width={200}
-                          height={200}
-                          className="mx-auto rounded-lg border-2 border-purple-500"
-                        />
-                        <p className="text-xs text-gray-400 mt-2">Scan with bKash</p>
+                        <p className="text-lg font-semibold mb-3 text-purple-400">
+                          Scan & Pay ৳{price}
+                          {isMonthlySubscription && "/month"}
+                        </p>
                         <div className="mx-auto w-[200px] h-[200px] bg-gray-700 rounded-lg border-2 border-purple-500 flex items-center justify-center">
                           {qrImageError ? (
                             <div className="text-center p-4">
@@ -436,14 +505,12 @@ export default function SignupModal({ isOpen, onClose, showPayment = false, even
                       </div>
                     )}
 
-                    {/* Transaction ID - Always required for event signups */}
-                    <input
+                    <AnimatedInput
+                      label={showPayment ? "Transaction ID" : "Transaction ID"}
                       type="text"
                       name="trnxId"
-                      placeholder={showPayment ? "Enter Transaction ID (Required) *" : "Transaction ID (Required) *"}
                       value={formData.trnxId}
                       onChange={handleInputChange}
-                      className="w-full bg-gray-800 border border-gray-700 focus:border-purple-500 p-3 rounded-lg outline-none transition-all"
                       required
                     />
                   </>

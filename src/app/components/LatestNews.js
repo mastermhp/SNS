@@ -42,26 +42,27 @@ export default function LatestNews() {
     <section id="news" className="py-20 px-4" style={{ backgroundColor: "#0a0a14" }}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-12">
+        <div className="flex items-start md:items-center justify-between mb-12">
           <h2
-            className="text-5xl md:text-6xl font-bold text-white mb-4 md:mb-0"
+            className="text-2xl md:text-6xl font-bold text-white mb-4 md:mb-0"
             style={{ fontFamily: "Bebas Neue, sans-serif" }}
           >
             Latest News
           </h2>
-          <a href="#" className="text-white hover:text-purple-400 transition flex items-center gap-2 text-lg">
+          <a href="#" className="text-white hover:text-purple-400 transition flex items-center gap-2 text-sm md:text-lg">
             Explore All <span>›</span>
           </a>
         </div>
 
         <div className="rounded-3xl p-[3px] bg-gradient-to-br from-[#A076CC] to-[#40057C] mb-12">
           <div
-            className="relative rounded-3xl overflow-hidden min-h-[900px] flex items-end"
+            className="relative rounded-3xl overflow-hidden min-h-[400px] md:min-h-[1000px] flex items-end"
             style={{
               backgroundImage: `url('${newsList[0].image}')`,
               backgroundSize: "cover",
-              backgroundPosition: "center",
+              backgroundPosition: "center top",
               backgroundRepeat: "no-repeat",
+              backgroundColor: "#0a0a14",
             }}
           >
             {/* 70% gradient overlay from bottom - dark to transparent */}
@@ -78,17 +79,22 @@ export default function LatestNews() {
             />
 
             {/* Text content on top of overlay */}
-            <div className="relative z-10 p-8 md:p-12 max-w-3xl">
-              <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">{newsList[0].title}</h3>
-              <p className="text-gray-200 text-lg mb-6 leading-relaxed">{newsList[0].description}</p>
-              <button
-                className="px-8 py-3 rounded-full font-bold text-white transition hover:scale-105"
+            <div className="relative z-10 p-4 md:p-12 max-w-3xl">
+              <h3 className="text-lg md:text-4xl font-bold text-white mb-3 md:mb-4">{newsList[0].title}</h3>
+              <p className="text-gray-200 text-sm md:text-lg mb-2 md:mb-6 leading-relaxed line-clamp-3 md:line-clamp-none">
+                {newsList[0].description}
+              </p>
+              <a
+                href="https://www.facebook.com/share/p/1TdPFRpfQ7/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block px-3 md:px-8 py-1 md:py-3 rounded-full font-bold text-sm text-white transition hover:scale-105"
                 style={{
                   background: "linear-gradient(135deg, #8117EE 0%, #A076CC 100%)",
                 }}
               >
                 Read More
-              </button>
+              </a>
             </div>
           </div>
         </div>

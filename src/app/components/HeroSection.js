@@ -61,7 +61,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: ANIMATION_DURATION, delay: ANIMATION_DELAYS.title }}
-            className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 leading-tight"
+            className="text-3xl md:text-6xl lg:text-7xl font-bold text-white mb-4 leading-tight"
             style={{ fontFamily: "Bebas Neue, sans-serif", letterSpacing: "-0.02em" }}
           >
             EMPOWERING THE NEXT
@@ -73,13 +73,13 @@ export default function HeroSection() {
           <div className="flex items-center justify-center gap-4 mt-10">
             <button
               onClick={() => setSignupModalOpen(true)}
-              className="px-8 py-3 rounded-full text-white transition flex items-center justify-center gap-2"
+              className="px-8 py-3 rounded-full text-white transition flex items-center justify-center gap-1 md:gap-2"
               style={{
                 backgroundColor: "#8117EE",
-                width: "280px",
+                
               }}
             >
-              <img src="/Logo/SNS_Logo.svg" alt="SNS Logo" className="hero-logo" /> <p className="text-[24px]">Network</p>
+              <img src="/Logo/SNS_Logo.svg" alt="SNS Logo" className="w-18 md:w-28" /> <p className="text-[16px] md:text-[24px]">Network</p>
             </button>
             {/* <button
             className="px-8 py-3 rounded-full font-bold text-white transition border-2"

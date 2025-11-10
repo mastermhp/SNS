@@ -94,14 +94,14 @@ export default function UpcomingEvents() {
         {/* Header */}
         <div className="flex items-center justify-between mb-12">
           <h2
-            className="text-5xl md:text-6xl font-bold text-white mb-4 md:mb-0"
+            className="text-2xl md:text-6xl font-bold text-white "
             style={{ fontFamily: "Bebas Neue, sans-serif" }}
           >
             Upcoming Events
           </h2>
           <a
             href="#"
-            className="text-white hover:text-purple-400 transition flex items-center gap-2 text-lg"
+            className="text-white hover:text-purple-400 transition flex items-center gap-2 text-sm md:text-lg"
           >
             Explore All <span className="text-2xl">›</span>
           </a>
