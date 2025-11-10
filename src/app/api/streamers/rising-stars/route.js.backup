@@ -1,9 +1,6 @@
 // This API route is not used in static export mode
 // The component calls the backend API directly instead
-// Keeping this file for reference, but it won't be built with output: 'export'
-
-export const dynamic = 'force-dynamic'
-export const runtime = 'nodejs'
+// Keeping this file for reference - Next.js will skip it during static export
 
 export async function GET() {
   try {
