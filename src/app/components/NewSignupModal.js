@@ -140,15 +140,15 @@ export default function SignupModal({ isOpen, onClose, showPayment = false, even
           eventName: eventType || "General Signup",
         }
 
+        // trnxId is required for event signups
+        payload.trnxId = formData.trnxId || `TXN${Date.now()}`
+
         // Only add optional fields if they have values
         if (formData.fbUrl) {
           payload.fbUrl = formData.fbUrl
         }
         if (formData.youtubeUrl) {
           payload.youtubeUrl = formData.youtubeUrl
-        }
-        if (formData.trnxId) {
-          payload.trnxId = formData.trnxId
         }
 
         const res = await fetch("https://api.slicenshare.com/api/v2/public/events/signup", {
@@ -403,30 +403,29 @@ export default function SignupModal({ isOpen, onClose, showPayment = false, even
                     </div>
 
                     {showPayment && (
-                      <>
-                        <div className="text-center mt-6 p-4 bg-gray-800 rounded-lg border border-purple-500/30">
-                          <p className="text-lg font-semibold mb-3 text-purple-400">Scan & Pay ৳{price}</p>
-                          <Image
-                            src="/qr.jpeg"
-                            alt="Payment QR"
-                            width={200}
-                            height={200}
-                            className="mx-auto rounded-lg border-2 border-purple-500"
-                          />
-                          <p className="text-xs text-gray-400 mt-2">Scan with bKash or Nagad</p>
-                        </div>
-
-                        <input
-                          type="text"
-                          name="trnxId"
-                          placeholder="Enter Transaction ID (Required) *"
-                          value={formData.trnxId}
-                          onChange={handleInputChange}
-                          className="w-full bg-gray-800 border border-gray-700 focus:border-purple-500 p-3 rounded-lg outline-none transition-all"
-                          required
+                      <div className="text-center mt-6 p-4 bg-gray-800 rounded-lg border border-purple-500/30">
+                        <p className="text-lg font-semibold mb-3 text-purple-400">Scan & Pay ৳{price}</p>
+                        <Image
+                          src="/qr.jpeg"
+                          alt="Payment QR"
+                          width={200}
+                          height={200}
+                          className="mx-auto rounded-lg border-2 border-purple-500"
                         />
-                      </>
+                        <p className="text-xs text-gray-400 mt-2">Scan with bKash or Nagad</p>
+                      </div>
                     )}
+
+                    {/* Transaction ID - Always required for event signups */}
+                    <input
+                      type="text"
+                      name="trnxId"
+                      placeholder={showPayment ? "Enter Transaction ID (Required) *" : "Transaction ID (Required) *"}
+                      value={formData.trnxId}
+                      onChange={handleInputChange}
+                      className="w-full bg-gray-800 border border-gray-700 focus:border-purple-500 p-3 rounded-lg outline-none transition-all"
+                      required
+                    />
                   </>
                 )}
 

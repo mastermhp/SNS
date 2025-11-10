@@ -1,3 +1,10 @@
+// This API route is not used in static export mode
+// The component calls the backend API directly instead
+// Keeping this file for reference, but it won't be built with output: 'export'
+
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 export async function GET() {
   try {
     const response = await fetch("https://api.slicenshare.com/api/v1/public/streamers/rising-stars", {
