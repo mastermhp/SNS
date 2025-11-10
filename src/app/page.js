@@ -1,21 +1,22 @@
+"use client"
 import Header from "./components/Header"
 import HeroSection from "./components/HeroSection"
+import TournamentCarousel from "./components/TournamentCarousel.js"
 import RisingStarsCarousel from "./components/RisingStarsCarousel"
-import HowItWorks from "./components/HowItWorks"
-import PricingPlans from "./components/PricingPlans"
 import UpcomingEvents from "./components/UpcomingEvents"
+import LatestNews from "./components/LatestNews"
 import ContactSection from "./components/ContactSection"
 import Footer from "./components/Footer"
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-black">
+    <main className="min-h-screen" style={{ backgroundColor: "#0a0a14" }}>
       <Header />
       <HeroSection />
+      <TournamentCarousel />
       <RisingStarsCarousel />
-      <HowItWorks />
-      <PricingPlans />
       <UpcomingEvents />
+      <LatestNews />
       <ContactSection />
       <Footer />
     </main>

@@ -86,8 +86,9 @@ export default function EventInterestModal({ isOpen, onClose, eventTitle, eventI
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-[#0D0D0D] rounded-2xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto"
+            className="rounded-2xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
+            style={{ background: "#0a0a14", border: "2px solid rgba(129, 23, 241, 0.3)" }}
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-6">

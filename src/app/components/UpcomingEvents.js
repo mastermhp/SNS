@@ -1,158 +1,204 @@
-"use client"
-import { motion } from "framer-motion"
-import { useState } from "react"
-import EventInterestModal from "./EventInterestModal"
-
-const events = [
-  {
-    title: "Slice N Share LAN Tournament",
-    description: "Get ready to battle it out! Big prizes, bigger glory.",
-    date: "2025",
-    time: "TBA",
-    location: "National & International City",
-    image:
-      "https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-  },
-  {
-    title: "Campus Ambassador Program",
-    description: "Host games, gain perks and opportunities.",
-    date: "2025",
-    time: "TBA",
-    location: "National & International Institutes",
-    image:
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-  },
-  {
-    title: "Meet-Up & Concert Vibes",
-    description: "Gamers, fans & music—an epic night awaits! ",
-    date: "2025",
-    time: "TBA",
-    location: "National & International City",
-    image:
-      "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-  },
-]
+"use client";
+import { MapPin, Clock } from "lucide-react";
+import EventInterestModal from "./EventInterestModal";
+import { useState } from "react";
 
 export default function UpcomingEvents() {
-  const [modalOpen, setModalOpen] = useState(false)
-  const [selectedEvent, setSelectedEvent] = useState(null)
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [currentEventIndex, setCurrentEventIndex] = useState(0);
+
+  const events = [
+    {
+      title: "NSU Startup Next X SnS",
+      location: "NSU Plaza",
+      time: "9 AM - 6 PM",
+      date: "28-29",
+      month: "JAN",
+      // logo: "SLICE/SHARE",
+      // venue: "NSU",
+      image: "/Event/coming-to-nsu.png",
+    },
+    // {
+    //   title: "NSU Startup Next X SnS",
+    //   location: "NSU Plaza",
+    //   time: "9 AM - 6 PM",
+    //   date: "28-29",
+    //   month: "JAN",
+    //   logo: "SLICE/SHARE",
+    //   venue: "NSU",
+    //   image: "/nsu-university-building.jpg",
+    // },
+    // {
+    //   title: "NSU Startup Next X SnS",
+    //   location: "NSU Plaza",
+    //   time: "9 AM - 6 PM",
+    //   date: "28-29",
+    //   month: "JAN",
+    //   logo: "SLICE/SHARE",
+    //   venue: "NSU",
+    //   image: "/nsu-university-building.jpg",
+    // },
+  ];
 
   const handleEventInterest = (event) => {
-    setSelectedEvent(event)
-    setModalOpen(true)
-  }
+    setSelectedEvent(event);
+    setModalOpen(true);
+  };
 
   const handleCloseModal = () => {
-    setModalOpen(false)
-    setSelectedEvent(null)
-  }
+    setModalOpen(false);
+    setSelectedEvent(null);
+  };
+
+  const nextSlide = () => {
+    setCurrentEventIndex((prev) => (prev + 1) % events.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentEventIndex((prev) => (prev - 1 + events.length) % events.length);
+  };
 
   return (
-    <section id="events" className="py-40 bg-[#0D0D0D]">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
+    <section
+      className="relative py-20 px-4 overflow-hidden"
+      style={{ backgroundColor: "#0a0a14" }}
+    >
+      {/* Top-right radial gradient */}
+      <div
+        className="absolute -top-40 -right-80 pointer-events-none"
+        style={{
+          width: "483px",
+          height: "608px",
+          background:
+            "radial-gradient(circle, rgba(141, 21, 222, 0.5) 0%, transparent 50%)",
+          filter: "blur(200px)",
+        }}
+      />
+
+      {/* Bottom-left diagonal gradient */}
+      <div
+        className="absolute -bottom-92 -left-40 pointer-events-none"
+        style={{
+          width: "348px",
+          height: "498px",
+          background:
+            "linear-gradient(135deg, rgba(248, 2, 74, 0.61) 0%, rgba(54, 28, 82, 1) 100%)",
+          filter: "blur(320px)",
+        }}
+      />
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-12">
           <h2
-            className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-wider"
+            className="text-5xl md:text-6xl font-bold text-white mb-4 md:mb-0"
             style={{ fontFamily: "Bebas Neue, sans-serif" }}
           >
-            UPCOMING EVENTS
+            Upcoming Events
           </h2>
-        </motion.div>
+          <a
+            href="#"
+            className="text-white hover:text-purple-400 transition flex items-center gap-2 text-lg"
+          >
+            Explore All <span className="text-2xl">›</span>
+          </a>
+        </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {events.map((event, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: index * 0.2 }}
-              className="bg-[#1a1a1a] rounded-2xl overflow-hidden"
-              whileHover={{ scale: 1.02 }}
+        {/* Events Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {events.map((event, idx) => (
+            <div
+              key={idx}
+              className="relative rounded-3xl overflow-hidden"
+              style={{
+                minHeight: "460px",
+                border: "2px solid #7c3aed",
+                background: "linear-gradient(135deg, #4a1d7e 0%, #2d1450 100%)",
+              }}
             >
-              {/* Event Image */}
-              <div className="relative h-64 overflow-hidden">
-                <img
-                  src={event.image || "/placeholder.svg"}
-                  alt={event.title}
-                  className="w-full h-full object-cover"
-                  crossOrigin="anonymous"
-                />
-              </div>
+              {/* Background Image with Gradient Overlay */}
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{
+                  backgroundImage: `url('${event.image}')`,
+                }}
+              />
 
-              {/* Event Content */}
-              <div className="p-6 space-y-4">
-                {/* Event Title with Gradient */}
-                <h3
-                  className="text-xl font-bold mb-3"
+              {/* Gradient Overlay - allows background to show through */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(74, 29, 126, 0.6) 0%, rgba(45, 20, 80, 0.3) 40%, rgba(20, 10, 35, 0.9) 100%)",
+                }}
+              />
+
+              {/* Content */}
+              <div className="relative h-full flex flex-col justify-between p-6">
+                {/* Top Section */}
+                <div>
+                  {/* Date Badge */}
+                  <div
+                    className="inline-block px-4 py-2 rounded-xl mb-4"
+                    style={{ backgroundColor: "#8117ee" }}
+                  >
+                    <div className="text-white font-bold text-lg text-center leading-tight">
+                      {event.date}
+                      <br />
+                      {event.month}
+                    </div>
+                  </div>
+
+                  {/* Venue */}
+                  <div className="text-7xl font-bold text-purple-200 mt-4">
+                    {event.venue}
+                  </div>
+                </div>
+
+                {/* Bottom Card - Event Details */}
+                <div
+                  className="rounded-2xl p-5"
                   style={{
-                    backgroundImage:
-                      "linear-gradient(300deg, var(--token-dc9856fd-0400-432f-8bac-dca82295da25, rgb(255, 0, 64)) 0%, rgb(255, 145, 173) 19.91370160204264%, rgb(182, 214, 241) 36.19087837837838%, rgb(254, 221, 194) 52.43997912726201%, rgb(255, 195, 161) 65.35754504504504%, rgb(252, 161, 43) 82.6090811186774%, var(--token-8a3f945e-7097-47e8-ae48-c03cf8e5cf8b, rgb(129, 23, 241)) 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
+                    backgroundColor: "rgba(21, 2, 43, 0.85)",
+                    backdropFilter: "blur(10px)",
+                    opacity: "58%",
                   }}
                 >
-                  {event.title}
-                </h3>
+                  {/* Event Title */}
+                  <h3 className="text-2xl font-bold text-white mb-4">
+                    {event.title}
+                  </h3>
 
-                {/* Event Description */}
-                <p className="text-gray-400 text-sm leading-relaxed mb-6">{event.description}</p>
+                  {/* Location & Time */}
+                  <div className="flex items-center justify-between text-white mb-8">
+                    <div className="flex items-center gap-2">
+                      <MapPin size={20} />
+                      <span className="text-base">{event.location}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock size={20} />
+                      <span className="text-base">{event.time}</span>
+                    </div>
+                  </div>
 
-                {/* Date and Time */}
-                <div className="flex items-center space-x-2 text-sm text-gray-300 mb-3">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>{event.date}</span>
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>{event.time}</span>
+                  {/* View Details Button */}
+                  <button
+                    className="w-32 py-2 rounded-full font-bold text-white transition"
+                    style={{
+                      backgroundColor: "#8117EE",
+                      fontSize: "14px",
+                    }}
+                    onClick={() => handleEventInterest(event)}
+                  >
+                    View Details
+                  </button>
                 </div>
-
-                {/* Location */}
-                <div className="flex items-center space-x-2 text-sm text-gray-300 mb-6">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>{event.location}</span>
-                </div>
-
-                {/* Interested Button */}
-                <motion.button
-                  onClick={() => handleEventInterest(event)}
-                  className="w-full bg-[#2a2a2a] hover:bg-[#3a3a3a] text-gray-300 font-medium py-3 px-6 rounded-full transition-all flex items-center justify-center space-x-2"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span>Interested</span>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </motion.button>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
-
       {/* Event Interest Modal */}
       <EventInterestModal
         isOpen={modalOpen}
@@ -161,5 +207,5 @@ export default function UpcomingEvents() {
         eventImage={selectedEvent?.image}
       />
     </section>
-  )
+  );
 }

@@ -1,11 +1,14 @@
 "use client"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { useState, useEffect } from "react"
 import { Menu, X } from "lucide-react"
+import Link from "next/link"
+import SignupModal from "./NewSignupModal"
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [signupModalOpen, setSignupModalOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,108 +18,131 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen)
-  }
-
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false)
+  const handleLinkClick = () => {
+    setMobileMenuOpen(false)
   }
 
   return (
     <>
       <motion.header
-        className={`fixed top-2 sm:top-4 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 ${
-          isScrolled ? "bg-black/80 backdrop-blur-md rounded-[8px]" : "bg-transparent rounded-[8px]"
+        className={`fixed top-0 left-0 right-0 z-50 px-3 sm:px-4 md:px-6 py-3 md:py-4 transition-all duration-300 ${
+          isScrolled ? "bg-black/80 backdrop-blur-md rounded-b-[8px]" : "bg-transparent"
         }`}
-        style={{ width: "95%", maxWidth: "600px" }}
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8 }}
       >
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3 rounded-[20px]">
-          <div className="flex items-center space-x-1">
-            <img src="/Logo/Logo.png" alt="Slice N Share Logo" className="w-6 h-6 sm:w-8 sm:h-8" />
-          </div>
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          {/* Logo */}
+          <Link href="#home" className="flex items-center space-x-2 flex-shrink-0">
+            <img src="/Logo/Logo.png" alt="Slice N Share" className="h-7 sm:h-8 md:h-10" />
+          </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-4 lg:space-x-6">
-            <a href="#home" className="text-white hover:text-red-500 transition-colors text-sm font-medium">
+          <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
+            <Link href="#home" className="text-white text-sm font-medium hover:text-purple-400 transition">
               Home
-            </a>
-            <a href="#how-it-works" className="text-white hover:text-red-500 transition-colors text-sm font-medium">
-              How It Works
-            </a>
-            <a href="#plans" className="text-white hover:text-red-500 transition-colors text-sm font-medium">
-              Plans
-            </a>
-            <a href="#events" className="text-white hover:text-red-500 transition-colors text-sm font-medium">
+            </Link>
+            <Link href="#tournament" className="text-white text-sm font-medium hover:text-purple-400 transition">
+              Tournament
+            </Link>
+            <Link href="#events" className="text-white text-sm font-medium hover:text-purple-400 transition">
               Events
-            </a>
-            <a href="#contact" className="text-white hover:text-red-500 transition-colors text-sm font-medium">
-              Contact
-            </a>
+            </Link>
+            <Link href="#news" className="text-white text-sm font-medium hover:text-purple-400 transition">
+              News
+            </Link>
+            <Link href="#contact" className="text-white text-sm font-medium hover:text-purple-400 transition">
+              Contact Us
+            </Link>
           </nav>
 
-          {/* Mobile Menu Button */}
-          <button onClick={toggleMobileMenu} className="md:hidden text-white hover:text-red-500 transition-colors">
-            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          <button
+            onClick={() => setSignupModalOpen(true)}
+            className="hidden sm:block px-4 sm:px-5 md:px-6 py-1.5 sm:py-2 rounded-full font-bold text-white transition hover:opacity-90 flex-shrink-0"
+            style={{
+              backgroundColor: "#8117EE",
+              fontSize: "12px",
+            }}
+          >
+            Sign Up
+          </button>
+
+          <button
+            className="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg transition"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </motion.header>
 
-      {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/90 backdrop-blur-md z-40 md:hidden"
-          onClick={closeMobileMenu}
-        >
-          <motion.nav
-            initial={{ y: -50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            className="flex flex-col items-center justify-center h-full space-y-8"
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            className="lg:hidden fixed top-[60px] sm:top-[64px] md:top-[72px] left-0 right-0 z-40 bg-black/95 backdrop-blur-lg border-b border-purple-500/20"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
           >
-            <a
-              href="#home"
-              onClick={closeMobileMenu}
-              className="text-white hover:text-red-500 transition-colors text-xl font-medium"
-            >
-              Home
-            </a>
-            <a
-              href="#how-it-works"
-              onClick={closeMobileMenu}
-              className="text-white hover:text-red-500 transition-colors text-xl font-medium"
-            >
-              How It Works
-            </a>
-            <a
-              href="#plans"
-              onClick={closeMobileMenu}
-              className="text-white hover:text-red-500 transition-colors text-xl font-medium"
-            >
-              Plans
-            </a>
-            <a
-              href="#events"
-              onClick={closeMobileMenu}
-              className="text-white hover:text-red-500 transition-colors text-xl font-medium"
-            >
-              Events
-            </a>
-            <a
-              href="#contact"
-              onClick={closeMobileMenu}
-              className="text-white hover:text-red-500 transition-colors text-xl font-medium"
-            >
-              Contact
-            </a>
-          </motion.nav>
-        </motion.div>
-      )}
+            <nav className="flex flex-col p-4 sm:p-6">
+              <Link
+                href="#home"
+                className="text-white text-base font-medium py-3 border-b border-purple-500/10 hover:text-purple-400 transition"
+                onClick={handleLinkClick}
+              >
+                Home
+              </Link>
+              <Link
+                href="#tournament"
+                className="text-white text-base font-medium py-3 border-b border-purple-500/10 hover:text-purple-400 transition"
+                onClick={handleLinkClick}
+              >
+                Tournament
+              </Link>
+              <Link
+                href="#events"
+                className="text-white text-base font-medium py-3 border-b border-purple-500/10 hover:text-purple-400 transition"
+                onClick={handleLinkClick}
+              >
+                Events
+              </Link>
+              <Link
+                href="#news"
+                className="text-white text-base font-medium py-3 border-b border-purple-500/10 hover:text-purple-400 transition"
+                onClick={handleLinkClick}
+              >
+                News
+              </Link>
+              <Link
+                href="#contact"
+                className="text-white text-base font-medium py-3 border-b border-purple-500/10 hover:text-purple-400 transition"
+                onClick={handleLinkClick}
+              >
+                Contact Us
+              </Link>
+
+              <button
+                onClick={() => {
+                  setSignupModalOpen(true)
+                  setMobileMenuOpen(false)
+                }}
+                className="mt-4 w-full px-6 py-3 rounded-full font-bold text-white transition hover:opacity-90"
+                style={{
+                  backgroundColor: "#8117EE",
+                  fontSize: "14px",
+                }}
+              >
+                Sign Up
+              </button>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <SignupModal isOpen={signupModalOpen} onClose={() => setSignupModalOpen(false)} />
     </>
   )
 }

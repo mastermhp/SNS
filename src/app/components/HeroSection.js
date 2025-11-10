@@ -1,8 +1,9 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useState } from "react"
+import SignupModal from "./NewSignupModal"
 
-// Constants
 const ANIMATION_DELAYS = {
   logo: 0.5,
   title: 0.7,
@@ -11,94 +12,90 @@ const ANIMATION_DELAYS = {
 
 const ANIMATION_DURATION = 1
 
-// Components
-const BackgroundVideo = () => (
-  <div className="absolute inset-0 z-0">
-    <video 
-      autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          className="w-full h-full object-cover"
-          style={{
-            WebkitTransform: "translateZ(0)",
-            transform: "translateZ(0)",
-          }}
-    >
-      <source src="/Hero_Video/hero_video.webm" type="video/webm" />
-      <source src="/Hero_Video/hero_video.mp4" type="video/mp4" />
-    </video>
-  </div>
-)
-
-const DotPattern = () => (
-  <div className="absolute inset-0 z-10 opacity-40 hero-dot-pattern" />
-)
-
-const GradientOverlay = () => (
-  <div className="absolute inset-0 z-20 bg-gradient-to-b from-black/70 via-black/80 to-black" />
-)
-
-const Logo = () => (
-  <motion.div
-    initial={{ opacity: 0, y: 50 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: ANIMATION_DURATION, delay: ANIMATION_DELAYS.logo }}
-    className="mb-1"
-  >
-    <div className="flex items-center justify-center space-x-2 mb-2">
-      <img 
-        src="/Logo/SNS_Logo.svg" 
-        alt="SNS Logo" 
-        className="hero-logo"
-      />
-    </div>
-  </motion.div>
-)
-
-const Title = () => (
-  <motion.h1
-    initial={{ opacity: 0, y: 50 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: ANIMATION_DURATION, delay: ANIMATION_DELAYS.title }}
-    className="hero-title"
-  >
-    <span className="display-alt hero-title-line">
-      EMPOWERING THE NEXT
-    </span>
-    <br />
-    <span className="display-alt hero-title-line">
-      GENERATION OF ESPORTS TALENT
-    </span>
-  </motion.h1>
-)
-
-const Subtitle = () => (
-  <motion.p
-    initial={{ opacity: 0, y: 30 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: ANIMATION_DURATION, delay: ANIMATION_DELAYS.subtitle }}
-    className="hero-subtitle"
-  >
-    Join us early — as a user, a believer, or a backer.
-  </motion.p>
-)
-
-// Main Component
 export default function HeroSection() {
-  return (
-    <section id="home" className="hero-section mb-[50px] -mt-[30px] md:-mt-0 lg:-mt-0">
-      <BackgroundVideo />
-      <DotPattern />
-      <GradientOverlay />
+  const [signupModalOpen, setSignupModalOpen] = useState(false)
 
-      {/* Hero Content */}
-      <div className="hero-content">
-        <Logo />
-        <Title />
-        <Subtitle />
-      </div>
-    </section>
+  return (
+    <>
+      <section
+        id="home"
+        className="relative min-h-screen flex items-center justify-center pt-20 px-4"
+        style={{ backgroundColor: "#0a0a14" }}
+      >
+        {/* Background Image */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: "url('/Hero/hero-bg.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            zIndex: 0,
+          }}
+        />
+
+        {/* Gradient overlay from Figma */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: "linear-gradient(90deg, rgba(23, 3, 43, 0.2) 2%, rgba(13, 2, 26, 1) 96%)",
+            zIndex: 1,
+          }}
+        />
+
+        {/* Content */}
+        <div className="relative z-10 text-center max-w-3xl -mt-40">
+          {/* Logo */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: ANIMATION_DURATION, delay: ANIMATION_DELAYS.logo }}
+            className="mb-1"
+          >
+            <div className="flex items-center justify-center space-x-2 mb-2">
+              <img src="/Logo/SNS_Logo.svg" alt="SNS Logo" className="hero-logo" />
+            </div>
+          </motion.div>
+
+          {/* Title */}
+          <motion.h1
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: ANIMATION_DURATION, delay: ANIMATION_DELAYS.title }}
+            className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 leading-tight"
+            style={{ fontFamily: "Bebas Neue, sans-serif", letterSpacing: "-0.02em" }}
+          >
+            EMPOWERING THE NEXT
+            <br />
+            GENERATION OF ESPORTS TALENT
+          </motion.h1>
+
+          {/* Buttons */}
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-12">
+            <button
+              onClick={() => setSignupModalOpen(true)}
+              className="px-8 py-3 rounded-full font-bold text-white transition"
+              style={{
+                backgroundColor: "#8117EE",
+                width: "230px",
+              }}
+            >
+              SliceNshare Network
+            </button>
+            {/* <button
+            className="px-8 py-3 rounded-full font-bold text-white transition border-2"
+            style={{
+              borderColor: "#8117EE",
+              backgroundColor: "transparent",
+              width: "180px",
+            }}
+          >
+            Explore Sns
+          </button> */}
+          </div>
+        </div>
+      </section>
+
+      <SignupModal isOpen={signupModalOpen} onClose={() => setSignupModalOpen(false)} />
+    </>
   )
 }
