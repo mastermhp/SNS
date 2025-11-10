@@ -43,7 +43,7 @@ export default function HeroSection() {
         />
 
         {/* Content */}
-        <div className="relative z-10 text-center max-w-3xl -mt-40">
+        <div className="relative z-10 text-center max-w-3xl -mt-72">
           {/* Logo */}
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -70,16 +70,16 @@ export default function HeroSection() {
           </motion.h1>
 
           {/* Buttons */}
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-12">
+          <div className="flex items-center justify-center gap-4 mt-10">
             <button
               onClick={() => setSignupModalOpen(true)}
-              className="px-8 py-3 rounded-full font-bold text-white transition"
+              className="px-8 py-3 rounded-full text-white transition flex items-center justify-center gap-2"
               style={{
                 backgroundColor: "#8117EE",
-                width: "230px",
+                width: "280px",
               }}
             >
-              SliceNshare Network
+              <img src="/Logo/SNS_Logo.svg" alt="SNS Logo" className="hero-logo" /> <p className="text-[24px]">Network</p>
             </button>
             {/* <button
             className="px-8 py-3 rounded-full font-bold text-white transition border-2"

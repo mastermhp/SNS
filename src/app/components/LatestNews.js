@@ -3,10 +3,10 @@
 export default function LatestNews() {
   const newsList = [
     {
-      title: "PMSL 2025 Venue - Pixoul Event Hall",
+      title: "Slice N Share is with - ShareTrip",
       description:
-        "This PMSL CSA Fall 2025 will take place at the renowned Pixoul Gaming in Abu Dhabi! Featuring a massive prize pool of $200,000! Representing Bangladesh will be the PMNC Fall champions — Halal Axetron...",
-      image: "/News/pmsl.png",
+        "We extend our heartfelt gratitude to ShareTrip for being the Title Sponsor and Official eSports Travel & Booking Partner for eSports Campus Scrims Tournament.Your trust and support added immense value to our startup exhibition, helping us create an inspiring platform for innovation and collaboration. We truly appreciate your partnership in making this event a success! We hope to make a long term partnership for better eSports Scene at Bangladesh  & beyond the border.... #ShareTrip #Slicenshare #tournamentSponsor #campusScrims",
+      image: "/News/sharetrip.png",
       readMore: true,
     },
   ]
@@ -56,7 +56,7 @@ export default function LatestNews() {
 
         <div className="rounded-3xl p-[3px] bg-gradient-to-br from-[#A076CC] to-[#40057C] mb-12">
           <div
-            className="relative rounded-3xl overflow-hidden min-h-[500px] flex items-end"
+            className="relative rounded-3xl overflow-hidden min-h-[900px] flex items-end"
             style={{
               backgroundImage: `url('${newsList[0].image}')`,
               backgroundSize: "cover",

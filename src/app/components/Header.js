@@ -39,24 +39,24 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
-            <Link href="#home" className="text-white text-sm font-medium hover:text-purple-400 transition">
+          <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8 w-full justify-center">
+            <Link href="#home" className="text-white text-[16px] font-medium hover:text-purple-400 transition">
               Home
             </Link>
-            <Link href="#tournament" className="text-white text-sm font-medium hover:text-purple-400 transition">
+            <Link href="#tournament" className="text-white text-[16px] font-medium hover:text-purple-400 transition">
               Tournament
             </Link>
-            <Link href="#events" className="text-white text-sm font-medium hover:text-purple-400 transition">
+            <Link href="#events" className="text-white text-[16px] font-medium hover:text-purple-400 transition">
               Events
             </Link>
-            <Link href="#news" className="text-white text-sm font-medium hover:text-purple-400 transition">
+            <Link href="#news" className="text-white text-[16px] font-medium hover:text-purple-400 transition">
               News
             </Link>
-            <Link href="#contact" className="text-white text-sm font-medium hover:text-purple-400 transition">
+            <Link href="#contact" className="text-white text-[16px] font-medium hover:text-purple-400 transition">
               Contact Us
             </Link>
           </nav>
-
+{/* 
           <button
             onClick={() => setSignupModalOpen(true)}
             className="hidden sm:block px-4 sm:px-5 md:px-6 py-1.5 sm:py-2 rounded-full font-bold text-white transition hover:opacity-90 flex-shrink-0"
@@ -66,7 +66,7 @@ export default function Header() {
             }}
           >
             Sign Up
-          </button>
+          </button> */}
 
           <button
             className="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg transition"
@@ -124,7 +124,7 @@ export default function Header() {
                 Contact Us
               </Link>
 
-              <button
+              {/* <button
                 onClick={() => {
                   setSignupModalOpen(true)
                   setMobileMenuOpen(false)
@@ -136,7 +136,7 @@ export default function Header() {
                 }}
               >
                 Sign Up
-              </button>
+              </button> */}
             </nav>
           </motion.div>
         )}

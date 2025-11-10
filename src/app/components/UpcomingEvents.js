@@ -13,8 +13,8 @@ export default function UpcomingEvents() {
       title: "NSU Startup Next X SnS",
       location: "NSU Plaza",
       time: "9 AM - 6 PM",
-      date: "28-29",
-      month: "JAN",
+      date: "10-11",
+      month: "NOV",
       facebookLink: "https://www.facebook.com/share/p/1CUBDZxJdm/",
 
       // logo: "SLICE/SHARE",

@@ -95,7 +95,7 @@ export default function TournamentCarousel() {
 
   return (
     <>
-      <section className="relative py-20 -mt-76 overflow-hidden">
+      <section className="relative py-20 -mt-[420px] overflow-hidden">
         <div className="w-full flex justify-center">
           <div className="relative w-full max-w-[1600px] px-4">
             {/* Left Navigation Arrow */}
