@@ -43,6 +43,7 @@ export default function SignupModal({ isOpen, onClose, showPayment = false, even
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [notification, setNotification] = useState({ show: false, type: "", message: "" })
+  const [qrImageError, setQrImageError] = useState(false)
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -405,13 +406,24 @@ export default function SignupModal({ isOpen, onClose, showPayment = false, even
                     {showPayment && (
                       <div className="text-center mt-6 p-4 bg-gray-800 rounded-lg border border-purple-500/30">
                         <p className="text-lg font-semibold mb-3 text-purple-400">Scan & Pay ৳{price}</p>
-                        <Image
-                          src="/qr.jpeg"
-                          alt="Payment QR"
-                          width={200}
-                          height={200}
-                          className="mx-auto rounded-lg border-2 border-purple-500"
-                        />
+                        <div className="mx-auto w-[200px] h-[200px] bg-gray-700 rounded-lg border-2 border-purple-500 flex items-center justify-center">
+                          {qrImageError ? (
+                            <div className="text-center p-4">
+                              <p className="text-gray-400 text-sm mb-2">QR Code</p>
+                              <p className="text-gray-500 text-xs">Image not found</p>
+                              <p className="text-gray-500 text-xs mt-2">Please add /public/qr.jpeg</p>
+                            </div>
+                          ) : (
+                            <Image
+                              src="/qr.jpeg"
+                              alt="Payment QR Code"
+                              width={200}
+                              height={200}
+                              className="rounded-lg"
+                              onError={() => setQrImageError(true)}
+                            />
+                          )}
+                        </div>
                         <p className="text-xs text-gray-400 mt-2">Scan with bKash or Nagad</p>
                       </div>
                     )}
