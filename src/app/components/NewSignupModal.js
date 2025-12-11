@@ -1392,7 +1392,7 @@ export default function SignupModal({
                                     Backup QR Code
                                   </p>
                                   <p className="text-xs text-gray-400 text-center">
-                                    Use if primary doesn't work
+                                    Use if primary doesn&#39;t work
                                   </p>
                                 </div>
                               </div>
