@@ -1,42 +1,65 @@
 "use client"
 
+import { FaFacebookF, FaTwitter, FaLinkedin, FaWhatsapp } from "react-icons/fa"
+
 export default function LatestNews() {
   const newsList = [
     {
-      title: "Slice N Share is with - ShareTrip",
+      title: "Slice N Share Championship",
       description:
-        "We extend our heartfelt gratitude to ShareTrip for being the Title Sponsor and Official eSports Travel & Booking Partner for eSports Campus Scrims Tournament.Your trust and support added immense value to our startup exhibition, helping us create an inspiring platform for innovation and collaboration. We truly appreciate your partnership in making this event a success! We hope to make a long term partnership for better eSports Scene at Bangladesh  & beyond the border.... #ShareTrip #Slicenshare #tournamentSponsor #campusScrims",
-      image: "/News/sharetrip.png",
+        "Get ready for the biggest gaming tournament of the year! Total prize pool of 15 Lakh BDT. Sign up starts 9th December, Tournament starts 25th December. Mobile, PC & Console platforms. Hybrid (Online & Offline). Unlimited Slots available!",
+      image: "/News/championship-banner.png",
       readMore: true,
     },
   ]
 
   const smallNews = [
     {
-      title: "This PMSL CSA Fall 2025 will take place at the renowned Pixoul Gaming in Abu Dhabi...",
-      image: "/News/pmsl.png",
+      title: "Slice N Share at Startup Showcase Event - Connecting with aspiring entrepreneurs and gamers",
+      image: "/News/showcase.jpg",
       category: "E-sports",
-      time: "12 hours ago",
+      time: "November 14",
+      link: "https://www.facebook.com/share/p/17MYC1BAZR",
     },
     {
-      title: "This PMSL CSA Fall 2025 will take place at the renowned Pixoul Gaming in Abu Dhabi...",
-      image: "/News/pmsl.png",
+      title: "YUNet Bangladesh Gaming & Esports Summit 2025 - Sign Up going on. Follow YUNet Esport Arena",
+      image: "/News/summit.jpg",
       category: "E-sports",
-      time: "12 hours ago",
+      time: "December 7",
+      link: "https://www.facebook.com/share/p/1MCDXG1dSU",
     },
     {
-      title: "This PMSL CSA Fall 2025 will take place at the renowned Pixoul Gaming in Abu Dhabi...",
-      image: "/News/pmsl.png",
+      title: "YUNet x Slice N Share Collaboration - Official merchandise for Bangladesh Gaming & Esports Summit 2025",
+      image: "/News/tshirt.jpg",
       category: "E-sports",
-      time: "12 hours ago",
+      time: "December 10",
+      link: "https://www.facebook.com/share/17PCCM3zGX",
     },
     {
-      title: "This PMSL CSA Fall 2025 will take place at the renowned Pixoul Gaming in Abu Dhabi...",
-      image: "/News/pmsl.png",
+      title: "Hamza Choudhury Featured in EA Sports FC 26 - Bangladesh Football Federation star joins the game",
+      image: "/News/hamza.jpg",
       category: "E-sports",
-      time: "12 hours ago",
+      time: "December 10",
+      link: "https://www.facebook.com/share/p/1BXMwXgzn9",
     },
   ]
+
+  const shareUrl = "https://www.facebook.com/share/16BTiKFQVe/"
+  const shareTitle = "Slice N Share Championship - 15 Lakh BDT Prize Pool!"
+
+  const handleShare = (platform) => {
+    const url = encodeURIComponent(shareUrl)
+    const text = encodeURIComponent(shareTitle)
+
+    const shareLinks = {
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+      twitter: `https://twitter.com/intent/tweet?url=${url}&text=${text}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
+      whatsapp: `https://wa.me/?text=${text}%20${url}`,
+    }
+
+    window.open(shareLinks[platform], "_blank", "width=600,height=400")
+  }
 
   return (
     <section id="news" className="py-20 px-4" style={{ backgroundColor: "#0a0a14" }}>
@@ -49,14 +72,17 @@ export default function LatestNews() {
           >
             Latest News
           </h2>
-          <a href="#" className="text-white hover:text-purple-400 transition flex items-center gap-2 text-sm md:text-lg">
-            Explore All <span>›</span>
+          <a
+            href="#"
+            className="text-white hover:text-purple-400 transition flex items-center gap-2 text-sm md:text-lg"
+          >
+            {/* Explore All <span>›</span> */}
           </a>
         </div>
 
         <div className="rounded-3xl p-[3px] bg-gradient-to-br from-[#A076CC] to-[#40057C] mb-12">
           <div
-            className="relative rounded-3xl overflow-hidden min-h-[400px] md:min-h-[1000px] flex items-end"
+            className="relative rounded-3xl overflow-hidden min-h-[400px] md:min-h-[600px] flex items-end"
             style={{
               backgroundImage: `url('${newsList[0].image}')`,
               backgroundSize: "cover",
@@ -84,25 +110,64 @@ export default function LatestNews() {
               <p className="text-gray-200 text-sm md:text-lg mb-2 md:mb-6 leading-relaxed line-clamp-3 md:line-clamp-none">
                 {newsList[0].description}
               </p>
-              <a
-                href="https://www.facebook.com/share/p/1TdPFRpfQ7/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block px-3 md:px-8 py-1 md:py-3 rounded-full font-bold text-sm text-white transition hover:scale-105"
-                style={{
-                  background: "linear-gradient(135deg, #8117EE 0%, #A076CC 100%)",
-                }}
-              >
-                Read More
-              </a>
+
+              <div className="flex items-center gap-4 flex-wrap">
+                <a
+                  href="https://www.facebook.com/share/16BTiKFQVe/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block px-3 md:px-8 py-1 md:py-3 rounded-full font-bold text-sm text-white transition hover:scale-105"
+                  style={{
+                    background: "linear-gradient(135deg, #8117EE 0%, #A076CC 100%)",
+                  }}
+                >
+                  Read More
+                </a>
+
+                {/* Social Share Icons */}
+                <div className="flex items-center gap-3">
+                  {/* <span className="text-gray-400 text-xs md:text-sm hidden md:block">Share:</span> */}
+                  <button
+                    onClick={() => handleShare("facebook")}
+                    className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/10 hover:bg-[#1877F2] backdrop-blur-sm flex items-center justify-center transition-all duration-300 hover:scale-110"
+                    aria-label="Share on Facebook"
+                  >
+                    <FaFacebookF className="text-white text-sm md:text-base" />
+                  </button>
+                  <button
+                    onClick={() => handleShare("twitter")}
+                    className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/10 hover:bg-[#1DA1F2] backdrop-blur-sm flex items-center justify-center transition-all duration-300 hover:scale-110"
+                    aria-label="Share on Twitter"
+                  >
+                    <FaTwitter className="text-white text-sm md:text-base" />
+                  </button>
+                  <button
+                    onClick={() => handleShare("linkedin")}
+                    className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/10 hover:bg-[#0A66C2] backdrop-blur-sm flex items-center justify-center transition-all duration-300 hover:scale-110"
+                    aria-label="Share on LinkedIn"
+                  >
+                    <FaLinkedin className="text-white text-sm md:text-base" />
+                  </button>
+                  <button
+                    onClick={() => handleShare("whatsapp")}
+                    className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/10 hover:bg-[#25D366] backdrop-blur-sm flex items-center justify-center transition-all duration-300 hover:scale-110"
+                    aria-label="Share on WhatsApp"
+                  >
+                    <FaWhatsapp className="text-white text-sm md:text-base" />
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {smallNews.map((news, idx) => (
-            <div
+            <a
               key={idx}
+              href={news.link}
+              target="_blank"
+              rel="noopener noreferrer"
               className="rounded-2xl overflow-hidden group cursor-pointer transform transition duration-300 hover:scale-[1.02]"
               style={{
                 border: "2px solid transparent",
@@ -148,7 +213,7 @@ export default function LatestNews() {
                   </h4>
                 </div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </div>

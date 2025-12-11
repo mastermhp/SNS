@@ -14,6 +14,7 @@ const tournamentData = [
     image: "/Hero/tournament-card.png",
     eventType: "Slicenshare Tournament",
     price: 399,
+    flowType: "tournament",
   },
   {
     id: 2,
@@ -22,6 +23,7 @@ const tournamentData = [
     image: "/Hero/tournament-card.png",
     eventType: "Slicenshare Scrims",
     price: 299,
+    flowType: "scrims",
   },
   {
     id: 3,
@@ -31,6 +33,7 @@ const tournamentData = [
     image: "/Hero/tournament-card.png",
     eventType: "Slicenshare Brand Deal",
     price: 499,
+    flowType: "brand-deal",
   },
 ]
 
@@ -269,6 +272,9 @@ export default function TournamentCarousel() {
         showPayment={true}
         eventType={selectedCard?.eventType}
         price={selectedCard?.price}
+        flowType={selectedCard?.flowType}
+        showBrandDealType={selectedCard?.flowType === "brand-deal"}
+        showScrimsDuration={selectedCard?.flowType === "scrims"}
       />
     </>
   )

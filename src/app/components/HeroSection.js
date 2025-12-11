@@ -76,10 +76,10 @@ export default function HeroSection() {
               className="px-8 py-3 rounded-full text-white transition flex items-center justify-center gap-1 md:gap-2"
               style={{
                 backgroundColor: "#8117EE",
-                
               }}
             >
-              <img src="/Logo/SNS_Logo.svg" alt="SNS Logo" className="w-18 md:w-28" /> <p className="text-[16px] md:text-[24px]">Network</p>
+              <img src="/Logo/SNS_Logo.svg" alt="SNS Logo" className="w-18 md:w-28" />{" "}
+              <p className="text-[16px] md:text-[24px]">Network</p>
             </button>
             {/* <button
             className="px-8 py-3 rounded-full font-bold text-white transition border-2"
@@ -95,7 +95,12 @@ export default function HeroSection() {
         </div>
       </section>
 
-      <SignupModal isOpen={signupModalOpen} onClose={() => setSignupModalOpen(false)} />
+      <SignupModal
+        isOpen={signupModalOpen}
+        onClose={() => setSignupModalOpen(false)}
+        showPlanSelection={true}
+        flowType="network"
+      />
     </>
   )
 }

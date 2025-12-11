@@ -2,6 +2,7 @@
 import Header from "./components/Header"
 import HeroSection from "./components/HeroSection"
 import TournamentCarousel from "./components/TournamentCarousel.js"
+import TrustedBrands from "./components/TrustedBrands"
 import RisingStarsCarousel from "./components/RisingStarsCarousel"
 import UpcomingEvents from "./components/UpcomingEvents"
 import LatestNews from "./components/LatestNews"
@@ -14,6 +15,7 @@ export default function Home() {
       <Header />
       <HeroSection />
       <TournamentCarousel />
+      <TrustedBrands />
       <RisingStarsCarousel />
       <UpcomingEvents />
       <LatestNews />
