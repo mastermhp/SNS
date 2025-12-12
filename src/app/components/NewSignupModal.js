@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AlertCircle, CheckCircle, X, Loader2, Tag } from "lucide-react";
+import { AlertCircle, CheckCircle, X, Loader2, Tag, Copy } from "lucide-react";
 import Image from "next/image";
 
 const games = [
@@ -155,6 +155,11 @@ export default function SignupModal({
   });
   const [qrImageError, setQrImageError] = useState(false);
   const [qrImageError2, setQrImageError2] = useState(false);
+
+  const handleCopy = (value) => {
+    navigator.clipboard.writeText(value);
+    console.log("Copied:", value); // replace with toast if you want
+  };
 
   useEffect(() => {
     if (!isOpen) {
@@ -1354,8 +1359,20 @@ export default function SignupModal({
                                   <p className="text-sm font-semibold text-purple-300 mt-3 text-center">
                                     Primary QR Code
                                   </p>
-                                  <p className="text-xs text-gray-400 text-center">
+                                  <p className="text-xs text-gray-400 text-center mb-1">
                                     Scan with bKash
+                                  </p>
+
+                                  <p className="text-xs text-gray-400 text-center mb-2">
+                                    OR
+                                  </p>
+                                  <p className="text-md font-bold flex items-center gap-2 text-gray-400 text-center cursor-pointer">
+                                    01710789995
+                                    <Copy
+                                      size={13}
+                                      onClick={() => handleCopy("01710789995")}
+                                      className="cursor-pointer"
+                                    />
                                   </p>
                                 </div>
 
@@ -1391,8 +1408,19 @@ export default function SignupModal({
                                   <p className="text-sm font-semibold text-pink-300 mt-3 text-center">
                                     Backup QR Code
                                   </p>
-                                  <p className="text-xs text-gray-400 text-center">
+                                  <p className="text-xs text-gray-400 text-center mb-1">
                                     Use if primary doesn&#39;t work
+                                  </p>
+                                  <p className="text-xs text-gray-400 text-center mb-2">
+                                    OR
+                                  </p>
+                                  <p className="text-md font-bold flex items-center gap-2 text-gray-400 text-center cursor-pointer">
+                                    01317267498
+                                    <Copy
+                                      size={13}
+                                      onClick={() => handleCopy("01317267498")}
+                                      className="cursor-pointer"
+                                    />
                                   </p>
                                 </div>
                               </div>
@@ -1691,9 +1719,20 @@ export default function SignupModal({
                               <p className="text-center text-sm font-semibold text-purple-300 mt-3">
                                 Primary QR Code
                               </p>
-                              <p className="text-center text-xs text-gray-400">
+                              <p className="text-center text-xs text-gray-400 mb-1">
                                 Scan with bKash
                               </p>
+                              <p className="text-xs text-gray-400 text-center mb-2">
+                                    OR
+                                  </p>
+                                  <p className="text-md font-bold flex items-center gap-2 text-gray-400 text-center cursor-pointer">
+                                    01710789995
+                                    <Copy
+                                      size={13}
+                                      onClick={() => handleCopy("01710789995")}
+                                      className="cursor-pointer"
+                                    />
+                                  </p>
                             </div>
 
                             {/* QR ITEM — 2 */}
@@ -1718,9 +1757,20 @@ export default function SignupModal({
                               <p className="text-center text-sm font-semibold text-pink-300 mt-3">
                                 Backup QR Code
                               </p>
-                              <p className="text-center text-xs text-gray-400">
+                              <p className="text-center text-xs text-gray-400 mb-1">
                                 Use if primary doesn’t work
                               </p>
+                              <p className="text-xs text-gray-400 text-center mb-2">
+                                    OR
+                                  </p>
+                                  <p className="text-md font-bold flex items-center gap-2 text-gray-400 text-center cursor-pointer">
+                                    01317267498
+                                    <Copy
+                                      size={13}
+                                      onClick={() => handleCopy("01317267498")}
+                                      className="cursor-pointer"
+                                    />
+                                  </p>
                             </div>
                           </div>
                         </div>
