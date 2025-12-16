@@ -253,7 +253,7 @@ export default function SignupModal({
     if (selectedScrimsDuration === "7days") return 199;
     if (selectedScrimsDuration === "15days") return 349;
     if (selectedScrimsDuration === "30days") return 499;
-    if (flowType.includes("tournament")) return 399;
+    if (flowType.includes("tournament")) return 499;
     return price;
   };
 
