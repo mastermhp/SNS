@@ -71,7 +71,7 @@ export default function HeroSection() {
 
           {/* Buttons */}
           <div className="flex items-center justify-center gap-4 mt-10">
-            <button
+            {/* <button
               onClick={() => setSignupModalOpen(true)}
               className="px-8 py-3 rounded-full text-white transition flex items-center justify-center gap-1 md:gap-2"
               style={{
@@ -80,7 +80,7 @@ export default function HeroSection() {
             >
               <img src="/Logo/SNS_Logo.svg" alt="SNS Logo" className="w-18 md:w-28" />{" "}
               <p className="text-[16px] md:text-[24px]">Network</p>
-            </button>
+            </button> */}
             {/* <button
             className="px-8 py-3 rounded-full font-bold text-white transition border-2"
             style={{

@@ -14,9 +14,9 @@ export default function Home() {
     <main className="min-h-screen" style={{ backgroundColor: "#0a0a14" }}>
       <Header />
       <HeroSection />
-      <TournamentCarousel />
+      {/* <TournamentCarousel /> */}
       <TrustedBrands />
-      <RisingStarsCarousel />
+      {/* <RisingStarsCarousel /> */}
       <UpcomingEvents />
       <LatestNews />
       <ContactSection />
