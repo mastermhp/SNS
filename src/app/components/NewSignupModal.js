@@ -1367,12 +1367,13 @@ export default function SignupModal({
                                     OR
                                   </p>
                                   <p className="text-md font-bold flex items-center gap-2 text-gray-400 text-center cursor-pointer">
-                                    01710789995
-                                    <Copy
+                                    {/* 01710789995 */}
+                                    Number coming soon
+                                    {/* <Copy
                                       size={13}
                                       onClick={() => handleCopy("01710789995")}
                                       className="cursor-pointer"
-                                    />
+                                    /> */}
                                   </p>
                                 </div>
 
@@ -1415,12 +1416,13 @@ export default function SignupModal({
                                     OR
                                   </p>
                                   <p className="text-md font-bold flex items-center gap-2 text-gray-400 text-center cursor-pointer">
-                                    01317267498
-                                    <Copy
+                                    {/* 01317267498 */}
+                                    Number Coming Soon
+                                    {/* <Copy
                                       size={13}
                                       onClick={() => handleCopy("01317267498")}
                                       className="cursor-pointer"
-                                    />
+                                    /> */}
                                   </p>
                                 </div>
                               </div>
@@ -1726,12 +1728,13 @@ export default function SignupModal({
                                     OR
                                   </p>
                                   <p className="text-md font-bold flex items-center gap-2 text-gray-400 text-center cursor-pointer">
-                                    01710789995
-                                    <Copy
+                                    {/* 01710789995 */}
+                                    Number Coming Soon
+                                    {/* <Copy
                                       size={13}
                                       onClick={() => handleCopy("01710789995")}
                                       className="cursor-pointer"
-                                    />
+                                    /> */}
                                   </p>
                             </div>
 
@@ -1764,12 +1767,13 @@ export default function SignupModal({
                                     OR
                                   </p>
                                   <p className="text-md font-bold flex items-center gap-2 text-gray-400 text-center cursor-pointer">
-                                    01317267498
-                                    <Copy
+                                    {/* 01317267498 */}
+                                    Number Coming Soon
+                                    {/* <Copy
                                       size={13}
                                       onClick={() => handleCopy("01317267498")}
                                       className="cursor-pointer"
-                                    />
+                                    /> */}
                                   </p>
                             </div>
                           </div>
