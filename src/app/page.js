@@ -14,13 +14,14 @@ export default function Home() {
     <main className="min-h-screen" style={{ backgroundColor: "#0a0a14" }}>
       <Header />
       <HeroSection />
+      {/* <ComingSoon/> */}
       {/* <TournamentCarousel /> */}
-      <TrustedBrands />
+      {/* <TrustedBrands /> */}
       {/* <RisingStarsCarousel /> */}
-      <UpcomingEvents />
-      <LatestNews />
-      <ContactSection />
-      <Footer />
+      {/* <UpcomingEvents /> */}
+      {/* <LatestNews /> */}
+      {/* <ContactSection /> */}
+      {/* <Footer /> */}
     </main>
   )
 }
