@@ -71,7 +71,7 @@ export default function HeroSection() {
 
           {/* Buttons */}
           <div className="flex items-center justify-center gap-4 mt-20 bg-black/30 px-6 py-4">
-          <h1 className="text-[40px] text-red-700">Maintanence Going On</h1>
+          <h1 className="text-[40px] text-red-700">Maintenance Going On</h1>
             {/* <button
               onClick={() => setSignupModalOpen(true)}
               className="px-8 py-3 rounded-full text-white transition flex items-center justify-center gap-1 md:gap-2"
