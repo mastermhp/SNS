@@ -196,7 +196,7 @@ export default function SignupModal({
     e.preventDefault();
     showNotification(
       "error",
-      "Please type the Transaction ID manually. Copy-paste is not allowed for confirmation."
+      "Please type the Transaction ID manually. Copy-paste is not allowed for confirmation.",
     );
   };
 
@@ -272,7 +272,7 @@ export default function SignupModal({
     try {
       const eventType = getEventTypeForPromo();
       let url = `https://api.slicenshare.com/api/v2/public/events/promo-code/validate?code=${encodeURIComponent(
-        promoCode.trim()
+        promoCode.trim(),
       )}`;
       if (eventType) {
         url += `&eventType=${encodeURIComponent(eventType)}`;
@@ -305,13 +305,13 @@ export default function SignupModal({
             data.data.discountType === "percentage"
               ? data.data.discountValue + "%"
               : data.data.discountType === "free"
-              ? "100%"
-              : "৳" + data.data.discountValue
-          } off!`
+                ? "100%"
+                : "৳" + data.data.discountValue
+          } off!`,
         );
       } else {
         setPromoCodeError(
-          data.data?.error || data.message || "Invalid promo code"
+          data.data?.error || data.message || "Invalid promo code",
         );
         setPromoCodeData(null);
         setDiscountedPrice(null);
@@ -340,7 +340,7 @@ export default function SignupModal({
       if (formData.trnxId !== formData.trnxIdConfirm) {
         showNotification(
           "error",
-          "Transaction IDs do not match. Please enter the same Transaction ID in both fields."
+          "Transaction IDs do not match. Please enter the same Transaction ID in both fields.",
         );
         return;
       }
@@ -383,7 +383,7 @@ export default function SignupModal({
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
-          }
+          },
         );
 
         const responseText = await res.text();
@@ -400,7 +400,7 @@ export default function SignupModal({
           showNotification(
             "success",
             responseData.message ||
-              "Subscription successful! Please check your email to verify."
+              "Subscription successful! Please check your email to verify.",
           );
         } else {
           const errorMsg = responseData.errors
@@ -451,7 +451,7 @@ export default function SignupModal({
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
-          }
+          },
         );
 
         const responseText = await res.text();
@@ -507,7 +507,7 @@ export default function SignupModal({
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
-          }
+          },
         );
 
         const responseText = await res.text();
@@ -521,14 +521,14 @@ export default function SignupModal({
         console.log(
           "[v0] Default newsletter API response:",
           res.status,
-          responseData
+          responseData,
         );
 
         if (res.ok) {
           showNotification(
             "success",
             responseData.message ||
-              "Thanks for subscribing! We'll keep you updated."
+              "Thanks for subscribing! We'll keep you updated.",
           );
         } else {
           const errorMsg = responseData.errors
@@ -541,7 +541,7 @@ export default function SignupModal({
       console.error("[v0] Signup error:", error);
       showNotification(
         "error",
-        "Network error. Please check your connection and try again."
+        "Network error. Please check your connection and try again.",
       );
     } finally {
       setIsSubmitting(false);
@@ -606,7 +606,7 @@ export default function SignupModal({
             </p>
 
             <div className="grid md:grid-cols-1 gap-6">
-              <motion.div
+              {/* <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="cursor-pointer rounded-xl p-6 border-2 border-gray-700 hover:border-green-500 transition-all bg-gradient-to-br from-gray-800 to-gray-900"
@@ -629,8 +629,8 @@ export default function SignupModal({
                     <li>✓ Jobs & Income Insights</li>
                   </ul>
                 </div>
-              </motion.div>
-
+              </motion.div> */}
+              <ComingSoon />
               {/* <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -702,7 +702,7 @@ export default function SignupModal({
             <p className="text-gray-400 text-center mb-8">
               Choose between Solo or Team/Organization sponsorship
             </p>
-            <ComingSoon/>
+            <ComingSoon />
 
             {/* <div className="grid md:grid-cols-2 gap-6">
               <motion.div
@@ -835,7 +835,7 @@ export default function SignupModal({
                 কয়েক হাজার টাকা এবং গেমিং , জার্সি সহ অনেক কিছু গিফট থাকবে।
               </p>
             </div>
-            <ComingSoon/>
+            <ComingSoon />
 
             {/* <div className="grid md:grid-cols-3 gap-6">
               <motion.div
@@ -944,7 +944,7 @@ export default function SignupModal({
       } else {
         showNotification(
           "error",
-          `You can select maximum ${maxGames} game${maxGames > 1 ? "s" : ""}.`
+          `You can select maximum ${maxGames} game${maxGames > 1 ? "s" : ""}.`,
         );
       }
     }
@@ -1059,7 +1059,7 @@ export default function SignupModal({
           <div className="p-6 md:p-8">
             {flowType.includes("tournament") && selectedGames.length === 0 && (
               <>
-              <ComingSoon/>
+                <ComingSoon />
                 {/* Championship Banner */}
                 {/* <div className="mb-8 rounded-xl overflow-hidden">
                   <img
@@ -1191,7 +1191,7 @@ export default function SignupModal({
                           type="button"
                           onClick={() =>
                             setSelectedGames(
-                              selectedGames.filter((g) => g.id !== game.id)
+                              selectedGames.filter((g) => g.id !== game.id),
                             )
                           }
                           className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600"
@@ -1570,8 +1570,8 @@ export default function SignupModal({
                                 {promoCodeData.discountType === "percentage"
                                   ? `${promoCodeData.discountValue}% off`
                                   : promoCodeData.discountType === "free"
-                                  ? "FREE"
-                                  : `৳${promoCodeData.discountValue} off`}
+                                    ? "FREE"
+                                    : `৳${promoCodeData.discountValue} off`}
                                 )
                               </span>
                             </div>
@@ -1729,17 +1729,17 @@ export default function SignupModal({
                                 Scan with bKash
                               </p>
                               <p className="text-xs text-gray-400 text-center mb-2">
-                                    OR
-                                  </p>
-                                  <p className="text-md font-bold flex items-center gap-2 text-gray-400 text-center cursor-pointer">
-                                    {/* 01710789995 */}
-                                    Number Coming Soon
-                                    {/* <Copy
+                                OR
+                              </p>
+                              <p className="text-md font-bold flex items-center gap-2 text-gray-400 text-center cursor-pointer">
+                                {/* 01710789995 */}
+                                Number Coming Soon
+                                {/* <Copy
                                       size={13}
                                       onClick={() => handleCopy("01710789995")}
                                       className="cursor-pointer"
                                     /> */}
-                                  </p>
+                              </p>
                             </div>
 
                             {/* QR ITEM — 2 */}
@@ -1768,17 +1768,17 @@ export default function SignupModal({
                                 Use if primary doesn’t work
                               </p>
                               <p className="text-xs text-gray-400 text-center mb-2">
-                                    OR
-                                  </p>
-                                  <p className="text-md font-bold flex items-center gap-2 text-gray-400 text-center cursor-pointer">
-                                    {/* 01317267498 */}
-                                    Number Coming Soon
-                                    {/* <Copy
+                                OR
+                              </p>
+                              <p className="text-md font-bold flex items-center gap-2 text-gray-400 text-center cursor-pointer">
+                                {/* 01317267498 */}
+                                Number Coming Soon
+                                {/* <Copy
                                       size={13}
                                       onClick={() => handleCopy("01317267498")}
                                       className="cursor-pointer"
                                     /> */}
-                                  </p>
+                              </p>
                             </div>
                           </div>
                         </div>
