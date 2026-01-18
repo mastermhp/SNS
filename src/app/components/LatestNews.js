@@ -5,10 +5,10 @@ import { FaFacebookF, FaTwitter, FaLinkedin, FaWhatsapp } from "react-icons/fa"
 export default function LatestNews() {
   const newsList = [
     {
-      title: "Slice N Share Championship",
+      title: "গেম খেলা হতে পারে কারো পেশা",
       description:
-        "Get ready for the biggest gaming tournament of the year! Total prize pool of 15 Lakh BDT. Sign up starts 9th December, Tournament starts 25th December. Mobile, PC & Console platforms. Hybrid (Online & Offline). Unlimited Slots available!",
-      image: "/News/championship-banner.png",
+        "গেম তৈরি ও বাজারজাত করে দেশের অর্থনীতিতেও বড় অবদান রাখতে পারে গেম নির্মাতা প্রতিষ্ঠান। পেশাদার গেমারদের জন্য প্ল্যাটফর্ম তৈরি ও গেম তৈরির কাজ করছেন কাজী হাসিব ও তাঁর দল। তাঁদের দুই প্রতিষ্ঠানের সম্পর্কে লিখেছেন আশিক উল বারাত... ",
+      image: "/News/bignews.jpg",
       readMore: true,
     },
   ]
@@ -29,22 +29,22 @@ export default function LatestNews() {
       link: "https://www.facebook.com/share/p/1MCDXG1dSU",
     },
     {
-      title: "YUNet x Slice N Share Collaboration - Official merchandise for Bangladesh Gaming & Esports Summit 2025",
-      image: "/News/tshirt.jpg",
+      title: "Digital Entrepreneurship and Innovation Ecosystem Development (DEIED) Project Office has organized a Dialogue Session to introduce the Startup and Scaleup Program (Accelerating Bangladesh) and the University Innovation Hub Program to senior public-sector leadership. ",
+      image: "/News/news3.jpg",
       category: "E-sports",
       time: "December 10",
-      link: "https://www.facebook.com/share/17PCCM3zGX",
+      link: "https://www.facebook.com/share/p/1TdTB2uQvS/?mibextid=wwXIfr",
     },
     {
-      title: "Hamza Choudhury Featured in EA Sports FC 26 - Bangladesh Football Federation star joins the game",
-      image: "/News/hamza.jpg",
+      title: "Dedicating to my Core Teammates & gamers ❤️. Tournament sign up going on at our website. Don’t forget to sign up. Slice N Share at Airtel Buzz Presents Bangladesh Gaming & Esports Summit 2025 ",
+      image: "/News/news4.jpg",
       category: "E-sports",
       time: "December 10",
-      link: "https://www.facebook.com/share/p/1BXMwXgzn9",
+      link: "https://www.facebook.com/share/p/1BthbTQrsq/?mibextid=wwXIfr",
     },
   ]
 
-  const shareUrl = "https://www.facebook.com/share/16BTiKFQVe/"
+  const shareUrl = "https://www.facebook.com/share/p/16yMhZvtR9/?mibextid=wwXIfr"
   const shareTitle = "Slice N Share Championship - 15 Lakh BDT Prize Pool!"
 
   const handleShare = (platform) => {
@@ -113,7 +113,7 @@ export default function LatestNews() {
 
               <div className="flex items-center gap-4 flex-wrap">
                 <a
-                  href="https://www.facebook.com/share/16BTiKFQVe/"
+                  href="https://www.facebook.com/share/p/16yMhZvtR9/?mibextid=wwXIfr"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-block px-3 md:px-8 py-1 md:py-3 rounded-full font-bold text-sm text-white transition hover:scale-105"

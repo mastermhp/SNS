@@ -20,16 +20,16 @@ export default function UpcomingEvents() {
       image: "/Event/coming-to-nsu.png",
       status: "finished",
     },
-    {
-      title: "Gaming & Esports Summit 2025",
-      location: "𝐈𝐃𝐄𝐁 𝐀𝐮𝐝𝐢𝐭𝐨𝐫𝐢𝐮𝐦, 𝐕𝐈𝐏 𝐑𝐨𝐚𝐝, 𝐃𝐡𝐚𝐤𝐚",
-      time: "9 AM - 8 PM",
-      date: "13",
-      month: "NOV",
-      facebookLink: "https://www.facebook.com/share/p/1GSkzoYVP7/",
-      image: "/Event/ideb.jpg",
-      status: "upcoming",
-    },
+    // {
+    //   title: "Gaming & Esports Summit 2025",
+    //   location: "𝐈𝐃𝐄𝐁 𝐀𝐮𝐝𝐢𝐭𝐨𝐫𝐢𝐮𝐦, 𝐕𝐈𝐏 𝐑𝐨𝐚𝐝, 𝐃𝐡𝐚𝐤𝐚",
+    //   time: "9 AM - 8 PM",
+    //   date: "13",
+    //   month: "NOV",
+    //   facebookLink: "https://www.facebook.com/share/p/1GSkzoYVP7/",
+    //   image: "/Event/ideb.jpg",
+    //   status: "upcoming",
+    // },
   ]
 
   const filteredEvents = events.filter((event) => event.status === eventFilter)

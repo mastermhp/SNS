@@ -8,6 +8,7 @@ import UpcomingEvents from "./components/UpcomingEvents"
 import LatestNews from "./components/LatestNews"
 import ContactSection from "./components/ContactSection"
 import Footer from "./components/Footer"
+import ComingSoon from "./components/ComingSoon"
 
 export default function Home() {
   return (
@@ -15,13 +16,13 @@ export default function Home() {
       <Header />
       <HeroSection />
       {/* <ComingSoon/> */}
-      {/* <TournamentCarousel /> */}
-      {/* <TrustedBrands /> */}
+      <TournamentCarousel />
+      <TrustedBrands />
       {/* <RisingStarsCarousel /> */}
-      {/* <UpcomingEvents /> */}
-      {/* <LatestNews /> */}
-      {/* <ContactSection /> */}
-      {/* <Footer /> */}
+      <UpcomingEvents />
+      <LatestNews />
+      <ContactSection />
+      <Footer />
     </main>
   )
 }

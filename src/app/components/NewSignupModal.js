@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle, CheckCircle, X, Loader2, Tag, Copy } from "lucide-react";
 import Image from "next/image";
+import ComingSoon from "./ComingSoon";
 
 const games = [
   { id: "apex", name: "Apex Legends", image: "/games/apex.png" },
@@ -604,7 +605,7 @@ export default function SignupModal({
               Choose between Free and Premium access to Slice N Share Network
             </p>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-1 gap-6">
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -630,7 +631,7 @@ export default function SignupModal({
                 </div>
               </motion.div>
 
-              <motion.div
+              {/* <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="cursor-pointer rounded-xl p-6 border-2 border-gray-700 hover:border-purple-500 transition-all bg-gradient-to-br from-purple-900/30 to-gray-900"
@@ -656,7 +657,7 @@ export default function SignupModal({
                     <li>✓ Exclusive Meetup Opportunities</li>
                   </ul>
                 </div>
-              </motion.div>
+              </motion.div> */}
             </div>
           </motion.div>
         </motion.div>
@@ -701,8 +702,9 @@ export default function SignupModal({
             <p className="text-gray-400 text-center mb-8">
               Choose between Solo or Team/Organization sponsorship
             </p>
+            <ComingSoon/>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            {/* <div className="grid md:grid-cols-2 gap-6">
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -759,7 +761,7 @@ export default function SignupModal({
                   </ul>
                 </div>
               </motion.div>
-            </div>
+            </div> */}
           </motion.div>
         </motion.div>
       </AnimatePresence>
@@ -833,8 +835,9 @@ export default function SignupModal({
                 কয়েক হাজার টাকা এবং গেমিং , জার্সি সহ অনেক কিছু গিফট থাকবে।
               </p>
             </div>
+            <ComingSoon/>
 
-            <div className="grid md:grid-cols-3 gap-6">
+            {/* <div className="grid md:grid-cols-3 gap-6">
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -923,7 +926,7 @@ export default function SignupModal({
                   </ul>
                 </div>
               </motion.div>
-            </div>
+            </div> */}
           </motion.div>
         </motion.div>
       </AnimatePresence>
@@ -1056,14 +1059,15 @@ export default function SignupModal({
           <div className="p-6 md:p-8">
             {flowType.includes("tournament") && selectedGames.length === 0 && (
               <>
+              <ComingSoon/>
                 {/* Championship Banner */}
-                <div className="mb-8 rounded-xl overflow-hidden">
+                {/* <div className="mb-8 rounded-xl overflow-hidden">
                   <img
                     src="/News/championship-banner.png"
                     alt="Slice N Share Championship"
                     className="w-full h-auto"
                   />
-                </div>
+                </div> */}
 
                 {/* Why Monthly Subscription - Bilingual */}
                 <div className="bg-gradient-to-r from-purple-900/40 to-pink-900/40 rounded-lg p-6 mb-6 border border-purple-500/30">
@@ -1093,7 +1097,7 @@ export default function SignupModal({
                 </div>
 
                 {/* Prize Pool Section */}
-                <div className="bg-gradient-to-r from-green-900/40 to-blue-900/40 rounded-lg p-6 mb-8 border border-green-500/30">
+                {/* <div className="bg-gradient-to-r from-green-900/40 to-blue-900/40 rounded-lg p-6 mb-8 border border-green-500/30">
                   <div className="text-center">
                     <h3 className="text-2xl font-bold text-green-400 mb-2">
                       Total 1 Lacs+ BDT Prizepool Monthly & MVP Gift
@@ -1102,11 +1106,11 @@ export default function SignupModal({
                       In total 15 lacs on next 12 months
                     </p>
                   </div>
-                </div>
+                </div> */}
               </>
             )}
 
-            {selectedGames.length === 0 && (
+            {/* {selectedGames.length === 0 && (
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold mb-2 text-center bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
                   Select Your Game{maxGames > 1 ? "s" : ""}
@@ -1168,7 +1172,7 @@ export default function SignupModal({
                   </div>
                 )}
               </div>
-            )}
+            )} */}
 
             {selectedGames.length > 0 && (
               <form onSubmit={handleSubmit} className="space-y-4">
