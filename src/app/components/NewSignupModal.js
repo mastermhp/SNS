@@ -803,8 +803,8 @@ export default function SignupModal({
               Select Scrims Duration
             </h2>
 
-            <div className="bg-gradient-to-r from-purple-900/40 to-pink-900/40 rounded-lg p-6 mb-8 border border-purple-500/30">
-              <h3 className="text-xl font-bold text-white mb-3">
+            {/* <div className="bg-gradient-to-r from-purple-900/40 to-pink-900/40 rounded-lg p-6 mb-8 border border-purple-500/30"> */}
+              {/* <h3 className="text-xl font-bold text-white mb-3">
                 Why Monthly Subscription?
               </h3>
               <p className="text-gray-300 text-sm leading-relaxed">
@@ -814,10 +814,10 @@ export default function SignupModal({
                 performance analytics, and continuous improvement tracking. This
                 commitment helps build better teams and enhances competitive
                 readiness month after month.
-              </p>
+              </p> */}
 
               {/* Bangla Translation */}
-              <h3 className="text-xl font-bold text-white mb-4 mt-6">
+              {/* <h3 className="text-xl font-bold text-white mb-4 mt-6">
                 স্ক্রিমের জন্য মাসিক সাবস্ক্রিপশন কেন?
               </h3>
               <p className="text-gray-300 text-sm leading-relaxed">
@@ -833,8 +833,8 @@ export default function SignupModal({
               <p className="font-bold">
                 বিঃ দ্রঃ প্রতি মাসের প্রাইজপুল ম্যাচ শুরুর আগে জানানো হয়। যেখানে
                 কয়েক হাজার টাকা এবং গেমিং , জার্সি সহ অনেক কিছু গিফট থাকবে।
-              </p>
-            </div>
+              </p> */}
+            {/* </div> */}
             <ComingSoon />
 
             {/* <div className="grid md:grid-cols-3 gap-6">
@@ -1070,8 +1070,8 @@ export default function SignupModal({
                 </div> */}
 
                 {/* Why Monthly Subscription - Bilingual */}
-                <div className="bg-gradient-to-r from-purple-900/40 to-pink-900/40 rounded-lg p-6 mb-6 border border-purple-500/30">
-                  <h3 className="text-xl font-bold text-white mb-4">
+                {/* <div className="bg-gradient-to-r from-purple-900/40 to-pink-900/40 rounded-lg p-6 mb-6 border border-purple-500/30"> */}
+                  {/* <h3 className="text-xl font-bold text-white mb-4">
                     Why Monthly Subscription for Tournaments?
                   </h3>
                   <p className="text-gray-300 text-sm leading-relaxed mb-4">
@@ -1080,10 +1080,10 @@ export default function SignupModal({
                     registration, exclusive rewards, and consistent competitive
                     experience. Build your ranking, improve your skills, and
                     compete regularly with the best players every month.
-                  </p>
+                  </p> */}
 
                   {/* Bangla Translation */}
-                  <h3 className="text-xl font-bold text-white mb-4 mt-6">
+                  {/* <h3 className="text-xl font-bold text-white mb-4 mt-6">
                     টুর্নামেন্টের জন্য মাসিক সাবস্ক্রিপশন কেন?
                   </h3>
                   <p className="text-gray-300 text-sm leading-relaxed">
@@ -1093,8 +1093,8 @@ export default function SignupModal({
                     সীমাহীন অ্যাক্সেস দেয়। আপনার র‍্যাঙ্কিং তৈরি করুন, আপনার
                     দক্ষতা উন্নত করুন এবং প্রতি মাসে সেরা খেলোয়াড়দের সাথে
                     নিয়মিত প্রতিদ্বন্দ্বিতা করুন।
-                  </p>
-                </div>
+                  </p> */}
+                {/* </div> */}
 
                 {/* Prize Pool Section */}
                 {/* <div className="bg-gradient-to-r from-green-900/40 to-blue-900/40 rounded-lg p-6 mb-8 border border-green-500/30">
