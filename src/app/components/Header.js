@@ -1,14 +1,20 @@
-"use client"
-import { motion, AnimatePresence } from "framer-motion"
-import { useState, useEffect } from "react"
-import { Menu, X } from "lucide-react"
-import Link from "next/link"
-import SignupModal from "./NewSignupModal"
+'use client'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { Menu, X, User, LogOut } from 'lucide-react'
+import Link from 'next/link'
+import SignupModal from './NewSignupModal'
+import AuthModal from './AuthModal'
+import ProfileSettings from './ProfileSettings'
+import { useAuth } from '../../hooks/useAuth'
 
 export default function Header() {
+  const { user, isAuthenticated } = useAuth()
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [signupModalOpen, setSignupModalOpen] = useState(false)
+  const [authModalOpen, setAuthModalOpen] = useState(false)
+  const [profileSettingsOpen, setProfileSettingsOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,17 +62,26 @@ export default function Header() {
               Contact Us
             </Link>
           </nav>
-{/* 
-          <button
-            onClick={() => setSignupModalOpen(true)}
-            className="hidden sm:block px-4 sm:px-5 md:px-6 py-1.5 sm:py-2 rounded-full font-bold text-white transition hover:opacity-90 flex-shrink-0"
-            style={{
-              backgroundColor: "#8117EE",
-              fontSize: "12px",
-            }}
-          >
-            Sign Up
-          </button> */}
+
+          {/* Auth Buttons */}
+          <div className="hidden sm:flex items-center gap-3 flex-shrink-0">
+            {isAuthenticated && user ? (
+              <button
+                onClick={() => setProfileSettingsOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition"
+              >
+                <User size={16} />
+                <span className="max-w-[100px] truncate">{user.fullName || user.email}</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => setAuthModalOpen(true)}
+                className="px-6 py-2 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white rounded-lg font-semibold transition"
+              >
+                Login
+              </button>
+            )}
+          </div>
 
           <button
             className="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg transition"
@@ -124,25 +139,39 @@ export default function Header() {
                 Contact Us
               </Link>
 
-              {/* <button
-                onClick={() => {
-                  setSignupModalOpen(true)
-                  setMobileMenuOpen(false)
-                }}
-                className="mt-4 w-full px-6 py-3 rounded-full font-bold text-white transition hover:opacity-90"
-                style={{
-                  backgroundColor: "#8117EE",
-                  fontSize: "14px",
-                }}
-              >
-                Sign Up
-              </button> */}
+              {/* Mobile Auth Button */}
+              {!isAuthenticated && (
+                <button
+                  onClick={() => {
+                    setAuthModalOpen(true)
+                    setMobileMenuOpen(false)
+                  }}
+                  className="mt-4 w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-500 rounded-lg font-semibold text-white transition"
+                >
+                  Login
+                </button>
+              )}
+
+              {isAuthenticated && user && (
+                <button
+                  onClick={() => {
+                    setProfileSettingsOpen(true)
+                    setMobileMenuOpen(false)
+                  }}
+                  className="mt-4 w-full flex items-center justify-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition"
+                >
+                  <User size={18} />
+                  {user.fullName || user.email}
+                </button>
+              )}
             </nav>
           </motion.div>
         )}
       </AnimatePresence>
 
       <SignupModal isOpen={signupModalOpen} onClose={() => setSignupModalOpen(false)} />
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+      <ProfileSettings isOpen={profileSettingsOpen} onClose={() => setProfileSettingsOpen(false)} />
     </>
   )
 }

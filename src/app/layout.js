@@ -1,10 +1,7 @@
+'use client'
 import "./globals.css"
 import Script from "next/script"
-
-export const metadata = {
-  title: "Slice N Share - Empowering Esports Talent",
-  description: "Join us early — as a user, a believer, or a backer.",
-}
+import { AuthProvider } from "../context/AuthContext"
 
 export default function RootLayout({ children }) {
   return (
@@ -29,7 +26,9 @@ export default function RootLayout({ children }) {
         </Script>
       </head>
       <body className="bg-black text-white overflow-x-hidden" style={{ fontFamily: "General Sans, sans-serif" }}>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   )
