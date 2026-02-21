@@ -1,19 +1,22 @@
 'use client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
-import { Menu, X, User, LogOut } from 'lucide-react'
+import { Menu, X, User } from 'lucide-react'
 import Link from 'next/link'
-import SignupModal from './NewSignupModal'
-import AuthModal from './AuthModal'
+import RoleSelectModal from './AuthModals/RoleSelectModal'
+import LoginModal from './AuthModals/LoginModal'
+import SignupModal from './AuthModals/SignupModal'
 import ProfileSettings from './ProfileSettings'
-import { useAuth } from '../../hooks/useAuth'
+import { useAuth } from '@/app/context/AuthContext'
 
 export default function Header() {
   const { user, isAuthenticated } = useAuth()
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
   const [signupModalOpen, setSignupModalOpen] = useState(false)
-  const [authModalOpen, setAuthModalOpen] = useState(false)
+  const [roleSelectOpen, setRoleSelectOpen] = useState(false)
+  const [selectedUserType, setSelectedUserType] = useState('player')
   const [profileSettingsOpen, setProfileSettingsOpen] = useState(false)
 
   useEffect(() => {
@@ -26,6 +29,20 @@ export default function Header() {
 
   const handleLinkClick = () => {
     setMobileMenuOpen(false)
+  }
+
+  const handleLoginClick = () => {
+    setLoginModalOpen(true)
+  }
+
+  const handleSignupClick = () => {
+    setRoleSelectOpen(true)
+  }
+
+  const handleRoleSelect = (role) => {
+    setSelectedUserType(role)
+    setRoleSelectOpen(false)
+    setSignupModalOpen(true)
   }
 
   return (
@@ -70,16 +87,28 @@ export default function Header() {
                 onClick={() => setProfileSettingsOpen(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition"
               >
-                <User size={16} />
+                {user.avatar ? (
+                  <img src={user.avatar} alt="" className="w-6 h-6 rounded-full object-cover" />
+                ) : (
+                  <User size={16} />
+                )}
                 <span className="max-w-[100px] truncate">{user.fullName || user.email}</span>
               </button>
             ) : (
-              <button
-                onClick={() => setAuthModalOpen(true)}
-                className="px-6 py-2 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white rounded-lg font-semibold transition"
-              >
-                Login
-              </button>
+              <>
+                <button
+                  onClick={handleLoginClick}
+                  className="px-6 py-2 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white rounded-lg font-semibold transition"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={handleSignupClick}
+                  className="px-6 py-2 border-2 border-purple-500/50 hover:border-purple-400 text-purple-300 hover:text-white rounded-lg font-semibold transition"
+                >
+                  Sign Up
+                </button>
+              </>
             )}
           </div>
 
@@ -103,64 +132,50 @@ export default function Header() {
             transition={{ duration: 0.2 }}
           >
             <nav className="flex flex-col p-4 sm:p-6">
-              <Link
-                href="#home"
-                className="text-white text-base font-medium py-3 border-b border-purple-500/10 hover:text-purple-400 transition"
-                onClick={handleLinkClick}
-              >
+              <Link href="#home" className="text-white text-base font-medium py-3 border-b border-purple-500/10 hover:text-purple-400 transition" onClick={handleLinkClick}>
                 Home
               </Link>
-              <Link
-                href="#tournament"
-                className="text-white text-base font-medium py-3 border-b border-purple-500/10 hover:text-purple-400 transition"
-                onClick={handleLinkClick}
-              >
+              <Link href="#tournament" className="text-white text-base font-medium py-3 border-b border-purple-500/10 hover:text-purple-400 transition" onClick={handleLinkClick}>
                 Tournament
               </Link>
-              <Link
-                href="#events"
-                className="text-white text-base font-medium py-3 border-b border-purple-500/10 hover:text-purple-400 transition"
-                onClick={handleLinkClick}
-              >
+              <Link href="#events" className="text-white text-base font-medium py-3 border-b border-purple-500/10 hover:text-purple-400 transition" onClick={handleLinkClick}>
                 Events
               </Link>
-              <Link
-                href="#news"
-                className="text-white text-base font-medium py-3 border-b border-purple-500/10 hover:text-purple-400 transition"
-                onClick={handleLinkClick}
-              >
+              <Link href="#news" className="text-white text-base font-medium py-3 border-b border-purple-500/10 hover:text-purple-400 transition" onClick={handleLinkClick}>
                 News
               </Link>
-              <Link
-                href="#contact"
-                className="text-white text-base font-medium py-3 border-b border-purple-500/10 hover:text-purple-400 transition"
-                onClick={handleLinkClick}
-              >
+              <Link href="#contact" className="text-white text-base font-medium py-3 border-b border-purple-500/10 hover:text-purple-400 transition" onClick={handleLinkClick}>
                 Contact Us
               </Link>
 
-              {/* Mobile Auth Button */}
+              {/* Mobile Auth Buttons */}
               {!isAuthenticated && (
-                <button
-                  onClick={() => {
-                    setAuthModalOpen(true)
-                    setMobileMenuOpen(false)
-                  }}
-                  className="mt-4 w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-500 rounded-lg font-semibold text-white transition"
-                >
-                  Login
-                </button>
+                <div className="flex flex-col gap-3 mt-4">
+                  <button
+                    onClick={() => { handleLoginClick(); setMobileMenuOpen(false) }}
+                    className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-500 rounded-lg font-semibold text-white transition"
+                  >
+                    Login
+                  </button>
+                  <button
+                    onClick={() => { handleSignupClick(); setMobileMenuOpen(false) }}
+                    className="w-full px-6 py-3 border-2 border-purple-500/50 text-purple-300 rounded-lg font-semibold transition"
+                  >
+                    Sign Up
+                  </button>
+                </div>
               )}
 
               {isAuthenticated && user && (
                 <button
-                  onClick={() => {
-                    setProfileSettingsOpen(true)
-                    setMobileMenuOpen(false)
-                  }}
+                  onClick={() => { setProfileSettingsOpen(true); setMobileMenuOpen(false) }}
                   className="mt-4 w-full flex items-center justify-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition"
                 >
-                  <User size={18} />
+                  {user.avatar ? (
+                    <img src={user.avatar} alt="" className="w-5 h-5 rounded-full object-cover" />
+                  ) : (
+                    <User size={18} />
+                  )}
                   {user.fullName || user.email}
                 </button>
               )}
@@ -169,8 +184,23 @@ export default function Header() {
         )}
       </AnimatePresence>
 
-      <SignupModal isOpen={signupModalOpen} onClose={() => setSignupModalOpen(false)} />
-      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+      {/* Auth Modals */}
+      <RoleSelectModal
+        isOpen={roleSelectOpen}
+        onClose={() => setRoleSelectOpen(false)}
+        onSelectRole={handleRoleSelect}
+      />
+      <LoginModal
+        isOpen={loginModalOpen}
+        onClose={() => setLoginModalOpen(false)}
+        onSwitchToSignup={() => { setLoginModalOpen(false); setRoleSelectOpen(true) }}
+      />
+      <SignupModal
+        isOpen={signupModalOpen}
+        onClose={() => setSignupModalOpen(false)}
+        userType={selectedUserType}
+        onSwitchToLogin={() => { setSignupModalOpen(false); setLoginModalOpen(true) }}
+      />
       <ProfileSettings isOpen={profileSettingsOpen} onClose={() => setProfileSettingsOpen(false)} />
     </>
   )

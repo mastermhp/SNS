@@ -1,8 +1,8 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { useAuth } from '@/context/AuthContext'
+import { useAuth } from '@/app/context/AuthContext'
 import { useRouter } from 'next/navigation'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -16,127 +16,141 @@ import Availability from '../components/ProfileComponents/Availability'
 import StatsVisualizer from '../components/ProfileComponents/StatsVisualizer'
 import AchievementsSection from '../components/ProfileComponents/AchievementsSection'
 import StreamingContent from '../components/ProfileComponents/StreamingContent'
+import EditProfileModal from '../components/ProfileComponents/EditProfileModal'
 
 export default function ProfilePage() {
-  const { user, isAuthenticated } = useAuth()
+  const { user, isAuthenticated, loading } = useAuth()
   const router = useRouter()
+  const [gamingProfile, setGamingProfile] = useState(null)
+  const [editProfileOpen, setEditProfileOpen] = useState(false)
 
-  React.useEffect(() => {
-    if (!isAuthenticated) {
+  // Load gaming profile from sessionStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = sessionStorage.getItem('sns_gaming_profile')
+        if (stored) {
+          setGamingProfile(JSON.parse(stored))
+        }
+      } catch {
+        // ignore
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
       router.push('/')
     }
-  }, [isAuthenticated, router])
+  }, [isAuthenticated, loading, router])
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-[#060608] flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="text-center"
         >
           <div className="inline-block">
-            <div className="w-12 h-12 border-4 border-purple-500 border-t-pink-500 rounded-full animate-spin" />
+            <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
           </div>
-          <p className="mt-4 text-gray-400">Loading profile...</p>
+          <p className="mt-4 text-gray-500 text-sm">Loading profile...</p>
         </motion.div>
       </div>
     )
   }
 
+  // Merge API user data with gaming profile
+  const mergedUser = {
+    ...user,
+    username: gamingProfile?.username || user.fullName || user.email?.split('@')[0] || 'Player',
+    bio: gamingProfile?.bio || '',
+    game: gamingProfile?.game || '',
+    role: gamingProfile?.role || '',
+    region: gamingProfile?.region || '',
+    rank: gamingProfile?.rank || '',
+    discord: gamingProfile?.discord || '',
+    games: gamingProfile?.game ? [gamingProfile.game] : [],
+    profileImagePreview: gamingProfile?.profileImagePreview || null,
+    bannerImagePreview: gamingProfile?.bannerImagePreview || null,
+  }
+
   return (
-    <div className="min-h-screen bg-black flex flex-col">
-      {/* Header */}
+    <div className="min-h-screen bg-[#060608] flex flex-col">
       <Header />
 
-      {/* Main Content */}
-      <main className="flex-1 pt-32 pb-20">
-        {/* Animated background - Purple and Pink only */}
+      <main className="flex-1 pt-28 pb-20">
+        {/* Subtle ambient glow */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <motion.div 
-            className="absolute top-20 left-1/4 w-96 h-96 bg-purple-600/15 rounded-full blur-3xl"
-            animate={{ 
-              y: [0, 30, 0],
-              x: [0, 20, 0]
-            }}
-            transition={{ duration: 8, repeat: Infinity }}
-          />
-          <motion.div 
-            className="absolute bottom-40 right-1/4 w-96 h-96 bg-pink-600/15 rounded-full blur-3xl"
-            animate={{ 
-              y: [0, -30, 0],
-              x: [0, -20, 0]
-            }}
-            transition={{ duration: 10, repeat: Infinity }}
-          />
+          <div className="absolute top-0 left-1/3 w-[600px] h-[600px] bg-purple-600/[0.04] rounded-full blur-[120px]" />
+          <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-pink-600/[0.04] rounded-full blur-[120px]" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Back Button */}
           <motion.button
             onClick={() => router.back()}
-            className="mb-8 flex items-center gap-2 text-gray-400 hover:text-purple-400 transition duration-300"
-            whileHover={{ x: -5 }}
+            className="mb-6 flex items-center gap-2 text-gray-500 hover:text-purple-400 transition duration-300 text-sm"
+            whileHover={{ x: -4 }}
             whileTap={{ scale: 0.95 }}
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Back to directory
+            Back
           </motion.button>
 
-          {/* Hero Banner Section */}
-          <div className="mb-10">
-            <ProfileHeroBanner user={user} />
+          {/* Hero Banner */}
+          <div className="mb-8">
+            <ProfileHeroBanner user={mergedUser} />
           </div>
 
           {/* Profile Header */}
-          <div className="mb-10">
-            <ProfileHeader user={user} />
+          <div className="mb-8">
+            <ProfileHeader user={mergedUser} onEditProfile={() => setEditProfileOpen(true)} />
           </div>
 
           {/* Main Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-10 mb-10">
-            {/* Left Column - Profile Info */}
-            <div className="lg:col-span-1 space-y-6">
-              <QuickInfo user={user} />
-              <Availability user={user} />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-8 mb-8">
+            {/* Left Column - Sidebar */}
+            <div className="lg:col-span-4 space-y-6">
+              <QuickInfo user={mergedUser} />
+              <Availability user={mergedUser} />
             </div>
 
             {/* Right Column - Main Content */}
-            <div className="lg:col-span-2 space-y-8">
-              {/* Career Stats */}
-              <CareerStats stats={user.stats} />
-
-              {/* Match History */}
-              <MatchHistory matches={user.matchHistory} />
+            <div className="lg:col-span-8 space-y-6">
+              <CareerStats stats={mergedUser.stats || { totalWins: 0, tournaments: 0, earnings: 0, winRate: 0 }} />
+              <MatchHistory matches={mergedUser.matchHistory || []} />
             </div>
           </div>
 
-          {/* Stats Visualizer Section */}
-          <div className="mb-10">
-            <StatsVisualizer stats={user.stats} />
-          </div>
-
-          {/* Streaming & Content Section */}
-          <div className="mb-10">
-            <StreamingContent />
-          </div>
-
-          {/* Achievements Section */}
-          <div className="mb-10">
-            <AchievementsSection />
-          </div>
-
-          {/* Subscriptions Section */}
-          <div className="mb-10">
-            <SubscriptionsSection user={user} />
+          {/* Full Width Sections */}
+          <div className="space-y-6">
+            {/* <StatsVisualizer stats={mergedUser.stats || {}} /> */}
+            {/* <StreamingContent /> */}
+            {/* <AchievementsSection /> */}
+            <SubscriptionsSection user={mergedUser} />
           </div>
         </div>
       </main>
 
-      {/* Footer */}
       <Footer />
+
+      {/* Edit Profile Modal */}
+      <EditProfileModal
+        isOpen={editProfileOpen}
+        onClose={() => setEditProfileOpen(false)}
+        user={mergedUser}
+        gamingProfile={gamingProfile}
+        onProfileUpdate={(updated) => {
+          setGamingProfile(updated)
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem('sns_gaming_profile', JSON.stringify(updated))
+          }
+        }}
+      />
     </div>
   )
 }

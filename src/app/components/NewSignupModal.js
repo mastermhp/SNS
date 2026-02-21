@@ -92,17 +92,15 @@ const AnimatedInput = ({
         onBlur={() => setIsFocused(false)}
         onPaste={onPaste}
         disabled={disabled}
-        className={`w-full bg-gray-800 border border-gray-700 focus:border-purple-500 p-3 pt-6 rounded-lg outline-none transition-all peer ${
-          disabled ? "opacity-50 cursor-not-allowed" : ""
-        } ${className}`}
+        className={`w-full bg-gray-800 border border-gray-700 focus:border-purple-500 p-3 pt-6 rounded-lg outline-none transition-all peer ${disabled ? "opacity-50 cursor-not-allowed" : ""
+          } ${className}`}
         required={required}
       />
       <motion.label
-        className={`absolute left-3 text-gray-400 pointer-events-none transition-all duration-200 ${
-          isFocused || hasValue
+        className={`absolute left-3 text-gray-400 pointer-events-none transition-all duration-200 ${isFocused || hasValue
             ? "top-1.5 text-xs text-purple-400 font-medium"
             : "top-3.5 text-base"
-        }`}
+          }`}
         initial={false}
         animate={{
           y: isFocused || hasValue ? 0 : 0,
@@ -125,10 +123,13 @@ export default function SignupModal({
   showPlanSelection = false,
   showBrandDealType = false,
   showScrimsDuration = false,
+  initialPlan = null,
+  initialBrandType = null,
+  initialScrimsDuration = null,
 }) {
-  const [selectedPlan, setSelectedPlan] = useState(null);
-  const [selectedBrandType, setSelectedBrandType] = useState(null);
-  const [selectedScrimsDuration, setSelectedScrimsDuration] = useState(null);
+  const [selectedPlan, setSelectedPlan] = useState(initialPlan);
+  const [selectedBrandType, setSelectedBrandType] = useState(initialBrandType);
+  const [selectedScrimsDuration, setSelectedScrimsDuration] = useState(initialScrimsDuration);
   const [selectedGames, setSelectedGames] = useState([]);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -164,9 +165,9 @@ export default function SignupModal({
 
   useEffect(() => {
     if (!isOpen) {
-      setSelectedPlan(null);
-      setSelectedBrandType(null);
-      setSelectedScrimsDuration(null);
+      setSelectedPlan(initialPlan);
+      setSelectedBrandType(initialBrandType);
+      setSelectedScrimsDuration(initialScrimsDuration);
       setSelectedGames([]);
       setFormData({
         fullName: "",
@@ -186,7 +187,16 @@ export default function SignupModal({
       setQrImageError(false);
       setQrImageError2(false);
     }
-  }, [isOpen]);
+  }, [isOpen, initialPlan, initialBrandType, initialScrimsDuration]);
+
+  // Sync initial values when props change (e.g. modal reopens with different subscription)
+  useEffect(() => {
+    if (isOpen) {
+      if (initialPlan) setSelectedPlan(initialPlan);
+      if (initialBrandType) setSelectedBrandType(initialBrandType);
+      if (initialScrimsDuration) setSelectedScrimsDuration(initialScrimsDuration);
+    }
+  }, [isOpen, initialPlan, initialBrandType, initialScrimsDuration]);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -301,12 +311,11 @@ export default function SignupModal({
         setDiscountedPrice(Math.round(newPrice));
         showNotification(
           "success",
-          `Promo code applied! You get ${
-            data.data.discountType === "percentage"
-              ? data.data.discountValue + "%"
-              : data.data.discountType === "free"
-                ? "100%"
-                : "৳" + data.data.discountValue
+          `Promo code applied! You get ${data.data.discountType === "percentage"
+            ? data.data.discountValue + "%"
+            : data.data.discountType === "free"
+              ? "100%"
+              : "৳" + data.data.discountValue
           } off!`,
         );
       } else {
@@ -400,7 +409,7 @@ export default function SignupModal({
           showNotification(
             "success",
             responseData.message ||
-              "Subscription successful! Please check your email to verify.",
+            "Subscription successful! Please check your email to verify.",
           );
         } else {
           const errorMsg = responseData.errors
@@ -528,7 +537,7 @@ export default function SignupModal({
           showNotification(
             "success",
             responseData.message ||
-              "Thanks for subscribing! We'll keep you updated.",
+            "Thanks for subscribing! We'll keep you updated.",
           );
         } else {
           const errorMsg = responseData.errors
@@ -606,7 +615,7 @@ export default function SignupModal({
             </p>
 
             <div className="grid md:grid-cols-1 gap-6">
-              {/* <motion.div
+              <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="cursor-pointer rounded-xl p-6 border-2 border-gray-700 hover:border-green-500 transition-all bg-gradient-to-br from-gray-800 to-gray-900"
@@ -629,9 +638,9 @@ export default function SignupModal({
                     <li>✓ Jobs & Income Insights</li>
                   </ul>
                 </div>
-              </motion.div> */}
-              <ComingSoon />
-              {/* <motion.div
+              </motion.div>
+              {/* <ComingSoon /> */}
+              <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="cursor-pointer rounded-xl p-6 border-2 border-gray-700 hover:border-purple-500 transition-all bg-gradient-to-br from-purple-900/30 to-gray-900"
@@ -657,7 +666,7 @@ export default function SignupModal({
                     <li>✓ Exclusive Meetup Opportunities</li>
                   </ul>
                 </div>
-              </motion.div> */}
+              </motion.div>
             </div>
           </motion.div>
         </motion.div>
@@ -702,9 +711,9 @@ export default function SignupModal({
             <p className="text-gray-400 text-center mb-8">
               Choose between Solo or Team/Organization sponsorship
             </p>
-            <ComingSoon />
+            {/* <ComingSoon /> */}
 
-            {/* <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-2 gap-6">
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -761,7 +770,7 @@ export default function SignupModal({
                   </ul>
                 </div>
               </motion.div>
-            </div> */}
+            </div>
           </motion.div>
         </motion.div>
       </AnimatePresence>
@@ -803,8 +812,8 @@ export default function SignupModal({
               Select Scrims Duration
             </h2>
 
-            {/* <div className="bg-gradient-to-r from-purple-900/40 to-pink-900/40 rounded-lg p-6 mb-8 border border-purple-500/30"> */}
-              {/* <h3 className="text-xl font-bold text-white mb-3">
+            <div className="bg-gradient-to-r from-purple-900/40 to-pink-900/40 rounded-lg p-6 mb-8 border border-purple-500/30">
+              <h3 className="text-xl font-bold text-white mb-3">
                 Why Monthly Subscription?
               </h3>
               <p className="text-gray-300 text-sm leading-relaxed">
@@ -814,10 +823,10 @@ export default function SignupModal({
                 performance analytics, and continuous improvement tracking. This
                 commitment helps build better teams and enhances competitive
                 readiness month after month.
-              </p> */}
+              </p>
 
               {/* Bangla Translation */}
-              {/* <h3 className="text-xl font-bold text-white mb-4 mt-6">
+              <h3 className="text-xl font-bold text-white mb-4 mt-6">
                 স্ক্রিমের জন্য মাসিক সাবস্ক্রিপশন কেন?
               </h3>
               <p className="text-gray-300 text-sm leading-relaxed">
@@ -833,11 +842,11 @@ export default function SignupModal({
               <p className="font-bold">
                 বিঃ দ্রঃ প্রতি মাসের প্রাইজপুল ম্যাচ শুরুর আগে জানানো হয়। যেখানে
                 কয়েক হাজার টাকা এবং গেমিং , জার্সি সহ অনেক কিছু গিফট থাকবে।
-              </p> */}
-            {/* </div> */}
-            <ComingSoon />
+              </p>
+            </div>
+            {/* <ComingSoon /> */}
 
-            {/* <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-6">
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -926,7 +935,7 @@ export default function SignupModal({
                   </ul>
                 </div>
               </motion.div>
-            </div> */}
+            </div>
           </motion.div>
         </motion.div>
       </AnimatePresence>
@@ -1037,11 +1046,10 @@ export default function SignupModal({
                 className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md"
               >
                 <div
-                  className={`px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 ${
-                    notification.type === "success"
+                  className={`px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 ${notification.type === "success"
                       ? "bg-gradient-to-r from-green-500 to-emerald-600"
                       : "bg-gradient-to-r from-red-500 to-pink-600"
-                  }`}
+                    }`}
                 >
                   {notification.type === "success" ? (
                     <CheckCircle className="w-6 h-6 flex-shrink-0" />
@@ -1059,19 +1067,19 @@ export default function SignupModal({
           <div className="p-6 md:p-8">
             {flowType.includes("tournament") && selectedGames.length === 0 && (
               <>
-                <ComingSoon />
+                {/* <ComingSoon /> */}
                 {/* Championship Banner */}
-                {/* <div className="mb-8 rounded-xl overflow-hidden">
+                <div className="mb-8 rounded-xl overflow-hidden">
                   <img
                     src="/News/championship-banner.png"
                     alt="Slice N Share Championship"
                     className="w-full h-auto"
                   />
-                </div> */}
+                </div>
 
                 {/* Why Monthly Subscription - Bilingual */}
-                {/* <div className="bg-gradient-to-r from-purple-900/40 to-pink-900/40 rounded-lg p-6 mb-6 border border-purple-500/30"> */}
-                  {/* <h3 className="text-xl font-bold text-white mb-4">
+                <div className="bg-gradient-to-r from-purple-900/40 to-pink-900/40 rounded-lg p-6 mb-6 border border-purple-500/30">
+                  <h3 className="text-xl font-bold text-white mb-4">
                     Why Monthly Subscription for Tournaments?
                   </h3>
                   <p className="text-gray-300 text-sm leading-relaxed mb-4">
@@ -1080,10 +1088,10 @@ export default function SignupModal({
                     registration, exclusive rewards, and consistent competitive
                     experience. Build your ranking, improve your skills, and
                     compete regularly with the best players every month.
-                  </p> */}
+                  </p>
 
                   {/* Bangla Translation */}
-                  {/* <h3 className="text-xl font-bold text-white mb-4 mt-6">
+                  <h3 className="text-xl font-bold text-white mb-4 mt-6">
                     টুর্নামেন্টের জন্য মাসিক সাবস্ক্রিপশন কেন?
                   </h3>
                   <p className="text-gray-300 text-sm leading-relaxed">
@@ -1093,11 +1101,11 @@ export default function SignupModal({
                     সীমাহীন অ্যাক্সেস দেয়। আপনার র‍্যাঙ্কিং তৈরি করুন, আপনার
                     দক্ষতা উন্নত করুন এবং প্রতি মাসে সেরা খেলোয়াড়দের সাথে
                     নিয়মিত প্রতিদ্বন্দ্বিতা করুন।
-                  </p> */}
-                {/* </div> */}
+                  </p>
+                </div>
 
                 {/* Prize Pool Section */}
-                {/* <div className="bg-gradient-to-r from-green-900/40 to-blue-900/40 rounded-lg p-6 mb-8 border border-green-500/30">
+                <div className="bg-gradient-to-r from-green-900/40 to-blue-900/40 rounded-lg p-6 mb-8 border border-green-500/30">
                   <div className="text-center">
                     <h3 className="text-2xl font-bold text-green-400 mb-2">
                       Total 1 Lacs+ BDT Prizepool Monthly & MVP Gift
@@ -1106,11 +1114,11 @@ export default function SignupModal({
                       In total 15 lacs on next 12 months
                     </p>
                   </div>
-                </div> */}
+                </div>
               </>
             )}
 
-            {/* {selectedGames.length === 0 && (
+            {selectedGames.length === 0 && (
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold mb-2 text-center bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
                   Select Your Game{maxGames > 1 ? "s" : ""}
@@ -1130,11 +1138,10 @@ export default function SignupModal({
                         key={game.id}
                         whileHover={{ scale: 1.05, y: -5 }}
                         whileTap={{ scale: 0.95 }}
-                        className={`cursor-pointer rounded-xl overflow-hidden border-2 transition-all h-full flex flex-col ${
-                          isSelected
+                        className={`cursor-pointer rounded-xl overflow-hidden border-2 transition-all h-full flex flex-col ${isSelected
                             ? "border-purple-500 ring-2 ring-purple-400"
                             : "border-gray-700 hover:border-purple-500"
-                        }`}
+                          }`}
                         onClick={() => handleGameSelect(game)}
                       >
                         <div className="relative flex-shrink-0">
@@ -1163,7 +1170,7 @@ export default function SignupModal({
                 {selectedGames.length > 0 && (
                   <div className="mt-6 text-center">
                     <button
-                      onClick={() => {}}
+                      onClick={() => { }}
                       className="px-8 py-3 rounded-full font-bold text-white transition bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                     >
                       Continue with {selectedGames.length} game
@@ -1172,7 +1179,7 @@ export default function SignupModal({
                   </div>
                 )}
               </div>
-            )} */}
+            )}
 
             {selectedGames.length > 0 && (
               <form onSubmit={handleSubmit} className="space-y-4">

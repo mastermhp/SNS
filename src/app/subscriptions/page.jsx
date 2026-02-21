@@ -2,21 +2,21 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { useAuth } from '@/context/AuthContext'
+import { useAuth } from '@/app/context/AuthContext'
 import { useRouter } from 'next/navigation'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SubscriptionsSection from '../components/ProfileComponents/SubscriptionsSection'
 
 export default function SubscriptionsPage() {
-  const { user, isAuthenticated } = useAuth()
+  const { user, isAuthenticated, loading } = useAuth()
   const router = useRouter()
 
   React.useEffect(() => {
-    if (!isAuthenticated) {
+    if (!loading && !isAuthenticated) {
       router.push('/')
     }
-  }, [isAuthenticated, router])
+  }, [isAuthenticated, loading, router])
 
   if (!user) {
     return (

@@ -1,11 +1,13 @@
 'use client';
 
 import { useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../app/context/AuthContext';
 
 /**
- * Custom hook to access authentication context
- * Usage: const { user, login, logout, isAuthenticated } = useAuth();
+ * Custom hook to access authentication context.
+ * Re-exports the useAuth from AuthContext for convenience.
+ * 
+ * Usage: const { user, loginSendOTP, loginVerifyOTP, logout, isAuthenticated } = useAuth();
  */
 export function useAuth() {
   const context = useContext(AuthContext);

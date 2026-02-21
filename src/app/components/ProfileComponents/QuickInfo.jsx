@@ -2,111 +2,110 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Gamepad2, Users2, Award, MapPin, Mail, Hash } from 'lucide-react'
+import { Gamepad2, Users2, Award, MapPin, Mail, Hash, User, AtSign } from 'lucide-react'
 
 export default function QuickInfo({ user }) {
   const infoItems = [
-    {
-      label: 'Game',
-      value: user?.game,
-      icon: Gamepad2,
-      color: 'text-purple-400',
-    },
-    {
-      label: 'Role',
-      value: user?.role,
-      icon: Users2,
-      color: 'text-pink-400',
-    },
-    {
-      label: 'Rank',
-      value: user?.rank,
-      icon: Award,
-      color: 'text-purple-400',
-    },
-    {
-      label: 'Region',
-      value: user?.region,
-      icon: MapPin,
-      color: 'text-pink-400',
-    },
-    {
-      label: 'Email',
-      value: user?.email,
-      icon: Mail,
-      color: 'text-purple-400',
-    },
-    {
-      label: 'Discord',
-      value: user?.discord || 'Not provided',
-      icon: Hash,
-      color: 'text-pink-400',
-    },
+    { label: 'Full Name', value: user?.fullName, icon: User, accent: 'purple' },
+    { label: 'Gamer Tag', value: user?.username, icon: AtSign, accent: 'pink' },
+    { label: 'Primary Game', value: user?.game, icon: Gamepad2, accent: 'purple' },
+    { label: 'Role', value: user?.role, icon: Users2, accent: 'pink' },
+    { label: 'Rank', value: user?.rank, icon: Award, accent: 'purple' },
+    { label: 'Region', value: user?.region, icon: MapPin, accent: 'pink' },
+    { label: 'Email', value: user?.email, icon: Mail, accent: 'purple' },
+    { label: 'Discord', value: user?.discord, icon: Hash, accent: 'pink' },
   ]
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.05,
-        delayChildren: 0.3,
-      },
+      transition: { staggerChildren: 0.04, delayChildren: 0.2 },
     },
   }
 
   const itemVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.4 },
-    },
+    hidden: { opacity: 0, x: -10 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.3 } },
   }
+
+  const hasGamingInfo = user?.game || user?.role || user?.rank || user?.region
 
   return (
     <motion.div
-      className="rounded-2xl border border-purple-500/30 bg-gradient-to-br from-purple-900/20 to-black p-6 overflow-hidden backdrop-blur-sm relative"
-      initial={{ opacity: 0, y: 30 }}
+      className="rounded-2xl border border-white/[0.06] bg-[#0c0c12] overflow-hidden relative"
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.1 }}
+      transition={{ duration: 0.5, delay: 0.1 }}
     >
-      {/* Accent line */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-transparent" />
+      {/* Top accent */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-purple-500/30 via-transparent to-transparent" />
 
-      <motion.h3 
-        className="text-xl font-bold text-white mb-6 flex items-center gap-2"
-        initial={{ x: -20, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-      >
-        Quick Info
-      </motion.h3>
+      <div className="p-6">
+        <motion.h3
+          className="text-lg font-semibold text-white mb-5"
+          initial={{ x: -10, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+        >
+          Player Info
+        </motion.h3>
 
-      <motion.div
-        className="space-y-4"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {infoItems.map((item, index) => {
-          if (!item.value) return null
-          const Icon = item.icon
-          return (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              className="flex items-start gap-3 p-3 rounded-lg hover:bg-white/5 transition duration-300"
-              whileHover={{ x: 5 }}
-            >
-              <Icon size={20} className={`${item.color} flex-shrink-0 mt-0.5`} />
-              <div className="flex-1 min-w-0">
-                <p className="text-gray-400 text-xs font-medium">{item.label}</p>
-                <p className="text-white text-sm font-semibold truncate">{item.value}</p>
-              </div>
-            </motion.div>
-          )
-        })}
-      </motion.div>
+        <motion.div
+          className="space-y-1"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {infoItems.map((item, index) => {
+            if (!item.value) return null
+            const Icon = item.icon
+            const accentColor = item.accent === 'purple' ? 'text-purple-400' : 'text-pink-400'
+            const accentBg = item.accent === 'purple' ? 'bg-purple-500/10' : 'bg-pink-500/10'
+            return (
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/[0.03] transition duration-200 group"
+              >
+                <div className={`w-8 h-8 rounded-lg ${accentBg} flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition`}>
+                  <Icon size={14} className={accentColor} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-600">{item.label}</p>
+                  <p className="text-sm text-white font-medium truncate">{item.value}</p>
+                </div>
+              </motion.div>
+            )
+          })}
+        </motion.div>
+
+        {/* Empty state for gaming info */}
+        {!hasGamingInfo && (
+          <motion.div
+            className="mt-4 p-4 rounded-xl bg-purple-500/[0.04] border border-purple-500/10 text-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
+            <Gamepad2 size={24} className="mx-auto text-purple-500/40 mb-2" />
+            <p className="text-gray-500 text-xs">Gaming profile not set up yet.</p>
+            <p className="text-gray-600 text-[10px] mt-1">Edit your profile to add game info.</p>
+          </motion.div>
+        )}
+
+        {/* Bio section */}
+        {user?.bio && (
+          <motion.div
+            className="mt-4 pt-4 border-t border-white/[0.04]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-600 mb-2">About</p>
+            <p className="text-sm text-gray-300 leading-relaxed">{user.bio}</p>
+          </motion.div>
+        )}
+      </div>
     </motion.div>
   )
 }

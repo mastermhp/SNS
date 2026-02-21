@@ -1,92 +1,38 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Loader } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-import { firebaseConfig, validateFirebaseConfig } from '../../lib/firebase-config';
 
+/**
+ * Standalone Google Login Button component.
+ * Uses Firebase signInWithPopup + exchanges token with our API.
+ */
 export default function GoogleLoginButton({ onSuccess, onError, className = '' }) {
-  const { signInWithGoogle } = useAuth();
+  const { loginWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [firebaseReady, setFirebaseReady] = useState(false);
-  const [auth, setAuth] = useState(null);
-
-  useEffect(() => {
-    // Initialize Firebase
-    const initFirebase = async () => {
-      try {
-        const isConfigValid = validateFirebaseConfig();
-        if (!isConfigValid) {
-          console.warn('[GoogleLoginButton] Firebase config is incomplete');
-          return;
-        }
-
-        const { initializeApp } = await import('firebase/app');
-        const { getAuth } = await import('firebase/auth');
-
-        const app = initializeApp(firebaseConfig);
-        const authInstance = getAuth(app);
-        setAuth(authInstance);
-        setFirebaseReady(true);
-
-        console.log('[GoogleLoginButton] Firebase initialized');
-      } catch (error) {
-        console.error('[GoogleLoginButton] Firebase initialization error:', error);
-        onError?.('Firebase initialization failed');
-      }
-    };
-
-    initFirebase();
-  }, [onError]);
 
   const handleGoogleSignIn = async () => {
-    if (!auth) {
-      console.error('[GoogleLoginButton] Firebase not ready');
-      return;
-    }
-
     setLoading(true);
     try {
-      const { signInWithPopup, GoogleAuthProvider } = await import('firebase/auth');
-
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-
-      // Get the Firebase ID token
-      const idToken = await result.user.getIdToken();
-      console.log('[GoogleLoginButton] Firebase ID token obtained');
-
-      // Exchange for our app tokens
-      const response = await signInWithGoogle(idToken);
-      console.log('[GoogleLoginButton] Sign in response:', response);
-
+      const response = await loginWithGoogle();
+      console.log('[v0] GoogleLoginButton - sign in response:', response);
       onSuccess?.({ user: response.user, isNewUser: response.isNewUser });
     } catch (error) {
-      console.error('[GoogleLoginButton] Google sign-in error:', error);
+      console.error('[v0] GoogleLoginButton - sign in error:', error);
 
       // Handle specific Firebase errors
       if (error.code === 'auth/popup-closed-by-user') {
-        const message = 'Sign-in popup was closed';
-        onError?.(message);
+        onError?.('Sign-in popup was closed');
       } else if (error.code === 'auth/popup-blocked') {
-        const message = 'Sign-in popup was blocked. Please allow popups for this site.';
-        onError?.(message);
+        onError?.('Sign-in popup was blocked. Please allow popups for this site.');
       } else {
-        const message = error.data?.message || error.message || 'Google sign-in failed';
-        onError?.(message);
+        onError?.(error.message || 'Google sign-in failed');
       }
     } finally {
       setLoading(false);
     }
   };
-
-  if (!firebaseReady) {
-    return (
-      <button disabled className={`opacity-50 cursor-not-allowed ${className}`}>
-        Loading...
-      </button>
-    );
-  }
 
   return (
     <button

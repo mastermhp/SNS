@@ -6,6 +6,7 @@ export const API = {
   SIGNUP_VERIFY: `${API_BASE}/api/v1/auth/users/signup/verify`,
   LOGIN: `${API_BASE}/api/v1/auth/users/login`,
   LOGIN_VERIFY: `${API_BASE}/api/v1/auth/users/login/verify`,
+  SET_PASSWORD: `${API_BASE}/api/v1/auth/users/set-password`,
   REFRESH_TOKEN: `${API_BASE}/api/v1/auth/users/refresh-token`,
   LOGOUT: `${API_BASE}/api/v1/auth/users/logout`,
   LOGOUT_ALL: `${API_BASE}/api/v1/auth/users/logout-all`,
@@ -18,12 +19,21 @@ export const API = {
   // v2 Profile
   PROFILE: `${API_BASE}/api/v2/auth/me`,
 
+  // v2 Auth (alternative)
+  V2_SIGNUP: `${API_BASE}/api/v2/auth/signup`,
+  V2_SIGNUP_VERIFY: `${API_BASE}/api/v2/auth/signup/verify`,
+  V2_LOGIN: `${API_BASE}/api/v2/auth/login`,
+  V2_LOGIN_VERIFY: `${API_BASE}/api/v2/auth/login/verify`,
+  V2_REFRESH_TOKEN: `${API_BASE}/api/v2/auth/refresh-token`,
+  V2_LOGOUT: `${API_BASE}/api/v2/auth/logout`,
+  V2_LOGOUT_ALL: `${API_BASE}/api/v2/auth/logout-all`,
+
   // Events
   EVENT_INTERESTED: `${API_BASE}/api/v1/events/event-interested`,
 };
 
 /**
- * Make an authenticated API request
+ * Make an authenticated API request with automatic token refresh on 401
  */
 export async function authFetch(url, options = {}) {
   const tokens = getTokens();
@@ -41,13 +51,16 @@ export async function authFetch(url, options = {}) {
 
   // If 401, try refreshing the token
   if (res.status === 401) {
+    console.log("[v0] Access token expired, attempting refresh...");
     const refreshed = await refreshAccessToken(tokens);
     if (refreshed) {
+      console.log("[v0] Token refreshed successfully");
       headers.Authorization = `Bearer ${refreshed.accessToken}`;
       res = await fetch(url, { ...options, headers });
     } else {
+      console.log("[v0] Token refresh failed, clearing session");
       clearTokens();
-      throw new Error("Session expired");
+      throw new Error("Session expired. Please login again.");
     }
   }
 
@@ -56,7 +69,7 @@ export async function authFetch(url, options = {}) {
 
 /**
  * Token storage in memory + sessionStorage for persistence across page loads
- * We use sessionStorage (not localStorage) for security - tokens cleared when tab closes
+ * sessionStorage clears when the tab closes for better security
  */
 let memoryTokens = null;
 
@@ -80,6 +93,7 @@ export function setTokens(tokens) {
   if (typeof window !== "undefined") {
     try {
       sessionStorage.setItem("sns_auth_tokens", JSON.stringify(tokens));
+      console.log("[v0] Tokens stored in sessionStorage");
     } catch {
       // ignore
     }
@@ -92,6 +106,7 @@ export function clearTokens() {
     try {
       sessionStorage.removeItem("sns_auth_tokens");
       sessionStorage.removeItem("sns_user");
+      console.log("[v0] Tokens and user data cleared from sessionStorage");
     } catch {
       // ignore
     }
@@ -121,35 +136,38 @@ export function setStoredUser(user) {
 
 /**
  * Refresh the access token using the refresh token
+ * Uses different endpoints for email vs firebase auth methods
  */
 async function refreshAccessToken(tokens) {
   try {
-    // Determine which refresh endpoint to use based on the token source
     const authMethod = getStoredUser()?.authMethod;
     const url =
       authMethod === "firebase" ? API.FIREBASE_REFRESH : API.REFRESH_TOKEN;
 
-    const body =
-      authMethod === "firebase"
-        ? { refreshToken: tokens.refreshToken }
-        : { refreshToken: tokens.refreshToken };
+    console.log(`[v0] Refreshing token via ${authMethod === "firebase" ? "Firebase" : "Email"} endpoint: ${url}`);
 
     const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ refreshToken: tokens.refreshToken }),
     });
 
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.log("[v0] Token refresh response not OK:", res.status);
+      return null;
+    }
 
     const data = await res.json();
+    console.log("[v0] Token refresh response data:", { hasAccessToken: !!data.accessToken, hasRefreshToken: !!data.refreshToken });
+    
     const newTokens = {
       accessToken: data.accessToken,
       refreshToken: data.refreshToken,
     };
     setTokens(newTokens);
     return newTokens;
-  } catch {
+  } catch (err) {
+    console.error("[v0] Token refresh error:", err);
     return null;
   }
 }

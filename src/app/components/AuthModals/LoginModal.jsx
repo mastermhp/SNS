@@ -2,47 +2,99 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Mail, Lock, Eye, EyeOff, Loader } from 'lucide-react'
-import { useAuth } from '@/context/AuthContext'
+import { X, Mail, Lock, Loader } from 'lucide-react'
+import { useAuth } from '@/app/context/AuthContext'
 
-export default function LoginModal({ isOpen, onClose }) {
-  const { login, isLoading, error } = useAuth()
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  })
-  const [showPassword, setShowPassword] = useState(false)
+export default function LoginModal({ isOpen, onClose, onSwitchToSignup }) {
+  const { loginSendOTP, loginVerifyOTP, loginWithGoogle, error } = useAuth()
+  const [step, setStep] = useState('email') // 'email' or 'otp'
+  const [email, setEmail] = useState('')
+  const [otp, setOtp] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
   const [localError, setLocalError] = useState('')
+  const [message, setMessage] = useState('')
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
+  const handleClose = () => {
+    setStep('email')
+    setEmail('')
+    setOtp('')
     setLocalError('')
+    setMessage('')
+    onClose()
   }
 
-  const handleSubmit = async (e) => {
+  const handleSendOTP = async (e) => {
     e.preventDefault()
     setLocalError('')
+    setMessage('')
 
-    if (!formData.email || !formData.password) {
-      setLocalError('Please fill in all fields')
+    if (!email.trim()) {
+      setLocalError('Email is required')
       return
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setLocalError('Please enter a valid email')
       return
     }
 
-    const result = await login(formData.email, formData.password)
-    if (result.success) {
-      onClose()
-      setFormData({ email: '', password: '' })
-    } else {
-      setLocalError(result.error)
+    setLoading(true)
+    try {
+      const response = await loginSendOTP(email)
+      console.log('[v0] LoginModal send OTP response:', response)
+      setMessage(response.message || 'OTP sent to your email!')
+      setStep('otp')
+    } catch (err) {
+      setLocalError(err.message || 'Failed to send OTP')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleVerifyOTP = async (e) => {
+    e.preventDefault()
+    setLocalError('')
+    setMessage('')
+
+    if (!otp.trim() || otp.length < 4) {
+      setLocalError('Please enter a valid OTP')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const response = await loginVerifyOTP(email, otp)
+      console.log('[v0] LoginModal verify OTP response:', response)
+      setMessage('Login successful!')
+      setTimeout(() => handleClose(), 1000)
+    } catch (err) {
+      setLocalError(err.message || 'Invalid OTP')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleGoogleLogin = async () => {
+    setLocalError('')
+    setMessage('')
+    setGoogleLoading(true)
+    try {
+      const response = await loginWithGoogle()
+      console.log('[v0] LoginModal Google login response:', response)
+      setMessage(response.isNewUser ? 'Account created with Google!' : 'Signed in with Google!')
+      setTimeout(() => handleClose(), 1000)
+    } catch (err) {
+      console.error('[v0] LoginModal Google login error:', err)
+      if (err.code === 'auth/popup-closed-by-user') {
+        setLocalError('Sign-in popup was closed')
+      } else if (err.code === 'auth/popup-blocked') {
+        setLocalError('Sign-in popup was blocked. Please allow popups.')
+      } else {
+        setLocalError(err.message || 'Google sign-in failed')
+      }
+    } finally {
+      setGoogleLoading(false)
     }
   }
 
@@ -76,7 +128,7 @@ export default function LoginModal({ isOpen, onClose }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
+            onClick={handleClose}
             transition={{ duration: 0.3 }}
           />
 
@@ -96,14 +148,16 @@ export default function LoginModal({ isOpen, onClose }) {
               <div className="relative p-6 sm:p-8">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8">
-                  <motion.div variants={itemVariants}>
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
                     <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 bg-clip-text text-transparent">
                       Welcome Back
                     </h2>
-                    <p className="text-gray-400 text-sm mt-1">Sign in to your account</p>
+                    <p className="text-gray-400 text-sm mt-1">
+                      {step === 'otp' ? `Enter the OTP sent to ${email}` : 'Sign in with email OTP or Google'}
+                    </p>
                   </motion.div>
                   <motion.button
-                    onClick={onClose}
+                    onClick={handleClose}
                     className="text-gray-400 hover:text-white transition p-2 hover:bg-white/10 rounded-lg"
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
@@ -112,52 +166,89 @@ export default function LoginModal({ isOpen, onClose }) {
                   </motion.button>
                 </div>
 
+                {/* Status Messages */}
+                <AnimatePresence mode="wait">
+                  {message && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="mb-4 p-3 bg-green-500/20 border border-green-500/50 rounded-lg text-green-200 text-sm"
+                    >
+                      {message}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 {/* Form */}
                 <motion.form
-                  onSubmit={handleSubmit}
+                  onSubmit={step === 'email' ? handleSendOTP : handleVerifyOTP}
                   className="space-y-5"
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
+                  key={step}
                 >
-                  {/* Email Field */}
-                  <motion.div variants={itemVariants}>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="you@email.com"
-                        className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 focus:bg-white/10 transition duration-300"
-                      />
-                    </div>
-                  </motion.div>
-
-                  {/* Password Field */}
-                  <motion.div variants={itemVariants}>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
-                      <input
-                        type={showPassword ? 'text' : 'password'}
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        placeholder="••••••••"
-                        className="w-full pl-10 pr-10 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 focus:bg-white/10 transition duration-300"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300 transition"
-                      >
-                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                      </button>
-                    </div>
-                  </motion.div>
+                  {step === 'email' ? (
+                    <>
+                      {/* Email Field */}
+                      <motion.div variants={itemVariants}>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+                          <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => { setEmail(e.target.value); setLocalError('') }}
+                            placeholder="you@email.com"
+                            className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 focus:bg-white/10 transition duration-300"
+                            autoFocus
+                          />
+                        </div>
+                      </motion.div>
+                    </>
+                  ) : (
+                    <>
+                      {/* OTP Field */}
+                      <motion.div variants={itemVariants}>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Enter OTP</label>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+                          <input
+                            type="text"
+                            value={otp}
+                            onChange={(e) => { setOtp(e.target.value.replace(/\D/g, '').slice(0, 6)); setLocalError('') }}
+                            placeholder="000000"
+                            maxLength="6"
+                            className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 focus:bg-white/10 transition duration-300 text-center text-2xl tracking-widest font-mono"
+                            autoFocus
+                          />
+                        </div>
+                        <div className="flex items-center justify-between mt-2">
+                          <button
+                            type="button"
+                            onClick={() => { setStep('email'); setOtp(''); setLocalError(''); setMessage('') }}
+                            className="text-xs text-purple-400 hover:text-purple-300 transition"
+                          >
+                            Change email
+                          </button>
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              setLoading(true)
+                              try { await loginSendOTP(email); setMessage('New OTP sent!') }
+                              catch (err) { setLocalError(err.message || 'Failed to resend') }
+                              finally { setLoading(false) }
+                            }}
+                            disabled={loading}
+                            className="text-xs text-purple-400 hover:text-purple-300 transition disabled:opacity-50"
+                          >
+                            Resend OTP
+                          </button>
+                        </div>
+                      </motion.div>
+                    </>
+                  )}
 
                   {/* Error Message */}
                   <AnimatePresence>
@@ -173,78 +264,93 @@ export default function LoginModal({ isOpen, onClose }) {
                     )}
                   </AnimatePresence>
 
-                  {/* Remember Me & Forgot Password */}
-                  <motion.div variants={itemVariants} className="flex items-center justify-between text-sm">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" className="w-4 h-4 bg-white/10 border border-white/20 rounded cursor-pointer" />
-                      <span className="text-gray-400">Remember me</span>
-                    </label>
-                    <button type="button" className="text-purple-400 hover:text-purple-300 transition">
-                      Forgot password?
-                    </button>
-                  </motion.div>
-
                   {/* Submit Button */}
                   <motion.button
                     variants={itemVariants}
                     type="submit"
-                    disabled={isLoading}
+                    disabled={loading}
                     className="w-full py-3 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white font-semibold rounded-lg transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    {isLoading ? (
+                    {loading ? (
                       <>
                         <Loader size={20} className="animate-spin" />
-                        Signing in...
+                        {step === 'email' ? 'Sending OTP...' : 'Verifying...'}
                       </>
                     ) : (
-                      'Sign In'
+                      step === 'email' ? 'Send OTP' : 'Verify & Sign In'
                     )}
                   </motion.button>
 
-                  {/* Divider */}
-                  <motion.div variants={itemVariants} className="relative py-4">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-white/10" />
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-gradient-to-b from-[#171717] to-[#0a0a14] text-gray-400">Or continue with</span>
-                    </div>
-                  </motion.div>
+                  {/* Divider - only on email step */}
+                  {step === 'email' && (
+                    <>
+                      <motion.div variants={itemVariants} className="relative py-4">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-white/10" />
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                          <span className="px-2 bg-gradient-to-b from-[#171717] to-[#0a0a14] text-gray-400">Or continue with</span>
+                        </div>
+                      </motion.div>
 
-                  {/* Social Buttons */}
-                  <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3">
-                    <button
-                      type="button"
-                      className="flex items-center justify-center gap-2 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white transition duration-300"
-                    >
-                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.014 12.014 0 0024 12c0-6.63-5.37-12-12-12z" />
-                      </svg>
-                      <span className="text-sm">GitHub</span>
-                    </button>
-                    <button
-                      type="button"
-                      className="flex items-center justify-center gap-2 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white transition duration-300"
-                    >
-                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
-                      </svg>
-                      <span className="text-sm">Google</span>
-                    </button>
-                  </motion.div>
+                      {/* Google Button */}
+                      <motion.button
+                        variants={itemVariants}
+                        type="button"
+                        onClick={handleGoogleLogin}
+                        disabled={googleLoading}
+                        className="w-full flex items-center justify-center gap-3 py-2.5 bg-white hover:bg-gray-100 text-gray-900 font-semibold rounded-lg transition duration-300 disabled:opacity-50"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        {googleLoading ? (
+                          <Loader size={20} className="animate-spin text-gray-600" />
+                        ) : (
+                          <>
+                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                            </svg>
+                            Sign in with Google
+                          </>
+                        )}
+                      </motion.button>
 
-                  {/* Sign Up Link */}
-                  <motion.p variants={itemVariants} className="text-center text-gray-400 text-sm">
-                    Don't have an account?{' '}
-                    <button
-                      type="button"
-                      onClick={onClose}
-                      className="text-purple-400 hover:text-purple-300 font-semibold transition"
-                    >
-                      Sign up
-                    </button>
+                      {/* Sign Up Link */}
+                      <motion.div variants={itemVariants} className="relative py-2">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-white/10" />
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                          <span className="px-2 bg-gradient-to-b from-[#171717] to-[#0a0a14] text-gray-500">{"Don't have an account?"}</span>
+                        </div>
+                      </motion.div>
+
+                      <motion.button
+                        variants={itemVariants}
+                        type="button"
+                        onClick={() => {
+                          handleClose()
+                          if (onSwitchToSignup) onSwitchToSignup()
+                        }}
+                        className="w-full py-3 border-2 border-purple-500/50 hover:border-purple-400 text-purple-300 font-semibold rounded-lg transition duration-300 flex items-center justify-center gap-2"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        Create New Account
+                      </motion.button>
+                    </>
+                  )}
+
+                  {/* Info Text */}
+                  <motion.p variants={itemVariants} className="text-center text-gray-500 text-xs">
+                    {step === 'email'
+                      ? "We'll send a one-time password to your email for secure authentication."
+                      : 'Check your email inbox (and spam folder) for the OTP code.'}
                   </motion.p>
                 </motion.form>
               </div>

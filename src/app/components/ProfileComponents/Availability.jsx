@@ -2,73 +2,51 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Clock, CheckCircle } from 'lucide-react'
+import { Clock, CheckCircle, Calendar } from 'lucide-react'
 
 export default function Availability({ user }) {
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.4 },
-    },
-  }
-
   return (
     <motion.div
-      className="rounded-2xl border border-pink-500/30 bg-gradient-to-br from-pink-900/20 to-black p-6 overflow-hidden backdrop-blur-sm relative"
-      initial={{ opacity: 0, y: 30 }}
+      className="rounded-2xl border border-white/[0.06] bg-[#0c0c12] overflow-hidden relative"
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.2 }}
-      variants={itemVariants}
+      transition={{ duration: 0.5, delay: 0.2 }}
     >
-      {/* Accent line */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent to-pink-500" />
+      {/* Top accent */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/30 to-transparent" />
 
-      <motion.h3 
-        className="text-xl font-bold text-white mb-4 flex items-center gap-2"
-        initial={{ x: -20, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-      >
-        <motion.div
-          animate={{ scale: [1, 1.2, 1] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          <Clock size={20} className="text-pink-400" />
-        </motion.div>
-        Availability
-      </motion.h3>
+      <div className="p-6">
+        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <Clock size={16} className="text-pink-400" />
+          Availability
+        </h3>
 
-      <motion.div className="space-y-3">
-        <motion.div 
-          className="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-pink-500/30 hover:border-pink-500/50 transition duration-300"
-          whileHover={{ y: -2 }}
-        >
-          <motion.div
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
-          >
-            <CheckCircle size={18} className="text-purple-400 flex-shrink-0 mt-0.5" />
-          </motion.div>
-          <div className="flex-1">
-            <p className="text-gray-300 text-sm font-semibold">Open to opportunities</p>
-            <p className="text-gray-400 text-xs mt-1">Typically available evenings & weekends (local time)</p>
+        <div className="space-y-3">
+          {/* Status */}
+          <div className="flex items-center gap-3 p-3.5 rounded-xl bg-emerald-500/[0.06] border border-emerald-500/10">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+              <CheckCircle size={14} className="text-emerald-400" />
+            </div>
+            <div>
+              <p className="text-sm text-white font-medium">Open to opportunities</p>
+              <p className="text-[10px] text-gray-500 mt-0.5">Available evenings & weekends</p>
+            </div>
           </div>
-        </motion.div>
 
-        <div className="space-y-2 text-sm p-4 rounded-xl bg-purple-500/5 border border-purple-500/20">
-          <p className="text-gray-400 text-xs font-medium uppercase tracking-wider">Timezone</p>
-          <p className="text-white font-bold text-base">UTC-5 (EST)</p>
+          {/* Timezone */}
+          <div className="flex items-center gap-3 p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+            <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center flex-shrink-0">
+              <Calendar size={14} className="text-purple-400" />
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-600">Timezone</p>
+              <p className="text-sm text-white font-medium mt-0.5">
+                {user?.region === 'Bangladesh' || user?.region === 'South Asia' ? 'UTC+6 (BDT)' : 'UTC+6'}
+              </p>
+            </div>
+          </div>
         </div>
-
-        <motion.button
-          className="w-full py-2 mt-4 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-500 hover:to-pink-500 transition duration-300 font-medium text-sm"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          Edit Availability
-        </motion.button>
-      </motion.div>
+      </div>
     </motion.div>
   )
 }

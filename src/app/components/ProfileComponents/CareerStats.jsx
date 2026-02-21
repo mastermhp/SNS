@@ -4,7 +4,10 @@ import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Trophy, Flame, DollarSign, TrendingUp } from 'lucide-react'
 
-export default function CareerStats({ stats }) {
+export default function CareerStats({ stats: rawStats }) {
+  // Default stats if none provided from API
+  const stats = rawStats || { totalWins: 0, tournaments: 0, earnings: 0, winRate: 0 }
+
   const [displayStats, setDisplayStats] = useState({
     totalWins: 0,
     tournaments: 0,
@@ -22,10 +25,10 @@ export default function CareerStats({ stats }) {
       const progress = Math.min((now - start) / duration, 1)
 
       setDisplayStats({
-        totalWins: Math.floor(stats.totalWins * progress),
-        tournaments: Math.floor(stats.tournaments * progress),
-        earnings: Math.floor(stats.earnings * progress),
-        winRate: Math.floor(stats.winRate * progress),
+        totalWins: Math.floor((stats.totalWins || 0) * progress),
+        tournaments: Math.floor((stats.tournaments || 0) * progress),
+        earnings: Math.floor((stats.earnings || 0) * progress),
+        winRate: Math.floor((stats.winRate || 0) * progress),
       })
 
       if (progress === 1) clearInterval(timer)
