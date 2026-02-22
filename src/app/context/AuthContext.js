@@ -147,12 +147,21 @@ export function AuthProvider({ children }) {
     console.log("[v0] Signup - sending OTP to:", email, "phone:", phone);
     const body = { email };
     if (phone) body.phone = phone;
+    console.log("[v0] Signup - POST URL:", API.SIGNUP, "body:", JSON.stringify(body));
     const res = await fetch(API.SIGNUP, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
-    const data = await res.json();
+    console.log("[v0] Signup - response status:", res.status, "statusText:", res.statusText);
+    const text = await res.text();
+    console.log("[v0] Signup - raw response body:", text);
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = { message: text || `Server error (${res.status})` };
+    }
     console.log("[v0] Signup send OTP response:", JSON.stringify(data, null, 2));
     if (!res.ok) {
       const msg = data.message || "Failed to send OTP";
