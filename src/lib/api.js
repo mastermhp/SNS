@@ -1,36 +1,27 @@
-// All browser requests go to /api/proxy/* which is a Next.js API route
-// that forwards to https://api.slicenshare.com/api/* server-side (no CORS).
+// All calls go through /api/proxy/[...path] which forwards to https://api.slicenshare.com/api/*
+const P = "/api/proxy";
 
 export const API = {
   // v1 Auth (email/OTP)
-  SIGNUP: `/api/proxy/v1/auth/users/signup`,
-  SIGNUP_VERIFY: `/api/proxy/v1/auth/users/signup/verify`,
-  LOGIN: `/api/proxy/v1/auth/users/login`,
-  LOGIN_VERIFY: `/api/proxy/v1/auth/users/login/verify`,
-  SET_PASSWORD: `/api/proxy/v1/auth/users/set-password`,
-  REFRESH_TOKEN: `/api/proxy/v1/auth/users/refresh-token`,
-  LOGOUT: `/api/proxy/v1/auth/users/logout`,
-  LOGOUT_ALL: `/api/proxy/v1/auth/users/logout-all`,
+  SIGNUP:         `${P}/v1/auth/users/signup`,
+  SIGNUP_VERIFY:  `${P}/v1/auth/users/signup/verify`,
+  LOGIN:          `${P}/v1/auth/users/login`,
+  LOGIN_VERIFY:   `${P}/v1/auth/users/login/verify`,
+  SET_PASSWORD:   `${P}/v1/auth/users/set-password`,
+  REFRESH_TOKEN:  `${P}/v1/auth/users/refresh-token`,
+  LOGOUT:         `${P}/v1/auth/users/logout`,
+  LOGOUT_ALL:     `${P}/v1/auth/users/logout-all`,
 
   // v1 Firebase (Google)
-  FIREBASE_AUTH: `/api/proxy/v1/auth/firebase`,
-  FIREBASE_REFRESH: `/api/proxy/v1/auth/refresh`,
-  FIREBASE_LOGOUT: `/api/proxy/v1/auth/logout`,
+  FIREBASE_AUTH:    `${P}/v1/auth/firebase`,
+  FIREBASE_REFRESH: `${P}/v1/auth/refresh`,
+  FIREBASE_LOGOUT:  `${P}/v1/auth/logout`,
 
   // v2 Profile
-  PROFILE: `/api/proxy/v2/auth/me`,
-
-  // v2 Auth (alternative)
-  V2_SIGNUP: `/api/proxy/v2/auth/signup`,
-  V2_SIGNUP_VERIFY: `/api/proxy/v2/auth/signup/verify`,
-  V2_LOGIN: `/api/proxy/v2/auth/login`,
-  V2_LOGIN_VERIFY: `/api/proxy/v2/auth/login/verify`,
-  V2_REFRESH_TOKEN: `/api/proxy/v2/auth/refresh-token`,
-  V2_LOGOUT: `/api/proxy/v2/auth/logout`,
-  V2_LOGOUT_ALL: `/api/proxy/v2/auth/logout-all`,
+  PROFILE: `${P}/v2/auth/me`,
 
   // Events
-  EVENT_INTERESTED: `/api/proxy/v1/events/event-interested`,
+  EVENT_INTERESTED: `${P}/v1/events/event-interested`,
 };
 
 /**

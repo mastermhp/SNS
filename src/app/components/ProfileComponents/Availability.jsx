@@ -7,7 +7,7 @@ import { Clock, CheckCircle, Calendar } from 'lucide-react'
 export default function Availability({ user }) {
   return (
     <motion.div
-      className="rounded-2xl border border-white/[0.06] bg-[#0c0c12] overflow-hidden relative"
+      className="rounded-2xl border border-white/[0.06] bg-[#0c0c12] overflow-hidden relative h-full"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}

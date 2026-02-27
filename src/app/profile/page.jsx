@@ -7,15 +7,12 @@ import { useRouter } from 'next/navigation'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import ProfileHeroBanner from '../components/ProfileComponents/ProfileHeroBanner'
-import ProfileHeader from '../components/ProfileComponents/ProfileHeader'
 import CareerStats from '../components/ProfileComponents/CareerStats'
 import QuickInfo from '../components/ProfileComponents/QuickInfo'
 import SubscriptionsSection from '../components/ProfileComponents/SubscriptionsSection'
 import MatchHistory from '../components/ProfileComponents/MatchHistory'
 import Availability from '../components/ProfileComponents/Availability'
-import StatsVisualizer from '../components/ProfileComponents/StatsVisualizer'
-import AchievementsSection from '../components/ProfileComponents/AchievementsSection'
-import StreamingContent from '../components/ProfileComponents/StreamingContent'
+import FeaturedCarousel from '../components/ProfileComponents/FeaturedCarousel'
 import EditProfileModal from '../components/ProfileComponents/EditProfileModal'
 
 export default function ProfilePage() {
@@ -24,19 +21,21 @@ export default function ProfilePage() {
   const [gamingProfile, setGamingProfile] = useState(null)
   const [editProfileOpen, setEditProfileOpen] = useState(false)
 
-  // Load gaming profile from sessionStorage
+  // Load gaming profile from sessionStorage whenever user changes
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
         const stored = sessionStorage.getItem('sns_gaming_profile')
         if (stored) {
           setGamingProfile(JSON.parse(stored))
+        } else {
+          setGamingProfile(null)
         }
       } catch {
-        // ignore
+        setGamingProfile(null)
       }
     }
-  }, [])
+  }, [user])
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -62,16 +61,20 @@ export default function ProfilePage() {
   }
 
   // Merge API user data with gaming profile
+  // Sanitize game field -- it may be an object {id, name, image} from subscription flow
+  const rawGame = gamingProfile?.game || ''
+  const gameName = typeof rawGame === 'object' && rawGame !== null ? (rawGame.name || '') : String(rawGame)
+
   const mergedUser = {
     ...user,
     username: gamingProfile?.username || user.fullName || user.email?.split('@')[0] || 'Player',
     bio: gamingProfile?.bio || '',
-    game: gamingProfile?.game || '',
+    game: gameName,
     role: gamingProfile?.role || '',
     region: gamingProfile?.region || '',
     rank: gamingProfile?.rank || '',
     discord: gamingProfile?.discord || '',
-    games: gamingProfile?.game ? [gamingProfile.game] : [],
+    games: gameName ? [gameName] : [],
     profileImagePreview: gamingProfile?.profileImagePreview || null,
     bannerImagePreview: gamingProfile?.bannerImagePreview || null,
   }
@@ -103,34 +106,26 @@ export default function ProfilePage() {
 
           {/* Hero Banner */}
           <div className="mb-8">
-            <ProfileHeroBanner user={mergedUser} />
+            <ProfileHeroBanner user={mergedUser} onEditProfile={() => setEditProfileOpen(true)} />
           </div>
 
-          {/* Profile Header */}
-          <div className="mb-8">
-            <ProfileHeader user={mergedUser} onEditProfile={() => setEditProfileOpen(true)} />
-          </div>
-
-          {/* Main Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-8 mb-8">
-            {/* Left Column - Sidebar */}
-            <div className="lg:col-span-4 space-y-6">
+          {/* Player Info (2/3) + Availability (1/3) */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div className="lg:col-span-2">
               <QuickInfo user={mergedUser} />
+            </div>
+            <div className="lg:col-span-1">
               <Availability user={mergedUser} />
             </div>
+          </div>
 
-            {/* Right Column - Main Content */}
-            <div className="lg:col-span-8 space-y-6">
-              <CareerStats stats={mergedUser.stats || { totalWins: 0, tournaments: 0, earnings: 0, winRate: 0 }} />
-              <MatchHistory matches={mergedUser.matchHistory || []} />
-            </div>
+          {/* Featured Carousel - Jobs, Career, Merch */}
+          <div className="mb-8">
+            <FeaturedCarousel />
           </div>
 
           {/* Full Width Sections */}
           <div className="space-y-6">
-            {/* <StatsVisualizer stats={mergedUser.stats || {}} /> */}
-            {/* <StreamingContent /> */}
-            {/* <AchievementsSection /> */}
             <SubscriptionsSection user={mergedUser} />
           </div>
         </div>

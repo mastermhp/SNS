@@ -99,7 +99,7 @@ export default function AuthModal({ isOpen, onClose }) {
         console.log('[v0] AuthModal Login verify response:', response);
         setMessage('Login successful!');
       } else {
-        const response = await signupVerifyOTP(email, otp);
+        const response = await signupVerifyOTP(email, otp.trim());
         console.log('[v0] AuthModal Signup verify response:', response);
         setMessage('Account created successfully!');
       }

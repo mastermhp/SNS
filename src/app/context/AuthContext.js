@@ -87,7 +87,7 @@ export function AuthProvider({ children }) {
     const data = await res.json();
     console.log("[v0] Login send OTP response:", JSON.stringify(data, null, 2));
     if (!res.ok) {
-      const msg = data.message || "Failed to send OTP";
+      const msg = data.error || data.message || "Failed to send OTP";
       setError(msg);
       throw new Error(msg);
     }
@@ -104,12 +104,12 @@ export function AuthProvider({ children }) {
     const res = await fetch(API.LOGIN_VERIFY, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, otp }),
+      body: JSON.stringify({ email, otp: String(otp).trim() }),
     });
     const data = await res.json();
     console.log("[v0] Login verify OTP response:", JSON.stringify(data, null, 2));
     if (!res.ok) {
-      const msg = data.message || "Invalid OTP";
+      const msg = data.error || data.message || "Invalid OTP";
       setError(msg);
       throw new Error(msg);
     }
@@ -144,59 +144,29 @@ export function AuthProvider({ children }) {
    */
   const signupSendOTP = useCallback(async (email, phone) => {
     setError(null);
-    console.log("[v0] Signup - sending OTP to:", email, "phone:", phone);
     const body = { email };
     if (phone) body.phone = phone;
-    console.log("[v0] Signup - POST URL:", API.SIGNUP, "body:", JSON.stringify(body));
+    console.log("[v0] Signup send OTP:", JSON.stringify(body));
     const res = await fetch(API.SIGNUP, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
-    console.log("[v0] Signup - response status:", res.status, "statusText:", res.statusText);
-    const text = await res.text();
-    console.log("[v0] Signup - raw response body:", text);
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch {
-      data = { message: text || `Server error (${res.status})` };
-    }
-    console.log("[v0] Signup send OTP response:", JSON.stringify(data, null, 2));
+    const data = await res.json();
+    console.log("[v0] Signup send response:", res.status, JSON.stringify(data));
     if (!res.ok) {
-      const msg = data.message || "Failed to send OTP";
+      const msg = data.error || data.message || (data.errors?.[0]?.msg) || "Failed to send OTP";
       setError(msg);
       throw new Error(msg);
     }
     return data;
   }, []);
 
-  /**
-   * Email/OTP Signup: Step 2 - Verify OTP
-   * POST /api/v1/auth/users/signup/verify  body: { email, otp }
-   */
-  const signupVerifyOTP = useCallback(async (email, otp) => {
-    setError(null);
-    console.log("[v0] Signup - verifying OTP for:", email);
-    const res = await fetch(API.SIGNUP_VERIFY, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, otp }),
-    });
-    const data = await res.json();
-    console.log("[v0] Signup verify OTP response:", JSON.stringify(data, null, 2));
-    if (!res.ok) {
-      const msg = data.message || "Invalid OTP";
-      setError(msg);
-      throw new Error(msg);
-    }
-
-    // Extract tokens - handle nested response: data.data.tokens or data.tokens or top-level
+  // Helper: process successful signup verify response
+  const handleSignupVerifySuccess = useCallback((data, email) => {
     const nestedData = data.data || data;
     const tokens = nestedData.tokens || data.tokens || { accessToken: data.accessToken, refreshToken: data.refreshToken };
-    console.log("[v0] Signup tokens received - accessToken:", tokens.accessToken?.substring(0, 20) + "...", "refreshToken:", tokens.refreshToken?.substring(0, 20) + "...");
     setTokens(tokens);
-
     const userObj = {
       id: nestedData.id || nestedData._id || data.user?.id || data.id,
       email: nestedData.email || data.user?.email || email,
@@ -205,15 +175,69 @@ export function AuthProvider({ children }) {
       avatar: nestedData.avatar || data.user?.avatar || "",
       authMethod: nestedData.authMethod || "email",
     };
-    console.log("[v0] Signup user object:", userObj);
     setUser(userObj);
     setStoredUser(userObj);
-
-    // Fetch full profile in background
     fetchProfile().catch(() => {});
-
     return { user: userObj, tokens };
   }, [fetchProfile]);
+
+  /**
+   * Email/OTP Signup: Step 2 - Verify OTP
+   * POST /v1/auth/users/signup/verify
+   * API accepts { email, otp } OR { phone, otp }
+   * We try { phone, otp } first (if phone was provided during signup), then { email, otp }
+   */
+  const signupVerifyOTP = useCallback(async (email, otp, phone) => {
+    setError(null);
+    const otpStr = String(otp).trim();
+
+    // Try phone-based verify first if phone was provided during signup,
+    // since the backend may key OTP by phone when both email+phone were sent
+    if (phone) {
+      console.log("[v0] Signup verify trying phone:", phone, "otp:", otpStr);
+      const phoneRes = await fetch(API.SIGNUP_VERIFY, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, otp: otpStr }),
+      });
+      const phoneText = await phoneRes.text();
+      console.log("[v0] Signup verify phone response:", phoneRes.status, phoneText);
+      if (phoneRes.ok) {
+        const data = JSON.parse(phoneText);
+        return handleSignupVerifySuccess(data, email);
+      }
+    }
+
+    // Try email-based verify
+    console.log("[v0] Signup verify trying email:", email, "otp:", otpStr);
+    const res = await fetch(API.SIGNUP_VERIFY, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, otp: otpStr }),
+    });
+    const data = await res.json();
+    console.log("[v0] Signup verify email response:", res.status, JSON.stringify(data));
+
+    if (!res.ok) {
+      // Last try: numeric OTP with email
+      console.log("[v0] Trying numeric OTP with email...");
+      const numRes = await fetch(API.SIGNUP_VERIFY, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp: Number(otpStr) }),
+      });
+      if (numRes.ok) {
+        const numData = await numRes.json();
+        console.log("[v0] Signup verify SUCCESS with numeric otp:", JSON.stringify(numData));
+        return handleSignupVerifySuccess(numData, email);
+      }
+      const msg = data.error || data.message || (data.errors?.[0]?.msg) || "Invalid OTP";
+      setError(msg);
+      throw new Error(msg);
+    }
+
+    return handleSignupVerifySuccess(data, email);
+  }, [fetchProfile, handleSignupVerifySuccess]);
 
   // ============================================
   // GOOGLE / FIREBASE AUTH

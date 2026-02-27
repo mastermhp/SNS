@@ -33,82 +33,67 @@ const RANKS = {
   'PUBG PC': ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Master', 'Conqueror'],
 }
 
-const REGIONS = [
-  { label: 'Asia', type: 'continent', children: [
-    { label: 'South Asia', type: 'subcontinent', children: [
-      { label: 'Bangladesh', type: 'country' },
-      { label: 'India', type: 'country' },
-      { label: 'Pakistan', type: 'country' },
-      { label: 'Sri Lanka', type: 'country' },
-      { label: 'Nepal', type: 'country' },
-    ]},
-    { label: 'Southeast Asia', type: 'subcontinent', children: [
-      { label: 'Indonesia', type: 'country' },
-      { label: 'Philippines', type: 'country' },
-      { label: 'Thailand', type: 'country' },
-      { label: 'Vietnam', type: 'country' },
-      { label: 'Malaysia', type: 'country' },
-      { label: 'Singapore', type: 'country' },
-    ]},
-    { label: 'East Asia', type: 'subcontinent', children: [
-      { label: 'Japan', type: 'country' },
-      { label: 'South Korea', type: 'country' },
-      { label: 'China', type: 'country' },
-    ]},
-    { label: 'Middle East', type: 'subcontinent', children: [
-      { label: 'UAE', type: 'country' },
-      { label: 'Saudi Arabia', type: 'country' },
-      { label: 'Turkey', type: 'country' },
-    ]},
-  ]},
-  { label: 'Europe', type: 'continent', children: [
-    { label: 'Western Europe', type: 'subcontinent', children: [
-      { label: 'United Kingdom', type: 'country' },
-      { label: 'Germany', type: 'country' },
-      { label: 'France', type: 'country' },
-    ]},
-    { label: 'Eastern Europe', type: 'subcontinent', children: [
-      { label: 'Poland', type: 'country' },
-      { label: 'Russia', type: 'country' },
-    ]},
-    { label: 'Northern Europe', type: 'subcontinent', children: [
-      { label: 'Sweden', type: 'country' },
-      { label: 'Denmark', type: 'country' },
-      { label: 'Finland', type: 'country' },
-    ]},
-  ]},
-  { label: 'North America', type: 'continent', children: [
-    { label: 'United States', type: 'country' },
-    { label: 'Canada', type: 'country' },
-    { label: 'Mexico', type: 'country' },
-  ]},
-  { label: 'South America', type: 'continent', children: [
-    { label: 'Brazil', type: 'country' },
-    { label: 'Argentina', type: 'country' },
-  ]},
-  { label: 'Africa', type: 'continent', children: [
-    { label: 'South Africa', type: 'country' },
-    { label: 'Nigeria', type: 'country' },
-    { label: 'Egypt', type: 'country' },
-  ]},
-  { label: 'Oceania', type: 'continent', children: [
-    { label: 'Australia', type: 'country' },
-    { label: 'New Zealand', type: 'country' },
-  ]},
-]
-
-function flattenRegions(nodes, depth = 0) {
-  const result = []
-  for (const node of nodes) {
-    result.push({ label: node.label, type: node.type, depth })
-    if (node.children) {
-      result.push(...flattenRegions(node.children, depth + 1))
-    }
-  }
-  return result
+// Continent -> Country -> State/City cascading data
+const REGION_DATA = {
+  Asia: {
+    Bangladesh: ['Dhaka', 'Chittagong', 'Sylhet', 'Rajshahi', 'Khulna', 'Barishal', 'Rangpur', 'Mymensingh', 'Comilla', 'Gazipur'],
+    India: ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata', 'Pune', 'Ahmedabad', 'Jaipur', 'Lucknow'],
+    Pakistan: ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Faisalabad', 'Peshawar', 'Multan', 'Quetta'],
+    'Sri Lanka': ['Colombo', 'Kandy', 'Galle', 'Jaffna', 'Negombo'],
+    Nepal: ['Kathmandu', 'Pokhara', 'Lalitpur', 'Biratnagar', 'Bharatpur'],
+    Indonesia: ['Jakarta', 'Surabaya', 'Bandung', 'Medan', 'Bali'],
+    Philippines: ['Manila', 'Cebu', 'Davao', 'Quezon City', 'Makati'],
+    Thailand: ['Bangkok', 'Chiang Mai', 'Pattaya', 'Phuket', 'Nonthaburi'],
+    Vietnam: ['Ho Chi Minh City', 'Hanoi', 'Da Nang', 'Hai Phong', 'Can Tho'],
+    Malaysia: ['Kuala Lumpur', 'Penang', 'Johor Bahru', 'Ipoh', 'Kota Kinabalu'],
+    Singapore: ['Singapore'],
+    Japan: ['Tokyo', 'Osaka', 'Yokohama', 'Nagoya', 'Sapporo', 'Fukuoka', 'Kyoto'],
+    'South Korea': ['Seoul', 'Busan', 'Incheon', 'Daegu', 'Daejeon', 'Gwangju'],
+    China: ['Beijing', 'Shanghai', 'Guangzhou', 'Shenzhen', 'Chengdu', 'Hangzhou'],
+    UAE: ['Dubai', 'Abu Dhabi', 'Sharjah', 'Ajman', 'Ras Al Khaimah'],
+    'Saudi Arabia': ['Riyadh', 'Jeddah', 'Mecca', 'Medina', 'Dammam'],
+    Turkey: ['Istanbul', 'Ankara', 'Izmir', 'Bursa', 'Antalya'],
+  },
+  Europe: {
+    'United Kingdom': ['London', 'Manchester', 'Birmingham', 'Leeds', 'Glasgow', 'Liverpool', 'Edinburgh'],
+    Germany: ['Berlin', 'Munich', 'Hamburg', 'Frankfurt', 'Cologne', 'Stuttgart'],
+    France: ['Paris', 'Marseille', 'Lyon', 'Toulouse', 'Nice', 'Strasbourg'],
+    Spain: ['Madrid', 'Barcelona', 'Valencia', 'Seville', 'Bilbao'],
+    Italy: ['Rome', 'Milan', 'Naples', 'Turin', 'Florence'],
+    Poland: ['Warsaw', 'Krakow', 'Wroclaw', 'Gdansk', 'Poznan'],
+    Russia: ['Moscow', 'Saint Petersburg', 'Novosibirsk', 'Yekaterinburg', 'Kazan'],
+    Sweden: ['Stockholm', 'Gothenburg', 'Malmo', 'Uppsala'],
+    Denmark: ['Copenhagen', 'Aarhus', 'Odense', 'Aalborg'],
+    Finland: ['Helsinki', 'Tampere', 'Turku', 'Oulu'],
+    Netherlands: ['Amsterdam', 'Rotterdam', 'The Hague', 'Utrecht', 'Eindhoven'],
+    Portugal: ['Lisbon', 'Porto', 'Braga', 'Coimbra'],
+  },
+  'North America': {
+    'United States': ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'San Francisco', 'Seattle', 'Miami', 'Dallas', 'Atlanta', 'Boston', 'Denver'],
+    Canada: ['Toronto', 'Vancouver', 'Montreal', 'Calgary', 'Ottawa', 'Edmonton', 'Winnipeg'],
+    Mexico: ['Mexico City', 'Guadalajara', 'Monterrey', 'Cancun', 'Puebla', 'Tijuana'],
+  },
+  'South America': {
+    Brazil: ['Sao Paulo', 'Rio de Janeiro', 'Brasilia', 'Salvador', 'Fortaleza', 'Belo Horizonte'],
+    Argentina: ['Buenos Aires', 'Cordoba', 'Rosario', 'Mendoza', 'La Plata'],
+    Colombia: ['Bogota', 'Medellin', 'Cali', 'Barranquilla', 'Cartagena'],
+    Chile: ['Santiago', 'Valparaiso', 'Concepcion', 'Antofagasta'],
+    Peru: ['Lima', 'Arequipa', 'Cusco', 'Trujillo'],
+  },
+  Africa: {
+    'South Africa': ['Johannesburg', 'Cape Town', 'Durban', 'Pretoria', 'Port Elizabeth'],
+    Nigeria: ['Lagos', 'Abuja', 'Kano', 'Ibadan', 'Port Harcourt'],
+    Egypt: ['Cairo', 'Alexandria', 'Giza', 'Luxor', 'Aswan'],
+    Kenya: ['Nairobi', 'Mombasa', 'Kisumu', 'Nakuru'],
+    Morocco: ['Casablanca', 'Rabat', 'Marrakech', 'Fez', 'Tangier'],
+  },
+  Oceania: {
+    Australia: ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Gold Coast', 'Canberra'],
+    'New Zealand': ['Auckland', 'Wellington', 'Christchurch', 'Hamilton', 'Dunedin'],
+  },
 }
 
-const FLAT_REGIONS = flattenRegions(REGIONS)
+const CONTINENTS = Object.keys(REGION_DATA)
 
 const TOTAL_STEPS = 5
 
@@ -120,8 +105,14 @@ export default function SignupModal({ isOpen, onClose, userType = 'player', onSw
   const [localError, setLocalError] = useState('')
   const [message, setMessage] = useState('')
   const [formData, setFormData] = useState({
-    email: '', phone: '', otp: '', fullName: '', username: '', bio: '', game: '', role: '', region: '', rank: '', discord: '',
+    email: '', phone: '', otp: '', fullName: '', username: '', bio: '', game: '', role: '', rank: '', discord: '',
   })
+  // Cascading region selection
+  const [selectedContinent, setSelectedContinent] = useState('')
+  const [selectedCountry, setSelectedCountry] = useState('')
+  const [selectedCity, setSelectedCity] = useState('')
+  // Store the normalized phone used during OTP send so verify can use it
+  const [normalizedPhoneForVerify, setNormalizedPhoneForVerify] = useState('')
   const [profileImage, setProfileImage] = useState(null)
   const [profileImagePreview, setProfileImagePreview] = useState(null)
   const [bannerImage, setBannerImage] = useState(null)
@@ -160,11 +151,26 @@ export default function SignupModal({ isOpen, onClose, userType = 'player', onSw
 
   const handleClose = () => {
     setStep(1)
-    setFormData({ email: '', phone: '', otp: '', fullName: '', username: '', bio: '', game: '', role: '', region: '', rank: '', discord: '' })
+    setFormData({ email: '', phone: '', otp: '', fullName: '', username: '', bio: '', game: '', role: '', rank: '', discord: '' })
+    setSelectedContinent(''); setSelectedCountry(''); setSelectedCity('')
     setProfileImage(null); setProfileImagePreview(null)
     setBannerImage(null); setBannerImagePreview(null)
     setLocalError(''); setMessage('')
     onClose()
+  }
+
+  // Normalize phone to +880 format expected by the API
+  const normalizePhone = (raw) => {
+    if (!raw) return undefined
+    // Strip dashes, spaces, and non-digit chars (keep leading +)
+    let digits = raw.replace(/[^+\d]/g, '')
+    // If starts with 0 (local BD), prefix +88
+    if (digits.startsWith('0')) digits = '+88' + digits
+    // If starts with 88 but not +88, add +
+    if (digits.startsWith('88') && !digits.startsWith('+88')) digits = '+' + digits
+    // If no + at all and 11+ digits, assume BD
+    if (!digits.startsWith('+') && digits.length >= 11) digits = '+88' + digits
+    return digits || undefined
   }
 
   const handleSendOTP = async (e) => {
@@ -174,7 +180,9 @@ export default function SignupModal({ isOpen, onClose, userType = 'player', onSw
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) { setLocalError('Invalid email format'); return }
     setLoading(true)
     try {
-      const response = await signupSendOTP(formData.email, formData.phone || undefined)
+      const phone = normalizePhone(formData.phone)
+      setNormalizedPhoneForVerify(phone || '')
+      const response = await signupSendOTP(formData.email, phone)
       setMessage(response.message || 'OTP sent to your email!')
       setStep(2)
     } catch (err) { setLocalError(err.message || 'Failed to send OTP') }
@@ -187,7 +195,7 @@ export default function SignupModal({ isOpen, onClose, userType = 'player', onSw
     if (!formData.otp.trim() || formData.otp.length < 4) { setLocalError('Please enter a valid OTP'); return }
     setLoading(true)
     try {
-      await signupVerifyOTP(formData.email, formData.otp)
+      await signupVerifyOTP(formData.email, formData.otp, normalizedPhoneForVerify || undefined)
       setMessage('Email verified! Now set up your profile.')
       setStep(3)
     } catch (err) { setLocalError(err.message || 'Invalid OTP') }
@@ -202,9 +210,10 @@ export default function SignupModal({ isOpen, onClose, userType = 'player', onSw
     try {
       await updateProfile({ fullName: formData.fullName, phone: formData.phone || undefined })
       setMessage('Personal info saved!')
+      const region = getRegionString()
       const gamingProfile = {
         username: formData.username, bio: formData.bio, game: formData.game, role: formData.role,
-        region: formData.region, rank: formData.rank, discord: formData.discord,
+        region, rank: formData.rank, discord: formData.discord,
         profileImagePreview, bannerImagePreview,
       }
       sessionStorage.setItem('sns_gaming_profile', JSON.stringify(gamingProfile))
@@ -213,12 +222,19 @@ export default function SignupModal({ isOpen, onClose, userType = 'player', onSw
     finally { setLoading(false) }
   }
 
+  // Build region string from cascading selections
+  const getRegionString = () => {
+    const parts = [selectedCity, selectedCountry, selectedContinent].filter(Boolean)
+    return parts.join(', ')
+  }
+
   const handleSaveGaming = async (e) => {
     e.preventDefault()
     setLocalError('')
+    const region = getRegionString()
     const gamingProfile = {
       username: formData.username || formData.fullName, bio: formData.bio, game: formData.game,
-      role: formData.role, region: formData.region, rank: formData.rank, discord: formData.discord,
+      role: formData.role, region, rank: formData.rank, discord: formData.discord,
       profileImagePreview, bannerImagePreview,
     }
     sessionStorage.setItem('sns_gaming_profile', JSON.stringify(gamingProfile))
@@ -228,9 +244,10 @@ export default function SignupModal({ isOpen, onClose, userType = 'player', onSw
 
   const handleFinishSignup = async (e) => {
     e.preventDefault()
+    const region = getRegionString()
     const gamingProfile = {
       username: formData.username || formData.fullName, bio: formData.bio, game: formData.game,
-      role: formData.role, region: formData.region, rank: formData.rank, discord: formData.discord,
+      role: formData.role, region, rank: formData.rank, discord: formData.discord,
       profileImagePreview, bannerImagePreview,
     }
     sessionStorage.setItem('sns_gaming_profile', JSON.stringify(gamingProfile))
@@ -462,31 +479,50 @@ export default function SignupModal({ isOpen, onClose, userType = 'player', onSw
                               </div>
                             </motion.div>
                           )}
+                          {/* Continent */}
                           <motion.div variants={itemVariants}>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">Region</label>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">Continent</label>
                             <div className="relative">
                               <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-600 w-4 h-4" />
-                              <select name="region" value={formData.region} onChange={handleChange} className={selectClass}>
-                                <option value="" className="bg-[#1a1a24] text-gray-400">Select region</option>
-                                {FLAT_REGIONS.map((reg, idx) => {
-                                  const prefix = reg.type === 'continent' ? '' : reg.type === 'subcontinent' ? '\u00A0\u00A0' : '\u00A0\u00A0\u00A0\u00A0'
-                                  const isHeader = reg.type === 'continent' || reg.type === 'subcontinent'
-                                  return (
-                                    <option
-                                      key={`${reg.label}-${idx}`}
-                                      value={reg.label}
-                                      className="bg-[#1a1a24] text-white"
-                                      disabled={reg.type === 'continent'}
-                                      style={{ fontWeight: isHeader ? 'bold' : 'normal', color: reg.type === 'continent' ? '#a78bfa' : reg.type === 'subcontinent' ? '#c084fc' : '#e2e8f0' }}
-                                    >
-                                      {prefix}{reg.label}
-                                    </option>
-                                  )
-                                })}
+                              <select value={selectedContinent} onChange={(e) => { setSelectedContinent(e.target.value); setSelectedCountry(''); setSelectedCity('') }} className={selectClass}>
+                                <option value="" className="bg-[#1a1a24] text-gray-400">Select continent</option>
+                                {CONTINENTS.map(c => <option key={c} value={c} className="bg-[#1a1a24] text-white">{c}</option>)}
                               </select>
                               <ChevronRight className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-600 w-4 h-4 rotate-90 pointer-events-none" />
                             </div>
                           </motion.div>
+                          {/* Country */}
+                          {selectedContinent && (
+                            <motion.div variants={itemVariants} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
+                              <label className="block text-sm font-medium text-gray-300 mb-2">Country</label>
+                              <div className="relative">
+                                <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-600 w-4 h-4" />
+                                <select value={selectedCountry} onChange={(e) => { setSelectedCountry(e.target.value); setSelectedCity('') }} className={selectClass}>
+                                  <option value="" className="bg-[#1a1a24] text-gray-400">Select country</option>
+                                  {Object.keys(REGION_DATA[selectedContinent] || {}).map(country => (
+                                    <option key={country} value={country} className="bg-[#1a1a24] text-white">{country}</option>
+                                  ))}
+                                </select>
+                                <ChevronRight className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-600 w-4 h-4 rotate-90 pointer-events-none" />
+                              </div>
+                            </motion.div>
+                          )}
+                          {/* City */}
+                          {selectedCountry && REGION_DATA[selectedContinent]?.[selectedCountry]?.length > 0 && (
+                            <motion.div variants={itemVariants} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
+                              <label className="block text-sm font-medium text-gray-300 mb-2">City / State</label>
+                              <div className="relative">
+                                <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-600 w-4 h-4" />
+                                <select value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)} className={selectClass}>
+                                  <option value="" className="bg-[#1a1a24] text-gray-400">Select city / state</option>
+                                  {REGION_DATA[selectedContinent][selectedCountry].map(city => (
+                                    <option key={city} value={city} className="bg-[#1a1a24] text-white">{city}</option>
+                                  ))}
+                                </select>
+                                <ChevronRight className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-600 w-4 h-4 rotate-90 pointer-events-none" />
+                              </div>
+                            </motion.div>
+                          )}
                         </>
                       )}
 
@@ -589,7 +625,8 @@ export default function SignupModal({ isOpen, onClose, userType = 'player', onSw
 
                     {(step === 4 || step === 5) && (
                       <motion.button type="button" onClick={() => {
-                        const gamingProfile = { username: formData.username || formData.fullName, bio: formData.bio, game: formData.game, role: formData.role, region: formData.region, rank: formData.rank, discord: formData.discord, profileImagePreview, bannerImagePreview }
+                        const region = getRegionString()
+                        const gamingProfile = { username: formData.username || formData.fullName, bio: formData.bio, game: formData.game, role: formData.role, region, rank: formData.rank, discord: formData.discord, profileImagePreview, bannerImagePreview }
                         sessionStorage.setItem('sns_gaming_profile', JSON.stringify(gamingProfile))
                         handleClose()
                       }} className="w-full text-center text-sm text-gray-500 hover:text-gray-400 transition mt-3 py-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>

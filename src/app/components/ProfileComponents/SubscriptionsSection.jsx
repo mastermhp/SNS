@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Trophy, Swords, Zap, Briefcase, Building2, Gamepad2, Check, Newspaper, Crown, Star, Users, Calendar, Gift, ChevronRight } from 'lucide-react'
 import NewSignupModal from '../NewSignupModal'
@@ -182,7 +182,34 @@ const ALL_SUBSCRIPTIONS = [
 
 export default function SubscriptionsSection({ user }) {
   const [activeModal, setActiveModal] = useState(null)
-  const [localActive, setLocalActive] = useState(user?.subscriptions || {})
+  const [localActive, setLocalActive] = useState(() => {
+    // Load subscribed plans from sessionStorage
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = JSON.parse(sessionStorage.getItem('sns_subscriptions') || '{}')
+        return { ...(user?.subscriptions || {}), ...stored }
+      } catch {}
+    }
+    return user?.subscriptions || {}
+  })
+
+  // Refresh subscription status from sessionStorage
+  const refreshSubscriptions = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = JSON.parse(sessionStorage.getItem('sns_subscriptions') || '{}')
+        setLocalActive(prev => ({ ...prev, ...stored }))
+      } catch {}
+    }
+  }, [])
+
+  // Re-read on mount and window focus (e.g. after redirect from subscription)
+  useEffect(() => {
+    refreshSubscriptions()
+    const onFocus = () => refreshSubscriptions()
+    window.addEventListener('focus', onFocus)
+    return () => window.removeEventListener('focus', onFocus)
+  }, [refreshSubscriptions])
 
   const handleSubscribe = (sub) => {
     setActiveModal(sub)
@@ -190,6 +217,7 @@ export default function SubscriptionsSection({ user }) {
 
   const handleCloseModal = () => {
     setActiveModal(null)
+    refreshSubscriptions()
   }
 
   const containerVariants = {
@@ -296,17 +324,17 @@ export default function SubscriptionsSection({ user }) {
 
                   {/* Action Button */}
                   <motion.button
-                    onClick={() => handleSubscribe(sub)}
+                    onClick={() => !isActive && handleSubscribe(sub)}
                     className={`w-full py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-300 ${
                       isActive
-                        ? `bg-gradient-to-r ${sub.color} text-white shadow-lg`
+                        ? `bg-gradient-to-r ${sub.color} text-white shadow-lg cursor-default`
                         : 'bg-white/[0.04] text-gray-300 border border-white/[0.08] hover:bg-white/[0.08] hover:text-white'
                     }`}
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
+                    whileHover={isActive ? {} : { scale: 1.01 }}
+                    whileTap={isActive ? {} : { scale: 0.99 }}
                   >
                     {isActive ? (
-                      <>Active - Manage</>
+                      <><Check size={16} className="text-white" /> Subscribed</>
                     ) : (
                       <>Subscribe <ChevronRight size={14} /></>
                     )}
@@ -339,6 +367,7 @@ export default function SubscriptionsSection({ user }) {
           key={activeModal.id}
           isOpen={!!activeModal}
           onClose={handleCloseModal}
+          subscriptionId={activeModal.id}
           {...activeModal.flowProps}
         />
       )}

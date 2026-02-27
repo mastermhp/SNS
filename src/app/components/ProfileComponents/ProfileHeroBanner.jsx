@@ -1,10 +1,22 @@
 'use client'
 
-import React from 'react'
-import { motion } from 'framer-motion'
-import { Share2, Settings, Gamepad2, MapPin, Award } from 'lucide-react'
+import React, { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Share2, Edit3, Gamepad2, MapPin, Award, Check, Link2, Facebook, Twitter } from 'lucide-react'
 
-export default function ProfileHeroBanner({ user }) {
+export default function ProfileHeroBanner({ user, onEditProfile }) {
+  const [showShareMenu, setShowShareMenu] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const shareRef = useRef(null)
+
+  // Close share menu on outside click
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (shareRef.current && !shareRef.current.contains(e.target)) setShowShareMenu(false)
+    }
+    if (showShareMenu) document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [showShareMenu])
   const initials = (user?.fullName || user?.username || 'P')
     .split(' ')
     .map(w => w[0])
@@ -132,22 +144,77 @@ export default function ProfileHeroBanner({ user }) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <motion.button
-              className="p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-gray-400 hover:text-white hover:bg-white/[0.08] transition"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              aria-label="Share profile"
-            >
-              <Share2 size={18} />
-            </motion.button>
-            <motion.button
-              className="p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-gray-400 hover:text-white hover:bg-white/[0.08] transition"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              aria-label="Settings"
-            >
-              <Settings size={18} />
-            </motion.button>
+            {/* Share button with dropdown */}
+            <div className="relative" ref={shareRef}>
+              <motion.button
+                className="p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-gray-400 hover:text-white hover:bg-white/[0.08] transition"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowShareMenu(!showShareMenu)}
+                aria-label="Share profile"
+              >
+                {copied ? <Check size={18} className="text-emerald-400" /> : <Share2 size={18} />}
+              </motion.button>
+              <AnimatePresence>
+                {showShareMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9, y: -5 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, y: -5 }}
+                    className="absolute right-0 top-12 z-50 w-48 rounded-xl bg-[#1a1a24] border border-white/[0.08] shadow-2xl shadow-black/40 overflow-hidden"
+                  >
+                    <button
+                      className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-white/[0.06] hover:text-white transition"
+                      onClick={async () => {
+                        const url = typeof window !== 'undefined' ? window.location.href : ''
+                        if (navigator.share) {
+                          try { await navigator.share({ title: `${user?.fullName || 'Player'} - SNS Profile`, url }) } catch {}
+                        } else {
+                          await navigator.clipboard.writeText(url)
+                          setCopied(true); setTimeout(() => setCopied(false), 2000)
+                        }
+                        setShowShareMenu(false)
+                      }}
+                    >
+                      <Link2 size={14} /> Copy Link
+                    </button>
+                    <button
+                      className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-white/[0.06] hover:text-white transition"
+                      onClick={() => {
+                        const url = typeof window !== 'undefined' ? window.location.href : ''
+                        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank', 'width=600,height=400')
+                        setShowShareMenu(false)
+                      }}
+                    >
+                      <Facebook size={14} /> Facebook
+                    </button>
+                    <button
+                      className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-white/[0.06] hover:text-white transition"
+                      onClick={() => {
+                        const url = typeof window !== 'undefined' ? window.location.href : ''
+                        window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(`Check out ${user?.fullName || 'this player'} on Slice N Share!`)}`, '_blank', 'width=600,height=400')
+                        setShowShareMenu(false)
+                      }}
+                    >
+                      <Twitter size={14} /> Twitter / X
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+            {/* Edit Profile button */}
+            {onEditProfile && (
+              <motion.button
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 hover:bg-purple-500/15 hover:border-purple-500/30 text-sm font-medium transition"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={onEditProfile}
+                aria-label="Edit Profile"
+              >
+                <Edit3 size={15} />
+                <span className="hidden sm:inline">Edit Profile</span>
+              </motion.button>
+            )}
           </motion.div>
         </div>
 

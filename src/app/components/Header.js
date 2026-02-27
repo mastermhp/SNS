@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { Menu, X, User } from 'lucide-react'
 import Link from 'next/link'
-import RoleSelectModal from './AuthModals/RoleSelectModal'
 import LoginModal from './AuthModals/LoginModal'
 import SignupModal from './AuthModals/SignupModal'
 import ProfileSettings from './ProfileSettings'
@@ -15,8 +14,6 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [loginModalOpen, setLoginModalOpen] = useState(false)
   const [signupModalOpen, setSignupModalOpen] = useState(false)
-  const [roleSelectOpen, setRoleSelectOpen] = useState(false)
-  const [selectedUserType, setSelectedUserType] = useState('player')
   const [profileSettingsOpen, setProfileSettingsOpen] = useState(false)
 
   useEffect(() => {
@@ -36,12 +33,6 @@ export default function Header() {
   }
 
   const handleSignupClick = () => {
-    setRoleSelectOpen(true)
-  }
-
-  const handleRoleSelect = (role) => {
-    setSelectedUserType(role)
-    setRoleSelectOpen(false)
     setSignupModalOpen(true)
   }
 
@@ -185,20 +176,15 @@ export default function Header() {
       </AnimatePresence>
 
       {/* Auth Modals */}
-      <RoleSelectModal
-        isOpen={roleSelectOpen}
-        onClose={() => setRoleSelectOpen(false)}
-        onSelectRole={handleRoleSelect}
-      />
       <LoginModal
         isOpen={loginModalOpen}
         onClose={() => setLoginModalOpen(false)}
-        onSwitchToSignup={() => { setLoginModalOpen(false); setRoleSelectOpen(true) }}
+        onSwitchToSignup={() => { setLoginModalOpen(false); setSignupModalOpen(true) }}
       />
       <SignupModal
         isOpen={signupModalOpen}
         onClose={() => setSignupModalOpen(false)}
-        userType={selectedUserType}
+        userType="player"
         onSwitchToLogin={() => { setSignupModalOpen(false); setLoginModalOpen(true) }}
       />
       <ProfileSettings isOpen={profileSettingsOpen} onClose={() => setProfileSettingsOpen(false)} />

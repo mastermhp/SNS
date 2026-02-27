@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, User, AtSign, Gamepad2, Globe, Award, MessageCircle, FileText, Loader, Check, Camera, ImageIcon, Phone } from 'lucide-react'
+import { X, User, AtSign, Gamepad2, Globe, Award, MessageCircle, FileText, Loader, Check, Camera, ImageIcon, Phone, MapPin, ChevronRight } from 'lucide-react'
 import { useAuth } from '@/app/context/AuthContext'
+import { REGION_DATA, CONTINENTS, parseRegionString } from '@/lib/regionData'
 
 const GAMES = ['Valorant', 'League of Legends', 'CS:GO', 'Dota 2', 'Fortnite', 'Apex Legends', 'PUBG Mobile', 'Free Fire', 'MLBB', 'Call of Duty Mobile', 'PUBG PC']
 const ROLES = {
@@ -33,41 +34,7 @@ const RANKS = {
   'PUBG PC': ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Master', 'Conqueror'],
 }
 
-const REGIONS = [
-  { label: 'Asia', type: 'continent', children: [
-    { label: 'South Asia', type: 'subcontinent', children: [
-      { label: 'Bangladesh', type: 'country' }, { label: 'India', type: 'country' }, { label: 'Pakistan', type: 'country' }, { label: 'Sri Lanka', type: 'country' }, { label: 'Nepal', type: 'country' },
-    ]},
-    { label: 'Southeast Asia', type: 'subcontinent', children: [
-      { label: 'Indonesia', type: 'country' }, { label: 'Philippines', type: 'country' }, { label: 'Thailand', type: 'country' }, { label: 'Vietnam', type: 'country' }, { label: 'Malaysia', type: 'country' }, { label: 'Singapore', type: 'country' },
-    ]},
-    { label: 'East Asia', type: 'subcontinent', children: [
-      { label: 'Japan', type: 'country' }, { label: 'South Korea', type: 'country' }, { label: 'China', type: 'country' },
-    ]},
-    { label: 'Middle East', type: 'subcontinent', children: [
-      { label: 'UAE', type: 'country' }, { label: 'Saudi Arabia', type: 'country' }, { label: 'Turkey', type: 'country' },
-    ]},
-  ]},
-  { label: 'Europe', type: 'continent', children: [
-    { label: 'Western Europe', type: 'subcontinent', children: [{ label: 'United Kingdom', type: 'country' }, { label: 'Germany', type: 'country' }, { label: 'France', type: 'country' }] },
-    { label: 'Eastern Europe', type: 'subcontinent', children: [{ label: 'Poland', type: 'country' }, { label: 'Russia', type: 'country' }] },
-    { label: 'Northern Europe', type: 'subcontinent', children: [{ label: 'Sweden', type: 'country' }, { label: 'Denmark', type: 'country' }, { label: 'Finland', type: 'country' }] },
-  ]},
-  { label: 'North America', type: 'continent', children: [{ label: 'United States', type: 'country' }, { label: 'Canada', type: 'country' }, { label: 'Mexico', type: 'country' }] },
-  { label: 'South America', type: 'continent', children: [{ label: 'Brazil', type: 'country' }, { label: 'Argentina', type: 'country' }] },
-  { label: 'Africa', type: 'continent', children: [{ label: 'South Africa', type: 'country' }, { label: 'Nigeria', type: 'country' }, { label: 'Egypt', type: 'country' }] },
-  { label: 'Oceania', type: 'continent', children: [{ label: 'Australia', type: 'country' }, { label: 'New Zealand', type: 'country' }] },
-]
 
-function flattenRegions(nodes, depth = 0) {
-  const result = []
-  for (const node of nodes) {
-    result.push({ label: node.label, type: node.type, depth })
-    if (node.children) result.push(...flattenRegions(node.children, depth + 1))
-  }
-  return result
-}
-const FLAT_REGIONS = flattenRegions(REGIONS)
 
 export default function EditProfileModal({ isOpen, onClose, user, gamingProfile, onProfileUpdate }) {
   const { updateProfile } = useAuth()
@@ -75,8 +42,11 @@ export default function EditProfileModal({ isOpen, onClose, user, gamingProfile,
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [formData, setFormData] = useState({
-    fullName: '', phone: '', username: '', bio: '', game: '', role: '', region: '', rank: '', discord: '',
+    fullName: '', phone: '', username: '', bio: '', game: '', role: '', rank: '', discord: '',
   })
+  const [selectedContinent, setSelectedContinent] = useState('')
+  const [selectedCountry, setSelectedCountry] = useState('')
+  const [selectedCity, setSelectedCity] = useState('')
   const [profileImagePreview, setProfileImagePreview] = useState(null)
   const [bannerImagePreview, setBannerImagePreview] = useState(null)
   const profileInputRef = useRef(null)
@@ -84,13 +54,17 @@ export default function EditProfileModal({ isOpen, onClose, user, gamingProfile,
 
   useEffect(() => {
     if (isOpen) {
+      const existingRegion = gamingProfile?.region || user?.region || ''
+      const { continent, country, city } = parseRegionString(existingRegion)
+      setSelectedContinent(continent)
+      setSelectedCountry(country)
+      setSelectedCity(city)
       setFormData({
         fullName: user?.fullName || '', phone: user?.phone || '',
         username: gamingProfile?.username || user?.username || '',
         bio: gamingProfile?.bio || user?.bio || '',
         game: gamingProfile?.game || user?.game || '',
         role: gamingProfile?.role || user?.role || '',
-        region: gamingProfile?.region || user?.region || '',
         rank: gamingProfile?.rank || user?.rank || '',
         discord: gamingProfile?.discord || user?.discord || '',
       })
@@ -119,6 +93,11 @@ export default function EditProfileModal({ isOpen, onClose, user, gamingProfile,
     if (name === 'game') setFormData(prev => ({ ...prev, [name]: value, role: '', rank: '' }))
   }
 
+  const getRegionString = () => {
+    const parts = [selectedCity, selectedCountry, selectedContinent].filter(Boolean)
+    return parts.join(', ')
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(''); setLoading(true)
@@ -126,9 +105,10 @@ export default function EditProfileModal({ isOpen, onClose, user, gamingProfile,
       if (formData.fullName.trim()) {
         await updateProfile({ fullName: formData.fullName, phone: formData.phone || undefined })
       }
+      const region = getRegionString()
       const updatedGamingProfile = {
         username: formData.username, bio: formData.bio, game: formData.game,
-        role: formData.role, region: formData.region, rank: formData.rank, discord: formData.discord,
+        role: formData.role, region, rank: formData.rank, discord: formData.discord,
         profileImagePreview, bannerImagePreview,
       }
       onProfileUpdate(updatedGamingProfile)
@@ -239,21 +219,41 @@ export default function EditProfileModal({ isOpen, onClose, user, gamingProfile,
                         </select>
                       </div>
                     )}
+                    {/* Continent */}
                     <div className="relative">
                       <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-600 w-4 h-4" />
-                      <select name="region" value={formData.region} onChange={handleChange} className={selectClass}>
-                        <option value="" className="bg-[#1a1a24]">Select region</option>
-                        {FLAT_REGIONS.map((reg, idx) => {
-                          const prefix = reg.type === 'continent' ? '' : reg.type === 'subcontinent' ? '\u00A0\u00A0' : '\u00A0\u00A0\u00A0\u00A0'
-                          return (
-                            <option key={`${reg.label}-${idx}`} value={reg.label} className="bg-[#1a1a24]" disabled={reg.type === 'continent'}
-                              style={{ fontWeight: reg.type !== 'country' ? 'bold' : 'normal', color: reg.type === 'continent' ? '#a78bfa' : reg.type === 'subcontinent' ? '#c084fc' : '#e2e8f0' }}>
-                              {prefix}{reg.label}
-                            </option>
-                          )
-                        })}
+                      <select value={selectedContinent} onChange={(e) => { setSelectedContinent(e.target.value); setSelectedCountry(''); setSelectedCity('') }} className={selectClass}>
+                        <option value="" className="bg-[#1a1a24]">Select continent</option>
+                        {CONTINENTS.map(c => <option key={c} value={c} className="bg-[#1a1a24]">{c}</option>)}
                       </select>
+                      <ChevronRight className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-600 w-4 h-4 rotate-90 pointer-events-none" />
                     </div>
+                    {/* Country */}
+                    {selectedContinent && (
+                      <div className="relative">
+                        <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-600 w-4 h-4" />
+                        <select value={selectedCountry} onChange={(e) => { setSelectedCountry(e.target.value); setSelectedCity('') }} className={selectClass}>
+                          <option value="" className="bg-[#1a1a24]">Select country</option>
+                          {Object.keys(REGION_DATA[selectedContinent] || {}).map(country => (
+                            <option key={country} value={country} className="bg-[#1a1a24]">{country}</option>
+                          ))}
+                        </select>
+                        <ChevronRight className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-600 w-4 h-4 rotate-90 pointer-events-none" />
+                      </div>
+                    )}
+                    {/* City / State */}
+                    {selectedCountry && REGION_DATA[selectedContinent]?.[selectedCountry]?.length > 0 && (
+                      <div className="relative">
+                        <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-600 w-4 h-4" />
+                        <select value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)} className={selectClass}>
+                          <option value="" className="bg-[#1a1a24]">Select city / state</option>
+                          {REGION_DATA[selectedContinent][selectedCountry].map(city => (
+                            <option key={city} value={city} className="bg-[#1a1a24]">{city}</option>
+                          ))}
+                        </select>
+                        <ChevronRight className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-600 w-4 h-4 rotate-90 pointer-events-none" />
+                      </div>
+                    )}
                   </div>
                 </div>
 

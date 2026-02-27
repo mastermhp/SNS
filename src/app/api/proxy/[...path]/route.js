@@ -1,9 +1,12 @@
 const UPSTREAM = "https://api.slicenshare.com";
 
-async function handler(req, { params }) {
-  const { path } = await params;
+async function handler(req, context) {
+  const { path } = await context.params;
+  // path is an array like ["v1","auth","users","signup","verify"]
   const segments = Array.isArray(path) ? path.join("/") : path;
-  const url = `${UPSTREAM}/api/${segments}`;
+  // Remove any trailing slashes from segments
+  const cleanSegments = segments.replace(/\/+$/, "");
+  const url = `${UPSTREAM}/api/${cleanSegments}`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -32,7 +35,7 @@ async function handler(req, { params }) {
     }
   }
 
-  console.log(`[proxy] ${req.method} ${url}`);
+  console.log(`[proxy] ${req.method} ${url}`, fetchOptions.body ? `body: ${fetchOptions.body}` : "");
 
   try {
     const upstream = await fetch(url, fetchOptions);

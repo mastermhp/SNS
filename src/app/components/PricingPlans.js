@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
-import SignupModal from "./SignupModal";
+import NewSignupModal from "./NewSignupModal";
 
 const plans = [
   {
@@ -572,10 +572,13 @@ export default function PricingPlans() {
           </div>
         </div>
       </div>
-      <SignupModal
+      <NewSignupModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        selectedPlan={selectedPlan}
+        showPayment={selectedPlan !== "BASIC"}
+        price={selectedPlan === "STANDARD" ? 1000 : selectedPlan === "ADVANCED" ? 4500 : 0}
+        eventType={`${selectedPlan} Plan Subscription`}
+        flowType="subscription"
       />
     </section>
   );

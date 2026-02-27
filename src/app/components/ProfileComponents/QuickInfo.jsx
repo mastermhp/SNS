@@ -51,7 +51,7 @@ export default function QuickInfo({ user }) {
         </motion.h3>
 
         <motion.div
-          className="space-y-1"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-2"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -65,10 +65,10 @@ export default function QuickInfo({ user }) {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/[0.03] transition duration-200 group"
+                className="flex items-center gap-3 px-3 py-3 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] transition duration-200 group"
               >
-                <div className={`w-8 h-8 rounded-lg ${accentBg} flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition`}>
-                  <Icon size={14} className={accentColor} />
+                <div className={`w-9 h-9 rounded-lg ${accentBg} flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition`}>
+                  <Icon size={15} className={accentColor} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-600">{item.label}</p>

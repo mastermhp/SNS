@@ -1,9 +1,11 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { AlertCircle, CheckCircle, X, Loader2, Tag, Copy } from "lucide-react";
+import { AlertCircle, CheckCircle, X, Loader2, Tag, Copy, Mail, Shield, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import ComingSoon from "./ComingSoon";
+import { useAuth } from "@/app/context/AuthContext";
 
 const games = [
   { id: "apex", name: "Apex Legends", image: "/games/apex.png" },
@@ -126,6 +128,7 @@ export default function SignupModal({
   initialPlan = null,
   initialBrandType = null,
   initialScrimsDuration = null,
+  subscriptionId = null,
 }) {
   const [selectedPlan, setSelectedPlan] = useState(initialPlan);
   const [selectedBrandType, setSelectedBrandType] = useState(initialBrandType);
@@ -158,6 +161,16 @@ export default function SignupModal({
   const [qrImageError, setQrImageError] = useState(false);
   const [qrImageError2, setQrImageError2] = useState(false);
 
+  // --- Account auto-creation (OTP verification after subscription) ---
+  const router = useRouter();
+  const { user: authUser, signupSendOTP, signupVerifyOTP, loginSendOTP, loginVerifyOTP, updateProfile } = useAuth();
+  const [otpStep, setOtpStep] = useState(null); // null | 'sending' | 'input' | 'verifying' | 'success'
+  const [otpValue, setOtpValue] = useState("");
+  const [otpError, setOtpError] = useState("");
+  const [otpAuthMode, setOtpAuthMode] = useState("signup"); // 'signup' | 'login'
+  const [accountPhone, setAccountPhone] = useState(""); // phone used for signup
+  const otpInputRefs = useRef([]);
+
   const handleCopy = (value) => {
     navigator.clipboard.writeText(value);
     console.log("Copied:", value); // replace with toast if you want
@@ -186,6 +199,11 @@ export default function SignupModal({
       setDiscountedPrice(null);
       setQrImageError(false);
       setQrImageError2(false);
+      setOtpStep(null);
+      setOtpValue("");
+      setOtpError("");
+      setOtpAuthMode("signup");
+      setAccountPhone("");
     }
   }, [isOpen, initialPlan, initialBrandType, initialScrimsDuration]);
 
@@ -222,14 +240,145 @@ export default function SignupModal({
     return cleaned;
   };
 
-  const showNotification = (type, message) => {
+  // Compute subscription key for tracking - prefer explicit subscriptionId prop
+  const getSubKey = () => {
+    if (subscriptionId) return subscriptionId;
+    const dur = selectedScrimsDuration || initialScrimsDuration;
+    const brand = selectedBrandType || initialBrandType;
+    const plan = selectedPlan || initialPlan;
+    if (dur) return `scrims-${dur === "7days" ? "7" : dur === "15days" ? "15" : "30"}`;
+    if (brand) return `brand-${brand}`;
+    if (plan) return `newsletter-${plan}`;
+    if (flowType === "tournament") return "tournament";
+    return flowType || "unknown";
+  };
+
+  // Save subscription to sessionStorage immediately on success
+  const saveSubscriptionTracking = () => {
+    if (typeof window === "undefined") return;
+    const subKey = getSubKey();
+    try {
+      const existing = JSON.parse(sessionStorage.getItem("sns_subscriptions") || "{}");
+      existing[subKey] = true;
+      sessionStorage.setItem("sns_subscriptions", JSON.stringify(existing));
+    } catch {}
+  };
+
+  const showNotification = (type, message, skipAutoAccount = false) => {
     setNotification({ show: true, type, message });
-    setTimeout(() => {
-      setNotification({ show: false, type: "", message: "" });
-      if (type === "success") {
-        onClose();
+    // Always save subscription tracking on success, regardless of auth state
+    if (type === "success") {
+      saveSubscriptionTracking();
+    }
+    if (type === "success" && !skipAutoAccount && !authUser) {
+      // Don't auto-close on success -- we'll trigger OTP account creation
+      // Clear notification after 3s, then the OTP step takes over
+      setTimeout(() => {
+        setNotification({ show: false, type: "", message: "" });
+      }, 3000);
+    } else {
+      setTimeout(() => {
+        setNotification({ show: false, type: "", message: "" });
+        if (type === "success") {
+          onClose();
+        }
+      }, 5000);
+    }
+  };
+
+  // --- Auto-create account after successful subscription ---
+  const triggerAccountCreation = async (email, phone) => {
+    if (authUser) return; // Already logged in
+    setOtpStep("sending");
+    setOtpError("");
+    setAccountPhone(phone);
+    try {
+      // Try signup first
+      await signupSendOTP(email, phone);
+      setOtpAuthMode("signup");
+      setOtpStep("input");
+    } catch (signupErr) {
+      console.log("[v0] Signup OTP failed, trying login:", signupErr.message);
+      // If user already exists, fall back to login
+      try {
+        await loginSendOTP(email);
+        setOtpAuthMode("login");
+        setOtpStep("input");
+      } catch (loginErr) {
+        console.log("[v0] Login OTP also failed:", loginErr.message);
+        setOtpError("Could not send OTP. You can create an account later from the Sign Up page.");
+        setOtpStep(null);
       }
-    }, 5000); // Increased timeout for better readability
+    }
+  };
+
+  const handleOtpVerify = async () => {
+    if (otpValue.length < 4) {
+      setOtpError("Please enter the complete OTP");
+      return;
+    }
+    setOtpStep("verifying");
+    setOtpError("");
+    const email = formData.email;
+    try {
+      if (otpAuthMode === "signup") {
+        await signupVerifyOTP(email, otpValue, accountPhone);
+      } else {
+        await loginVerifyOTP(email, otpValue);
+      }
+      // Update profile with name and phone
+      try {
+        await updateProfile({ fullName: formData.fullName, phone: accountPhone || undefined });
+      } catch {}
+
+      // Save the selected games as gaming profile so profile page shows the right data
+      if (typeof window !== "undefined") {
+        const gameNames = selectedGames.map(g => {
+          // selectedGames stores full game objects {id, name, image}
+          if (typeof g === "object" && g.name) return g.name;
+          const found = games.find(gm => gm.id === g);
+          return found ? found.name : String(g);
+        });
+        const gamingProfile = {
+          game: gameNames[0] || "",
+          username: formData.fullName || "",
+          bio: "",
+          role: "",
+          region: "",
+          rank: "",
+          discord: "",
+          profileImagePreview: null,
+          bannerImagePreview: null,
+        };
+        sessionStorage.setItem("sns_gaming_profile", JSON.stringify(gamingProfile));
+
+        // Subscription already tracked by saveSubscriptionTracking() in showNotification
+      }
+
+      setOtpStep("success");
+      setTimeout(() => {
+        onClose();
+        router.push("/profile");
+      }, 2000);
+    } catch (err) {
+      setOtpError(err.message || "Invalid OTP. Please try again.");
+      setOtpStep("input");
+    }
+  };
+
+  const handleResendOtp = async () => {
+    setOtpError("");
+    setOtpValue("");
+    try {
+      if (otpAuthMode === "signup") {
+        await signupSendOTP(formData.email, accountPhone);
+      } else {
+        await loginSendOTP(formData.email);
+      }
+      setOtpError("OTP resent! Check your email.");
+    } catch (err) {
+      setOtpError("Failed to resend OTP: " + err.message);
+    }
   };
 
   const getMaxGamesAllowed = () => {
@@ -409,8 +558,10 @@ export default function SignupModal({
           showNotification(
             "success",
             responseData.message ||
-            "Subscription successful! Please check your email to verify.",
+            "Subscription successful! Setting up your account...",
           );
+          // Trigger auto account creation
+          triggerAccountCreation(formData.email, formattedPhone);
         } else {
           const errorMsg = responseData.errors
             ? responseData.errors.map((e) => e.message || e.msg || e).join(", ")
@@ -476,8 +627,10 @@ export default function SignupModal({
         if (res.ok) {
           const successMsg =
             responseData.message ||
-            "Registration successful! Check your email for Discord invite link and further instructions.";
+            "Registration successful! Setting up your account...";
           showNotification("success", successMsg);
+          // Trigger auto account creation
+          triggerAccountCreation(formData.email, formattedPhone);
         } else {
           let errorMsg = "Something went wrong. Please try again.";
 
@@ -537,8 +690,10 @@ export default function SignupModal({
           showNotification(
             "success",
             responseData.message ||
-            "Thanks for subscribing! We'll keep you updated.",
+            "Thanks for subscribing! Setting up your account...",
           );
+          // Trigger auto account creation
+          triggerAccountCreation(formData.email, formattedPhone);
         } else {
           const errorMsg = responseData.errors
             ? responseData.errors.map((e) => e.message || e.msg || e).join(", ")
@@ -558,6 +713,163 @@ export default function SignupModal({
   };
 
   if (!isOpen) return null;
+
+  // ============ OTP VERIFICATION SCREEN ============
+  if (otpStep) {
+    return (
+      <AnimatePresence>
+        <motion.div
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <motion.div
+            className="bg-gray-900 text-white rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden"
+            style={{
+              border: "2px solid transparent",
+              backgroundImage:
+                "linear-gradient(#111827, #111827), linear-gradient(135deg, #8117EE, #E91E63, #FF6B35)",
+              backgroundOrigin: "border-box",
+              backgroundClip: "padding-box, border-box",
+            }}
+            initial={{ scale: 0.8, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.8, opacity: 0, y: 20 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="p-6 pb-0">
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                  {otpStep === "success" ? <CheckCircle size={32} /> : <Shield size={32} />}
+                </div>
+              </div>
+              <h2 className="text-2xl font-bold text-center mb-1">
+                {otpStep === "success" ? "Account Created!" : otpStep === "sending" || otpStep === "verifying" ? "Please Wait..." : "Verify Your Email"}
+              </h2>
+              <p className="text-gray-400 text-center text-sm mb-4">
+                {otpStep === "success"
+                  ? "Redirecting you to your profile..."
+                  : otpStep === "sending"
+                  ? "Sending verification code to your email..."
+                  : otpStep === "verifying"
+                  ? "Verifying your code..."
+                  : `We sent a verification code to ${formData.email}`}
+              </p>
+            </div>
+
+            <div className="p-6 pt-2">
+              {/* Sending / Verifying spinner */}
+              {(otpStep === "sending" || otpStep === "verifying") && (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="animate-spin text-purple-400" size={40} />
+                </div>
+              )}
+
+              {/* Success */}
+              {otpStep === "success" && (
+                <motion.div
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="flex flex-col items-center py-6 gap-3"
+                >
+                  <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center">
+                    <CheckCircle className="text-green-400" size={40} />
+                  </div>
+                  <p className="text-green-400 font-medium">Your account is ready!</p>
+                  <p className="text-gray-500 text-sm">Taking you to your profile...</p>
+                </motion.div>
+              )}
+
+              {/* OTP Input */}
+              {otpStep === "input" && (
+                <div className="space-y-4">
+                  {/* 6-digit OTP input boxes */}
+                  <div className="flex justify-center gap-2">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <input
+                        key={i}
+                        ref={(el) => { otpInputRefs.current[i] = el; }}
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={1}
+                        className="w-11 h-13 rounded-lg bg-gray-800 border border-gray-700 text-center text-xl font-bold text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition-all"
+                        value={otpValue[i] || ""}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/\D/g, "");
+                          if (!val && !e.target.value) {
+                            // Backspace on empty
+                            const newOtp = otpValue.slice(0, i) + "" + otpValue.slice(i + 1);
+                            setOtpValue(newOtp);
+                            if (i > 0) otpInputRefs.current[i - 1]?.focus();
+                            return;
+                          }
+                          const newOtp = otpValue.slice(0, i) + val + otpValue.slice(i + 1);
+                          setOtpValue(newOtp.slice(0, 6));
+                          if (val && i < 5) otpInputRefs.current[i + 1]?.focus();
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Backspace" && !otpValue[i] && i > 0) {
+                            otpInputRefs.current[i - 1]?.focus();
+                          }
+                        }}
+                        onPaste={(e) => {
+                          e.preventDefault();
+                          const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+                          setOtpValue(pasted);
+                          const nextIdx = Math.min(pasted.length, 5);
+                          otpInputRefs.current[nextIdx]?.focus();
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Error */}
+                  {otpError && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={`text-sm text-center ${otpError.includes("resent") ? "text-green-400" : "text-red-400"}`}
+                    >
+                      {otpError}
+                    </motion.p>
+                  )}
+
+                  {/* Verify Button */}
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleOtpVerify}
+                    disabled={otpValue.length < 4}
+                    className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                  >
+                    Verify & Create Account <ArrowRight size={16} />
+                  </motion.button>
+
+                  {/* Resend & Skip */}
+                  <div className="flex items-center justify-between text-sm">
+                    <button onClick={handleResendOtp} className="text-purple-400 hover:text-purple-300 transition">
+                      Resend OTP
+                    </button>
+                    <button
+                      onClick={() => {
+                        setOtpStep(null);
+                        onClose();
+                      }}
+                      className="text-gray-500 hover:text-gray-300 transition"
+                    >
+                      Skip for now
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
+      </AnimatePresence>
+    );
+  }
 
   const isNewsletterMode =
     selectedPlan === "free" || selectedPlan === "premium";
@@ -835,7 +1147,7 @@ export default function SignupModal({
                 এবং উচ্চ্যমূল্যের প্রাইজপুল ম্যাচ। সাবস্ক্রাইবাররা পায় স্ক্রিমে
                 প্রাধান্যভিত্তিক অ্যাক্সেস, নিয়মিত প্র্যাকটিস সূচি,
                 পারফরম্যান্স অ্যানালিটিক্স এবং ধারাবাহিক উন্নয়ন ট্র্যাকিং। এই
-                ধারাবাহিকতা দলকে আরও শক্তিশালী করে এবং প্রতি মাসে
+                ধারাবাহিকতা দলকে আরও শক্তিশালী করে এবং প্রতি মা���ে
                 প্রতিযোগিতামূলক প্রস্তুতিকে আরও উন্নত করে।
               </p>
               <br />
