@@ -9,7 +9,7 @@ import Footer from '../components/Footer'
 import ProfileHeroBanner from '../components/ProfileComponents/ProfileHeroBanner'
 import CareerStats from '../components/ProfileComponents/CareerStats'
 import QuickInfo from '../components/ProfileComponents/QuickInfo'
-import SubscriptionsSection from '../components/ProfileComponents/SubscriptionsSection'
+import EventsSection from '../components/ProfileComponents/EventsSection'
 import MatchHistory from '../components/ProfileComponents/MatchHistory'
 import Availability from '../components/ProfileComponents/Availability'
 import FeaturedCarousel from '../components/ProfileComponents/FeaturedCarousel'
@@ -124,9 +124,9 @@ export default function ProfilePage() {
             <FeaturedCarousel />
           </div>
 
-          {/* Full Width Sections */}
+          {/* Events Section */}
           <div className="space-y-6">
-            <SubscriptionsSection user={mergedUser} />
+            <EventsSection user={mergedUser} />
           </div>
         </div>
       </main>

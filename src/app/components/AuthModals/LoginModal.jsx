@@ -1,11 +1,13 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Mail, Lock, Loader } from 'lucide-react'
 import { useAuth } from '@/app/context/AuthContext'
 
-export default function LoginModal({ isOpen, onClose, onSwitchToSignup }) {
+export default function LoginModal({ isOpen, onClose }) {
+  const router = useRouter()
   const { loginSendOTP, loginVerifyOTP, loginWithGoogle, error } = useAuth()
   const [step, setStep] = useState('email') // 'email' or 'otp'
   const [email, setEmail] = useState('')
@@ -67,7 +69,10 @@ export default function LoginModal({ isOpen, onClose, onSwitchToSignup }) {
       const response = await loginVerifyOTP(email, otp)
       console.log('[v0] LoginModal verify OTP response:', response)
       setMessage('Login successful!')
-      setTimeout(() => handleClose(), 1000)
+      setTimeout(() => {
+        handleClose()
+        router.push('/profile')
+      }, 1000)
     } catch (err) {
       setLocalError(err.message || 'Invalid OTP')
     } finally {
@@ -83,7 +88,10 @@ export default function LoginModal({ isOpen, onClose, onSwitchToSignup }) {
       const response = await loginWithGoogle()
       console.log('[v0] LoginModal Google login response:', response)
       setMessage(response.isNewUser ? 'Account created with Google!' : 'Signed in with Google!')
-      setTimeout(() => handleClose(), 1000)
+      setTimeout(() => {
+        handleClose()
+        router.push('/profile')
+      }, 1000)
     } catch (err) {
       console.error('[v0] LoginModal Google login error:', err)
       if (err.code === 'auth/popup-closed-by-user') {
@@ -320,29 +328,12 @@ export default function LoginModal({ isOpen, onClose, onSwitchToSignup }) {
                         )}
                       </motion.button>
 
-                      {/* Sign Up Link */}
-                      <motion.div variants={itemVariants} className="relative py-2">
-                        <div className="absolute inset-0 flex items-center">
-                          <div className="w-full border-t border-white/10" />
-                        </div>
-                        <div className="relative flex justify-center text-sm">
-                          <span className="px-2 bg-gradient-to-b from-[#171717] to-[#0a0a14] text-gray-500">{"Don't have an account?"}</span>
-                        </div>
+                      {/* Sign Up Info */}
+                      <motion.div variants={itemVariants} className="text-center">
+                        <p className="text-gray-500 text-sm">
+                          {"Don't have an account? Sign up through our Tournament, Scrims, or Brand Deal options below."}
+                        </p>
                       </motion.div>
-
-                      <motion.button
-                        variants={itemVariants}
-                        type="button"
-                        onClick={() => {
-                          handleClose()
-                          if (onSwitchToSignup) onSwitchToSignup()
-                        }}
-                        className="w-full py-3 border-2 border-purple-500/50 hover:border-purple-400 text-purple-300 font-semibold rounded-lg transition duration-300 flex items-center justify-center gap-2"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        Create New Account
-                      </motion.button>
                     </>
                   )}
 

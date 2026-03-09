@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import SignupModal from "./NewSignupModal"
+import SignupModal from "./AuthModals/SignupModal"
 
 const tournamentData = [
   {
@@ -269,12 +269,7 @@ export default function TournamentCarousel() {
           setSignupModalOpen(false)
           setSelectedCard(null)
         }}
-        showPayment={true}
-        eventType={selectedCard?.eventType}
-        price={selectedCard?.price}
-        flowType={selectedCard?.flowType}
-        showBrandDealType={selectedCard?.flowType === "brand-deal"}
-        showScrimsDuration={selectedCard?.flowType === "scrims"}
+        userType="player"
       />
     </>
   )

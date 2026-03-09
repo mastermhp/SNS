@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { Menu, X, User } from 'lucide-react'
 import Link from 'next/link'
 import LoginModal from './AuthModals/LoginModal'
-import SignupModal from './AuthModals/SignupModal'
 import ProfileSettings from './ProfileSettings'
 import { useAuth } from '@/app/context/AuthContext'
 
@@ -13,7 +12,6 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [loginModalOpen, setLoginModalOpen] = useState(false)
-  const [signupModalOpen, setSignupModalOpen] = useState(false)
   const [profileSettingsOpen, setProfileSettingsOpen] = useState(false)
 
   useEffect(() => {
@@ -32,10 +30,6 @@ export default function Header() {
     setLoginModalOpen(true)
   }
 
-  const handleSignupClick = () => {
-    setSignupModalOpen(true)
-  }
-
   return (
     <>
       <motion.header
@@ -48,13 +42,13 @@ export default function Header() {
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           {/* Logo */}
-          <Link href="#home" className="flex items-center space-x-2 flex-shrink-0">
+          <Link href="/" className="flex items-center space-x-2 flex-shrink-0">
             <img src="/Logo/Logo.png" alt="Slice N Share" className="h-7 sm:h-8 md:h-10" />
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8 w-full justify-center">
-            <Link href="#home" className="text-white text-[16px] font-medium hover:text-purple-400 transition">
+            <Link href="/" className="text-white text-[16px] font-medium hover:text-purple-400 transition">
               Home
             </Link>
             <Link href="#tournament" className="text-white text-[16px] font-medium hover:text-purple-400 transition">
@@ -86,20 +80,12 @@ export default function Header() {
                 <span className="max-w-[100px] truncate">{user.fullName || user.email}</span>
               </button>
             ) : (
-              <>
-                <button
-                  onClick={handleLoginClick}
-                  className="px-6 py-2 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white rounded-lg font-semibold transition"
-                >
-                  Login
-                </button>
-                <button
-                  onClick={handleSignupClick}
-                  className="px-6 py-2 border-2 border-purple-500/50 hover:border-purple-400 text-purple-300 hover:text-white rounded-lg font-semibold transition"
-                >
-                  Sign Up
-                </button>
-              </>
+              <button
+                onClick={handleLoginClick}
+                className="px-6 py-2 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white rounded-lg font-semibold transition"
+              >
+                Login
+              </button>
             )}
           </div>
 
@@ -148,12 +134,6 @@ export default function Header() {
                   >
                     Login
                   </button>
-                  <button
-                    onClick={() => { handleSignupClick(); setMobileMenuOpen(false) }}
-                    className="w-full px-6 py-3 border-2 border-purple-500/50 text-purple-300 rounded-lg font-semibold transition"
-                  >
-                    Sign Up
-                  </button>
                 </div>
               )}
 
@@ -179,13 +159,6 @@ export default function Header() {
       <LoginModal
         isOpen={loginModalOpen}
         onClose={() => setLoginModalOpen(false)}
-        onSwitchToSignup={() => { setLoginModalOpen(false); setSignupModalOpen(true) }}
-      />
-      <SignupModal
-        isOpen={signupModalOpen}
-        onClose={() => setSignupModalOpen(false)}
-        userType="player"
-        onSwitchToLogin={() => { setSignupModalOpen(false); setLoginModalOpen(true) }}
       />
       <ProfileSettings isOpen={profileSettingsOpen} onClose={() => setProfileSettingsOpen(false)} />
     </>
